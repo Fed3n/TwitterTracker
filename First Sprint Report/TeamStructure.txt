@@ -1,0 +1,6 @@
+Il team si è così suddiviso: 
+-	Michele Cucci come Scrum Master
+-	Alessio Pellegrino come Product Owner
+-	Federico De Marchi come Developer
+-	William Arnone come Developer
+-	Martina Ritrovato come Developer
