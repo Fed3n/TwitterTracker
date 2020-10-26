@@ -1,7 +1,19 @@
 /*API di base che implementa la funzione di stream filtrato e non*/
 
-const axios = require('axios')
-const fs = require('fs')
+const axios = require('axios');
+const fs = require('fs');
+const express = require('express');
+const bodyParser = require("body-parser");
+
+var app = express();
+
+app.set("views", __dirname + "/views");
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(bodyParser.json());
+
+
 
 //INSERIRE TOKEN vvv
 const BEARER_TOKEN = '';
@@ -110,9 +122,26 @@ function saveToJson(){
 
 process.on('SIGINT', saveToJson);
 
-(async() => {
+/*(async() => {
     await removeAllRules();
     await setFilter('to:realdonaldtrump', 'tweets to trump');
     ruledStream();
     //stdStream();
-})();
+})();*/
+
+
+app.get("/", function (req, res) {
+    res.render("index");
+});
+
+app.post("/addRule", function (req, res) {
+    console.log(req.body);
+    for(let i = 0; i < req.body.length(); i++){
+        //aggiungere il filtro. ci guardo domani come li gestisce fede. Sono stanco e ho fame. Buon appetito
+    }
+    res.send("flitri aggiunti");
+});
+
+app.listen(8000, () => {
+    console.log(`app listening at http://localhost:8000`);
+});

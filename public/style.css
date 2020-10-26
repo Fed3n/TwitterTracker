@@ -1,0 +1,33 @@
+.container{
+    width: 80%;
+    height: 100%;
+    margin:auto;
+    background-color: cornflowerblue;
+    border-radius: 2%;
+}
+
+
+.filtro{
+    display:block;
+    justify-content: space-between;
+    margin: auto;
+    width: 50%;
+    padding: .3%;
+}
+
+#cerca{
+    border-radius: 15%;
+    margin-left:90%;
+    margin-top:1%;
+
+    border-color: white;
+    background-color: whitesmoke;
+}
+
+#aggiungi{
+    border-radius: 30%;
+    margin-left:2%;
+    margin-top:1%;
+    border-color: white;
+    background-color: whitesmoke;
+}
