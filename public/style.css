@@ -17,7 +17,16 @@
 
 #cerca{
     border-radius: 15%;
-    margin-left:90%;
+    margin-left:5%;
+    margin-top:1%;
+
+    border-color: white;
+    background-color: whitesmoke;
+}
+
+#aggiungi_Filtri{
+    border-radius: 15%;
+    margin-left:80%;
     margin-top:1%;
 
     border-color: white;

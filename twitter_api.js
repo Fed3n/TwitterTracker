@@ -2,16 +2,6 @@
 
 const axios = require('axios');
 const fs = require('fs');
-const express = require('express');
-const bodyParser = require("body-parser");
-
-var app = express();
-
-app.set("views", __dirname + "/views");
-app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(bodyParser.json());
 
 
 
@@ -68,6 +58,7 @@ async function removeAllRules(){
 
 //vd. https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule
 async function setFilter(expression, name){
+    let err = null;
     let rules = {
         'add': [
             {'value': expression, 'tag': name}
@@ -77,8 +68,8 @@ async function setFilter(expression, name){
     axios.post(RULES_URL, rules, RULES_CONFIG).then((res) => {
         console.log(`Rules set with tag ${name}.`);
         console.log(res.data);
-    }).catch((error) => { console.log(error) });
-    return;
+    }).catch((error) => { console.log(error); err = error });
+    return err;
 }
 
 function startStream(url){
@@ -128,20 +119,3 @@ process.on('SIGINT', saveToJson);
     ruledStream();
     //stdStream();
 })();*/
-
-
-app.get("/", function (req, res) {
-    res.render("index");
-});
-
-app.post("/addRule", function (req, res) {
-    console.log(req.body);
-    for(let i = 0; i < req.body.length(); i++){
-        //aggiungere il filtro. ci guardo domani come li gestisce fede. Sono stanco e ho fame. Buon appetito
-    }
-    res.send("flitri aggiunti");
-});
-
-app.listen(8000, () => {
-    console.log(`app listening at http://localhost:8000`);
-});

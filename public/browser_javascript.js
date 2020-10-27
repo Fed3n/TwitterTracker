@@ -10,7 +10,7 @@ $(document).ready(function(){
         Add_Filter();
     });
 
-    $("#cerca").click( function(ev){
+    $("#aggiungi_FIltri").click( function(ev){
         ev.preventDefault();
         let data =[];
         for(let i = 1; i <= numeroFiltri; i++){
@@ -38,12 +38,22 @@ $(document).ready(function(){
             url: "http://localhost:8000/addRule",
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function(res){console.log(res)},
+            success: function(res){
+                console.log(res)
+                $("#filtri").html("");
+                numeroFiltri = 0;
+                Add_Filter();  
+            },
+            error: function(error){
+                alert(error);
+            }
           });
-          $("#filtri").html("");
-          numeroFiltri = 0;
-          Add_Filter();
 
+    });
+
+    $("#cerca").click( function(ev){
+        ev.preventDefault();
+        alert("work in progress")
     });
 });
 
