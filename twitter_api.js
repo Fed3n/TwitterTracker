@@ -1,7 +1,9 @@
 /*API di base che implementa la funzione di stream filtrato e non*/
 
-const axios = require('axios')
-const fs = require('fs')
+const axios = require('axios');
+const fs = require('fs');
+
+
 
 //INSERIRE TOKEN vvv
 const BEARER_TOKEN = '';
@@ -56,6 +58,7 @@ async function removeAllRules(){
 
 //vd. https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule
 async function setFilter(expression, name){
+    let err = null;
     let rules = {
         'add': [
             {'value': expression, 'tag': name}
@@ -65,8 +68,8 @@ async function setFilter(expression, name){
     axios.post(RULES_URL, rules, RULES_CONFIG).then((res) => {
         console.log(`Rules set with tag ${name}.`);
         console.log(res.data);
-    }).catch((error) => { console.log(error) });
-    return;
+    }).catch((error) => { console.log(error); err = error });
+    return err;
 }
 
 function startStream(url){
@@ -110,9 +113,9 @@ function saveToJson(){
 
 process.on('SIGINT', saveToJson);
 
-(async() => {
+/*(async() => {
     await removeAllRules();
     await setFilter('to:realdonaldtrump', 'tweets to trump');
     ruledStream();
     //stdStream();
-})();
+})();*/
