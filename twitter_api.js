@@ -4,11 +4,13 @@ const axios = require('axios')
 const fs = require('fs')
 
 //INSERIRE TOKEN vvv
-const BEARER_TOKEN = "";
+const BEARER_TOKEN = ''
 
 const FILTERED_STREAM_URL = 'https://api.twitter.com/2/tweets/search/stream'
 const STREAM_URL = 'https://api.twitter.com/2/tweets/sample/stream'
 const RULES_URL = 'https://api.twitter.com/2/tweets/search/stream/rules'
+
+//TODO FUNZIONE CHE MODIFICHI I PARAMETRI params PER DECIDERE COSA FARSI RITORNARE
 const STREAM_CONFIG = {
     //non ho investigato pero' si possono richiedere
     //svariate altre informazioni sui tweet estratti
@@ -29,6 +31,13 @@ const RULES_CONFIG = {
         'Authorization': `Bearer ${BEARER_TOKEN}`
     }
 };
+
+//canceltoken factory
+const CancelToken = axios.CancelToken;
+//token dello stream request
+const stream_token = CancelToken.source();
+
+
 var tweet_collection = [];
 
 async function removeAllRules(){
@@ -77,8 +86,15 @@ async function setFilter(expression, name){
     return;
 }
 
+//funzione che inizializza lo stream di tweets
 function startStream(url){
-    axios.get(url, STREAM_CONFIG).then((res) => {
+    //Creo un token per interrompere lo stream request
+    //si interrompe chiamando cancel_token.cancel()
+    //var cancel_token = axios.CancelToken.source();
+    let config = {};
+    Object.assign(config, STREAM_CONFIG);
+    config["cancelToken"] =  stream_token.token;
+    axios.get(url, config).then((res) => {
         console.log('Beginning stream...');
         let stream = res.data;
         stream.on('data', (tweet_data) => {
@@ -92,24 +108,33 @@ function startStream(url){
             catch(err) {
                 //boh occasionalmente arrivano chunk corrotti
                 //li ignoro :')))
+                console.log('Failed parsing');
                 }
         });
         stream.on('end', () => { console.log("Fine") });
     }).catch((err) => { throw(err) });
 }
 
+//funzione wrapper per stream senza filtri
+//ritorna un cancelToken
 async function stdStream(){
     startStream(STREAM_URL);
 }
 
+//funzione wrapper per stream filtrato
+//ritorna un cancelToken
 async function ruledStream(){
     startStream(FILTERED_STREAM_URL);
+}
+
+//cancella tutti gli stream request in corso
+function closeStream(){
+    stream_token.cancel();
 }
 
 
 
 //TEST eseguibile con node dopo npm install axios//
-//Non ho idea di come chiudere lo stream request quindi al CTRL+C salvo il dump in plaintext
 function saveToJson(){
     let dump = JSON.stringify(tweet_collection);
     fs.writeFileSync('./tweet_dump.txt', dump);
@@ -118,11 +143,14 @@ function saveToJson(){
 
 process.on('SIGINT', saveToJson);
 
+/*
 (async() => {
     await removeAllRules();
-    await setFilter('#terremoto', 'terremoto hashtag');
-    await setFilter('#brescia', 'brescia hashtag');
-    await setFilter('terremoto brescia', 'terremoto brescia');
-    ruledStream();
-    //stdStream();
+    await setFilter('#BLM', 'black lives matter');
+    //ruledStream();
+    stdStream();
+    setTimeout( function(){
+        closeStream();
+    }, 5000);
 })();
+*/
