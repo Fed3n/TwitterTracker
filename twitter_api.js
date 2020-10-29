@@ -1,15 +1,13 @@
 /*API di base che implementa la funzione di stream filtrato e non*/
-
 const axios = require('axios');
 const fs = require('fs');
 
-
-
 //INSERIRE TOKEN vvv
-const BEARER_TOKEN = ''
+const BEARER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAAIfdIwEAAAAAO5RY%2FGsvF4lZlch0Wv%2Bf65NQc%2Bg%3DmFVfzJK1AHQbtvsP3khEEaJLhZxmloBcefCcN0FI49jz67lE1V'
 
 const FILTERED_STREAM_URL = 'https://api.twitter.com/2/tweets/search/stream'
 const STREAM_URL = 'https://api.twitter.com/2/tweets/sample/stream'
+const SEARCH_URL = 'https://api.twitter.com/2/tweets/search/recent'
 const RULES_URL = 'https://api.twitter.com/2/tweets/search/stream/rules'
 
 //TODO FUNZIONE CHE MODIFICHI I PARAMETRI params PER DECIDERE COSA FARSI RITORNARE
@@ -27,6 +25,18 @@ const STREAM_CONFIG = {
         'Authorization': `Bearer ${BEARER_TOKEN}`
     }
 };
+const SEARCH_CONFIG = {
+    params: {
+        'tweet.fields': 'created_at',
+        'expansions': 'author_id',
+        'user.fields': 'created_at',
+        'max_results': '',
+        'query': ''
+    },
+    headers: {
+        'Authorization': `Bearer ${BEARER_TOKEN}`
+    }
+};
 const RULES_CONFIG = {
     'Content-Type': 'application/json',
     headers: {
@@ -38,10 +48,13 @@ const RULES_CONFIG = {
 const CancelToken = axios.CancelToken;
 //token dello stream request
 const stream_token = CancelToken.source();
+const search_token = CancelToken.source();
 
 
-var tweet_collection = [];
+var stream_array = [];
+var search_array = [];
 
+//RULES SETTING AND REMOVAL FOR RULED STREAMS//
 async function removeAllRules(){
     try {
         //Prendo tutte le regole impostate (get)
@@ -88,15 +101,15 @@ async function setFilter(expression, name){
     }
     return err;
 }
+//#########################################################
 
+//FUNZIONE DI STREAM, WRAPPERS, CANCELLAZIONE REQ
 //funzione che inizializza lo stream di tweets
 function startStream(url){
-    //Creo un token per interrompere lo stream request
-    //si interrompe chiamando cancel_token.cancel()
-    //var cancel_token = axios.CancelToken.source();
     let config = {};
     Object.assign(config, STREAM_CONFIG);
-    config["cancelToken"] =  stream_token.token;
+    //token per la cancellazione
+    config['cancelToken'] =  stream_token.token;
     axios.get(url, config).then((res) => {
         console.log('Beginning stream...');
         let stream = res.data;
@@ -106,7 +119,7 @@ function startStream(url){
             try {
                 let parsed_json = JSON.parse(tweet_data);
                 console.log(parsed_json);
-                tweet_collection.push(parsed_json);
+                stream_array.push(parsed_json);
             }
             catch(err) {
                 //boh occasionalmente arrivano chunk corrotti
@@ -131,27 +144,56 @@ async function ruledStream(){
 }
 
 //cancella tutti gli stream request in corso
-function closeStream(){
+//se non ha parametri salva il dump come tweet_dump.txt
+function closeStream(path='./tweet_dump.txt'){
     stream_token.cancel();
+    let dump = JSON.stringify(stream_array);
+    fs.writeFileSync(path, dump); 
+}
+//####################################################
+
+//FUNZIONI DI SEARCH, CANCELLAZIONE REQ
+//query nel solito formato vd sopra rules, number e' numero di tweet restituiti default 10 max 100
+//TODO non ho capito che cazzo mi restituisce somebody do it thanks
+async function recentSearch(query, number){
+    let err = null;
+    let config = {};
+    Object.assign(config, SEARCH_CONFIG);
+    config['params']['query'] = query;
+    if(number) config['params']['max_results'] = number;
+    try {
+        let res = await axios.get(SEARCH_URL, SEARCH_CONFIG);
+        console.log(res.data);
+        search_array = res.data.data;
+    }
+    catch(error) {
+        console.log(error); err = error; 
+    }
+    return err;
 }
 
 
-
-//TEST eseguibile con node dopo npm install axios//
-function saveToJson(){
-    let dump = JSON.stringify(tweet_collection);
+function saveToJson(path='./tweet_dump.txt'){
+    let dump = JSON.stringify(stream_array);
     fs.writeFileSync('./tweet_dump.txt', dump);
     process.exit();
 }
 
 process.on('SIGINT', saveToJson);
 
-/*(async() => {
+
+
+//TEST eseguibile con node dopo npm install axios//
+/*
+(async() => {
     await removeAllRules();
     await setFilter('#BLM', 'black lives matter');
-    //ruledStream();
-    stdStream();
+    ruledStream();
+    //stdStream();
     setTimeout( function(){
         closeStream();
     }, 5000);
+    await recentSearch("#meme", 30);
+    let dump = JSON.stringify(search_array);
+    fs.writeFileSync('./search_dump.txt', dump);
 })();*/
