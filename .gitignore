@@ -1,2 +1,5 @@
 node_modules/*
 tweet_dump.txt
+package-lock.json
+launch.json
+sus
