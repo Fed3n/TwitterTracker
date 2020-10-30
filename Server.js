@@ -14,6 +14,10 @@ app.get("/", function (req, res) {
     res.render("index");
 });
 
+app.get("/will", function (req, res) {
+    res.render("prova");
+});
+
 app.post("/addRule", function (req, res) {
     console.log(req.body);
     let err = null;
