@@ -1,2 +1,6 @@
 node_modules/*
-tweet_dump.txt
+
+#volatile files for testing/program output
+search_dump.txt
+stream_dump.txt
+
