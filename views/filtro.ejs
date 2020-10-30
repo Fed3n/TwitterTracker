@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <title>Filtro tweets</title>
+    </head>
+    <body>
+        <div>
+            <form method="POST" action="/filter" id="filterForm">
+                <table>
+                    <tr>
+                        <td>Parametro di ricerca: </td>
+                        <td>
+                            <select id="searchParam" name="searchParam" required>
+                                <option disabled selected>---</option> 
+                                <option value="hashtag">Hashtag</option>
+                                <option value="location">Posizione</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Valore: </td>
+                        <td>
+                            <input type="text" name="paramValue" id="paramValue" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            <button type="reset">Annulla</button>
+                            <button type="submit">INVIA</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div id="response">
+            <pre id="jsonHolder"></pre>
+        </div>
+    </body>
+</html>
+
+<script>
+    $("#filterForm").submit(function(event) {
+
+        /* stop form from submitting normally */
+        event.preventDefault();
+
+        /* get the action attribute from the <form action=""> element */
+        var $form = $(this),
+        url = $form.attr('action');
+
+        /* Send the data using post with element id searchParam and paramValue*/
+        var posting = $.post(url, {
+            param: $('#searchParam').val(),
+            value: $('#paramValue').val()
+        });
+
+        /* Alerts the results */
+        posting.done(function(data) {
+            //console.log(JSON.stringify(data));
+            $('#jsonHolder').text(JSON.stringify(data, null, 4));
+        });
+        posting.fail(function() {
+            $('#jsonHolder').text('Errore');
+        });
+    });
+</script>

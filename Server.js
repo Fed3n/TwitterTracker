@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const twitter_Api = require('./twitter_api.js');
+const fs = require('fs');
 
 var app = express();
 
@@ -16,6 +17,31 @@ app.get("/", function (req, res) {
 
 app.get("/will", function (req, res) {
     res.render("prova");
+});
+
+app.get("/marti", function (req, res) {
+    res.render("filtro");
+});
+
+app.post("/filter", function (req, res) {
+    console.log(req.body);
+    let rawData = fs.readFileSync(__dirname + '/tests/covidSample.json');
+    let tweetSet = JSON.parse(rawData);
+
+    let search = req.body;
+
+    let filteredSet = [];
+
+    if(search.param == "hashtag"){
+        tweetSet.forEach(tweet => {
+            tweet.hashtagEntities.forEach(tag => {
+                if(tag.text == search.value)
+                    filteredSet.push(tweet);
+            });
+        });
+    }
+    res.header("Content-Type", 'application/json');
+    res.send(filteredSet);
 });
 
 app.post("/addRule", function (req, res) {
