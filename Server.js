@@ -58,8 +58,8 @@ app.post("/filter", async function (req, res) {
     let filteredSet = [];
 
     if(search.param == "hashtag"){
-        tweetSet.forEach(tweet => {
-            tweet.data.entities.hashtags.forEach(tag => {
+        tweetSet.data.forEach(tweet => {
+            tweet.entities.hashtags.forEach(tag => {
                 if(tag.tag == search.value)
                     filteredSet.push(tweet);
             });
