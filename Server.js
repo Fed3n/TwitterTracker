@@ -60,7 +60,7 @@ app.post("/filter", async function (req, res) {
     if(search.param == "hashtag"){
         tweetSet.data.forEach(tweet => {
             tweet.entities.hashtags.forEach(tag => {
-                if(tag.tag == search.value)
+                if(tag.tag.toLowerCase() == search.value.toLowerCase())
                     filteredSet.push(tweet);
             });
         });
