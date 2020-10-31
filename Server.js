@@ -26,7 +26,7 @@ app.get("/marti", function (req, res) {
 
 app.post("/filter", function (req, res) {
     console.log(req.body);
-    let rawData = fs.readFileSync(__dirname + '/tests/covidSample.json');
+    let rawData = fs.readFileSync(__dirname + '/search_dump.txt');
     let tweetSet = JSON.parse(rawData);
 
     let search = req.body;
@@ -35,8 +35,8 @@ app.post("/filter", function (req, res) {
 
     if(search.param == "hashtag"){
         tweetSet.forEach(tweet => {
-            tweet.hashtagEntities.forEach(tag => {
-                if(tag.text == search.value)
+            tweet.data.entities.hashtags.forEach(tag => {
+                if(tag.tag == search.value)
                     filteredSet.push(tweet);
             });
         });
@@ -44,10 +44,17 @@ app.post("/filter", function (req, res) {
     else if(search.param == "location"){
 
         // RICERCA PER COMUNI perchè non so se riesco a fare quello fatto bene per tempo
-        tweetSet.forEach(tweet => {
-            if(tweet.place != undefined)
-                if(tweet.place.name.replace(/[\W_]+/g,'').toLowerCase() == search.value.replace(/[\W_]+/g, '').toLowerCase())
-                    filteredSet.push(tweet);
+        var place_id;
+        tweetSet.includes.places.forEach(place => {
+            if(place.name.replace(/[\W_]+/g,'').toLowerCase() == search.value.replace(/[\W_]+/g, '').toLowerCase()){
+                place_id = place.id;
+            }
+        })
+
+        tweetSet.data.forEach(tweet => {
+            if(tweet.geo != undefined && tweet.geo.place_id == place_id){
+                filteredSet.push(tweet);
+            }
         });
     } 
         

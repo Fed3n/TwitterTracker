@@ -4,7 +4,7 @@
 const twitter_api = require('../twitter_api.js');
 
 (async() => {
-    await twitter_api.recentSearch("to:realdonaldtrump #BLM", 50);
+    await twitter_api.recentSearch("#IngSw2020", 100);
     twitter_api.saveSearchToJson();
 })();
 

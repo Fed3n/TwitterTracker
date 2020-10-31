@@ -16,8 +16,8 @@ const STREAM_CONFIG = {
     //svariate altre informazioni sui tweet estratti
     //cambiando i parametri della richiesta
     params: {
-        'tweet.fields': 'created_at',
-        'expansions': 'author_id',
+        'tweet.fields': 'created_at,entities',
+        'expansions': 'author_id,geo.place_id',
         'user.fields': 'created_at'
     },
     responseType: 'stream',
@@ -27,8 +27,9 @@ const STREAM_CONFIG = {
 };
 const SEARCH_CONFIG = {
     params: {
-        'tweet.fields': 'created_at',
-        'expansions': 'author_id',
+        'tweet.fields': 'created_at,entities',
+        'expansions': 'author_id,geo.place_id',
+        'place.fields': 'name',
         'user.fields': 'created_at',
         'max_results': '',
         'query': ''
@@ -163,7 +164,7 @@ recentSearch: async function(query, number){
     try {
         let res = await axios.get(SEARCH_URL, SEARCH_CONFIG);
         console.log(res.data);
-        this.search_array = res.data.data;
+        this.search_array = res.data;
     }
     catch(error) {
         console.log(error); err = error; 
