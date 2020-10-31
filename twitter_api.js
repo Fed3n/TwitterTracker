@@ -27,9 +27,9 @@ const STREAM_CONFIG = {
 };
 const SEARCH_CONFIG = {
     params: {
-        'tweet.fields': 'created_at,entities',
+        'tweet.fields': 'created_at,entities,geo',
         'expansions': 'author_id,geo.place_id',
-        'place.fields': 'name',
+        'place.fields': 'name,geo',
         'user.fields': 'created_at',
         'max_results': '',
         'query': ''

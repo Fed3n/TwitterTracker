@@ -24,8 +24,32 @@ app.get("/marti", function (req, res) {
     res.render("filtro");
 });
 
-app.post("/filter", function (req, res) {
-    console.log(req.body);
+async function getLocation(query){
+    return new Promise(function(resolve, reject){
+        const options = {
+            hostname: 'nominatim.openstreetmap.org',
+            port: 443,
+            path: '/search/' + query.replace(" ", "%20") + '?format=json&addressdetails=1&limit=1',
+            method: 'GET',
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36' }
+        }
+
+        const reqa = https.request(options, resa => {
+            resa.on('data', d => {
+                var location = JSON.parse(d);
+                resolve(location);
+            })
+        })
+
+        reqa.on('error', error => {
+            reject(error);
+        })
+
+        reqa.end()
+    })
+}
+
+app.post("/filter", async function (req, res) {
     let rawData = fs.readFileSync(__dirname + '/search_dump.txt');
     let tweetSet = JSON.parse(rawData);
 
@@ -43,7 +67,7 @@ app.post("/filter", function (req, res) {
     }
     else if(search.param == "location"){
 
-        // RICERCA PER COMUNI perchè non so se riesco a fare quello fatto bene per tempo
+        /* RICERCA PER COMUNI perchè non so se riesco a fare quello fatto bene per tempo
         var place_id;
         tweetSet.includes.places.forEach(place => {
             if(place.name.replace(/[\W_]+/g,'').toLowerCase() == search.value.replace(/[\W_]+/g, '').toLowerCase()){
@@ -56,27 +80,37 @@ app.post("/filter", function (req, res) {
                 filteredSet.push(tweet);
             }
         });
-    } 
-        
-        /* DOVREBBE ESSERE quello fatto bene ma non vanno le richieste https
-        let options = {
-            hostname: 'google.com',//'nominatim.openstreetmap.org',
-            port: 443,
-            path: '/search?q=miao&oq=miao&aqs=chrome..69i57j46j0l6.700j0j15&sourceid=chrome&ie=UTF-8',//'/search/' + search.value.replace(/\s/g, '') + '?format=json&addressdetails=1&limit=1'
-            method: 'GET'
-        };
-        
-        let request = https.request(options, response => {
-            response.on('data', d =>{
-                console.log(d);
-            });
-            request.on('error', error => {
-                console.error(error);
-            });
-            request.end();
+    } */
+   // '/search/' + search.value.replace(/\s/g, '') + '?format=json&addressdetails=1&limit=1' 'nominatim.openstreetmap.org'
+
+
+        // DOVREBBE ESSERE quello fatto bene
+        var place_ids = [];
+        var location = await getLocation(search.value);
+        var bbox = location[0].boundingbox;
+        bbox = bbox.map(function (x) { 
+            return parseFloat(x, 10); 
+          });
+    
+        tweetSet.includes.places.forEach(place => {
+            let place_bbox = place.geo.bbox;
+            let coords = [
+                (place_bbox[0]+place_bbox[2])/2,
+                (place_bbox[1]+place_bbox[3])/2
+            ];
+            if(bbox[2] <= coords[0] && bbox[3] >= coords[0] && 
+               bbox[0] <= coords[1] && bbox[1] >= coords[1]){
+                   place_ids.push(place.id);
+               }
         });
-        //let req_boundingbox = JSON.parse();
-    }*/
+
+        tweetSet.data.forEach(tweet => {
+            if(tweet.geo != undefined && place_ids.indexOf(tweet.geo.place_id) > -1){
+                filteredSet.push(tweet);
+            }
+        });
+    }
+
 
     res.header("Content-Type", 'application/json');
     res.send(filteredSet);
