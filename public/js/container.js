@@ -34,7 +34,7 @@ var container = new Vue({
 		},
 		search: function(){
 			let newexpr = this.$refs.searchfilter.value;
-			$.get("/search", { expr: newexpr, lim:100} ).done(function(newtweets){
+			$.get("/search", { expr:newexpr, lim:100}).done(function(newtweets){
 				console.log(newtweets);
 			});
 		}
