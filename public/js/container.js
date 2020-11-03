@@ -22,7 +22,7 @@ var container = new Vue({
 		removefilter: function(elem){
 			let index=0;
 			while(index<this.labels.length){
-				if(this.labels[index]==elem){//controlla
+				if(this.labels[index]==elem){
 					this.labels.splice(index,1);
 					index=this.labels.length;
 				}
@@ -31,13 +31,13 @@ var container = new Vue({
 		},
 		filters: function(type){
 			let count=0;
-			this.labels.forEach(label=>{if(label.type==type)count++});
+			this.labels.forEach(label=>{if(label.type==type){count++;}});
 			return count;
 		},
 		showinfo:function(data){
 			console.log(data);
         },
-        toggleStream:function(){
+        toggleStream:function(){ //da fare
             let expr = this.$refs.streamfilter.value;
             //stream
 		},
