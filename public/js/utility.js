@@ -4,17 +4,12 @@ function importfile(){
   	if (file <= 0) {
     	return false;
   	}
-
   	var fr = new FileReader();
-
   	fr.onload = function(e) { 
 		console.log(e);
-		JSON.parse(e.target.result).forEach(elem=>{
-			container.tweets.push(elem);
-		})
+		container.appendtweets(JSON.parse(e.target.result));
 		container.tweets.sort();
   	}
-
   	fr.readAsText(file);
 }
 

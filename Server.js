@@ -154,6 +154,7 @@ app.post("/stream/stop", async function(req, res){
 app.get("/stream", function(req, res){
     let arr = twitter_api.stream_array.slice();
     twitter_api.stream_array = [];
+    res.setHeader('Content-Type', 'application/json');  
     return res.status(200).send(arr);
 });
 //###########################
@@ -166,7 +167,10 @@ app.get("/search", async function (req, res) {
     let arr = await twitter_api.recentSearch(expr,lim);
     console.log(arr);
     if(arr) {
-        if(arr.length > 0) return res.status(200).send(arr);
+        if(arr.length > 0){
+            res.setHeader('Content-Type', 'application/json');  
+            return res.status(200).send(arr);
+        } 
         else return res.status(404).send("Nessun tweet corrisponde alla ricerca.");
     }
     else return res.status(500).send("Errore in search.");
