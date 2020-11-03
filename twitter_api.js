@@ -154,22 +154,20 @@ closeStream: function(){
 
 //FUNZIONI DI SEARCH, CANCELLAZIONE REQ
 //query nel solito formato vd sopra rules, number e' numero di tweet restituiti default 10 max 100
-//TODO non ho capito che cazzo mi restituisce somebody do it thanks
 recentSearch: async function(query, number){
-    let err = null;
     let config = {};
+    console.log(`query${query},number${number}`);
     Object.assign(config, SEARCH_CONFIG);
     config['params']['query'] = query;
     if(number) config['params']['max_results'] = number;
     try {
         let res = await axios.get(SEARCH_URL, SEARCH_CONFIG);
-        console.log(res.data);
-        this.search_array = res.data;
+        return res.data.data;
     }
     catch(error) {
-        console.log(error); err = error; 
+        console.log(error);
+        return null;
     }
-    return err;
 },
 
 
