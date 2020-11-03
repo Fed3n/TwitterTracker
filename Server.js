@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const twitter_Api = require('./twitter_api.js');
+const twitter_api = require('./twitter_api.js');
 const fs = require('fs');
 const https = require('https');
 
@@ -116,6 +116,7 @@ app.post("/filter", async function (req, res) {
     res.send(filteredSet);
 });
 
+//STREAMING REST API//
 app.post("/addRule", function (req, res) {
     console.log(req.body);
     let err = null;
@@ -127,6 +128,21 @@ app.post("/addRule", function (req, res) {
         })
     }
     res.send("flitri aggiunti");
+});
+//###########################
+
+//Tweets Search//Returns tweet array//Takes as query {expr: query_expression, lim: number_of_tweets}
+app.get("/search", async function (req, res) {
+    let expr = req.query.expr;
+    console.log(req.query.lim);
+    let lim = parseInt(req.query.lim);
+    let arr = await twitter_api.recentSearch(expr,lim);
+    console.log(arr);
+    if(arr) {
+        if(arr.length > 0) return res.status(400).send(arr);
+        else return res.status(404).send("Nessun tweet corrisponde alla ricerca.");
+    }
+    else return res.status(500).send("Errore in search.");
 });
 
 app.listen(8000, () => {
