@@ -58,11 +58,10 @@ app.post("/filter", async function (req, res) {
     let filteredSet = [];
 
     if(search.param == "hashtag"){
-        tweetSet.data.forEach(tweet => {
-            if (tweet.entities.hashtags != undefined)
-                tweet.entities.hashtags.forEach(tag => {
-                    if(tag.tag.toLowerCase() == search.value.toLowerCase())
-                        filteredSet.push(tweet);
+        tweetSet.forEach(tweet => {
+            tweet.data.entities.hashtags.forEach(tag => {
+                if(tag.tag == search.value)
+                    filteredSet.push(tweet);
             });
         });
     }
@@ -130,6 +129,33 @@ app.post("/addRule", function (req, res) {
     }
     res.send("flitri aggiunti");
 });
+
+//Funzione provvisoria per far partire stream per will//Takes as req body {expr: query_expression}
+app.post("/stream/start", async function(req,res){
+    let expr = req.body.expr;
+    if(expr){
+        await twitter_api.removeAllRules();
+        await twitter_api.setFilter(expr, "test");
+        twitter_api.ruledStream();
+        res.status(200).send("k");
+    } else {
+        twitter_api.stdStream();
+        res.status(200).send("k");
+    }
+});
+
+//Chiude tutti gli stream in corso
+app.post("/stream/stop", async function(req, res){
+    await twitter_api.closeStream();
+    res.status(200).send("Stream closed");
+});
+
+//Provvisoria, ritorna tweet dello stream e svuota buffer
+app.get("/stream", function(req, res){
+    let arr = twitter_api.stream_array.slice();
+    twitter_api.stream_array = [];
+    return res.status(200).send(arr);
+});
 //###########################
 
 //Tweets Search//Returns tweet array//Takes as query {expr: query_expression, lim: number_of_tweets}
@@ -140,7 +166,7 @@ app.get("/search", async function (req, res) {
     let arr = await twitter_api.recentSearch(expr,lim);
     console.log(arr);
     if(arr) {
-        if(arr.length > 0) return res.status(400).send(arr);
+        if(arr.length > 0) return res.status(200).send(arr);
         else return res.status(404).send("Nessun tweet corrisponde alla ricerca.");
     }
     else return res.status(500).send("Errore in search.");
