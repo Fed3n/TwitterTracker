@@ -58,10 +58,11 @@ app.post("/filter", async function (req, res) {
     let filteredSet = [];
 
     if(search.param == "hashtag"){
-        tweetSet.forEach(tweet => {
-            tweet.data.entities.hashtags.forEach(tag => {
-                if(tag.tag == search.value)
-                    filteredSet.push(tweet);
+        tweetSet.data.forEach(tweet => {
+            if (tweet.entities.hashtags != undefined)
+                tweet.entities.hashtags.forEach(tag => {
+                    if(tag.tag.toLowerCase() == search.value.toLowerCase())
+                        filteredSet.push(tweet);
             });
         });
     }
