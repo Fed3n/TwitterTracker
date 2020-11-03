@@ -1,7 +1,3 @@
-function searchquery(){
-	//inserire richiesta
-}
-
 function importfile(){
 	var file = $('#import')[0].files[0];
   	console.log(file);
@@ -12,15 +8,18 @@ function importfile(){
   	var fr = new FileReader();
 
   	fr.onload = function(e) { 
-  		console.log(e);
-    	tweetslist.tweets=JSON.parse(e.target.result);
+		console.log(e);
+		JSON.parse(e.target.result).forEach(elem=>{
+			container.tweets.push(elem);
+		})
+		container.tweets.sort();
   	}
 
   	fr.readAsText(file);
 }
 
 function exportfile(){
-	var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tweetslist.tweets));
+	var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(container.computedtweets));
 	var downloadAnchorNode = document.createElement('a');
 	downloadAnchorNode.setAttribute("href",     dataStr);
 	downloadAnchorNode.setAttribute("download", "tweet_analytics" + ".json");
@@ -30,7 +29,6 @@ function exportfile(){
 }  
 
 $(document).ready(function(){
-	$("#search").click(searchquery);
 	$("#import").change(importfile);
 	$("#export").click(exportfile);
 })
