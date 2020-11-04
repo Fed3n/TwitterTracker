@@ -1,9 +1,13 @@
 var numeroFiltri = 0;
 
+var markers = [{lat:0,long:0}, {lat:100,long:100}, {lat:500,long:200}];
+var i = 0;
+
 
 $(document).ready(function(){
     
     Add_Filter();
+    SetMap();
 
     $("#aggiungi").click(function(ev){
         ev.preventDefault();
@@ -53,7 +57,9 @@ $(document).ready(function(){
 
     $("#cerca").click( function(ev){
         ev.preventDefault();
-        alert("work in progress")
+        //alert("work in progress")
+        AddMarker(markers[i].lat, markers[i].long, "marker n:" + i);
+        i++;
     });
 });
 
