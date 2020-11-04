@@ -12,9 +12,9 @@
         <!-- STREAM -->
         <div id="stream">
             <label for="streamfilter">Stream Settings</label>
-            <input type="text" id="streamfilter" ref="streamfilter" :enabled="!stream_on">
+            <input type="text" id="streamfilter" ref="streamfilter" :disabled="stream_on">
             <button @click="toggleStream">
-                {{ stream_on ? "Start Stream" : "Close Stream" }}
+                {{ stream_on ? "Close Stream" : "Start Stream"}}
             </button>
         </div>
 
