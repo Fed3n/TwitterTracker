@@ -1,5 +1,3 @@
-var lat = 0;
-var lon = 0;
 var marker = [];
 var mymap;
 
