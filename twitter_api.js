@@ -1,9 +1,9 @@
 /*API di base che implementa la funzione di stream filtrato e non*/
 const axios = require('axios');
 const fs = require('fs');
+require('dotenv').config();
 
-//INSERIRE TOKEN vvv
-const BEARER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAAIfdIwEAAAAAO5RY%2FGsvF4lZlch0Wv%2Bf65NQc%2Bg%3DmFVfzJK1AHQbtvsP3khEEaJLhZxmloBcefCcN0FI49jz67lE1V'
+const BEARER_TOKEN = process.env.BEARER_TOKEN; 
 
 const FILTERED_STREAM_URL = 'https://api.twitter.com/2/tweets/search/stream'
 const STREAM_URL = 'https://api.twitter.com/2/tweets/sample/stream'
@@ -16,7 +16,7 @@ const STREAM_CONFIG = {
     //svariate altre informazioni sui tweet estratti
     //cambiando i parametri della richiesta
     params: {
-        'tweet.fields': 'created_at,entities',
+        'tweet.fields': 'created_at,entities,geo',
         'expansions': 'author_id,geo.place_id',
         'user.fields': 'created_at'
     },

@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const twitter_api = require('./twitter_api.js');
+const newapi = require('./newapi.js');
 const fs = require('fs');
 const https = require('https');
 
@@ -165,6 +166,23 @@ app.get("/search", async function (req, res) {
     console.log(req.query.lim);
     let lim = parseInt(req.query.lim);
     let arr = await twitter_api.recentSearch(expr,lim);
+    console.log(arr);
+    if(arr) {
+        if(arr.length > 0){
+            res.setHeader('Content-Type', 'application/json');  
+            return res.status(200).send(arr);
+        } 
+        else return res.status(404).send("Nessun tweet corrisponde alla ricerca.");
+    }
+    else return res.status(500).send("Errore in search.");
+});
+
+app.get("/newsearch", async function (req, res) {
+    let params = {};
+    for(let field in req.query){
+        params[field] = req.query[field];
+    }
+    let arr = await newapi.recentSearch(params);
     console.log(arr);
     if(arr) {
         if(arr.length > 0){
