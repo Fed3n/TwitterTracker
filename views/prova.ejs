@@ -8,6 +8,17 @@
     </head>
 <body>
     <div id="container">
+        
+        <!-- SETTINGS -->
+        <button id="togglesettings">Edit view</button>
+        <div id="settings">
+            <input type="checkbox" id="multiple" value="multiple" v-model="computedcheck" @change="checkedsettings.length>0 ? checkedsettings=[] : checkedsettings=settings">
+            <label for="multiple">{{computedcheck? "Deseleziona tutto" : "Seleziona Tutto"}}</label>
+            <div v-for="setting in settings">
+                <input type="checkbox" v-bind:id="setting" v-bind:value="setting" v-model="checkedsettings">
+                <label v-bind:for="setting">{{setting}}</label>
+            </div>
+        </div>
 
         <!-- STREAM -->
         <div id="stream">
@@ -50,16 +61,20 @@
         <div id="tweetslist">
             <table>
                 <tr>
-                    <th>Utente</th><th>Contenuto</th><th>Data-Ora</th><th></th>
+                    <th v-for="setting in checkedsettings">{{setting}}</th>
+                    <th></th>
                 </tr>
                 <tr v-for="tweet in computedtweets">
-                    <td> {{tweet.author_id}} </td>
-                    <td> {{tweet.text}} </td>
-                    <td> {{tweet.created_at}} </td>
+                    <td v-for="setting in checkedsettings">
+                        <template v-if="setting=='username'">{{tweet.user.name}}</template>
+                        <template v-else-if="setting=='replies' || setting=='retweets'">{{tweet[setting+"_count"]}}</template>
+                        <template v-else>{{tweet[setting]}}</template>
+                    </td>
                     <td> <button @click="showinfo(tweet)"> ... </button> </td>
                 </tr>
             </table> 
         </div>
+        <div id="map"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
