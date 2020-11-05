@@ -7,11 +7,12 @@ var i = 0;
 $(document).ready(function(){
     
     Add_Filter();
-    SetMap();
+    map.SetMap();
 
     $("#aggiungi").click(function(ev){
         ev.preventDefault();
         Add_Filter();
+        map.DeleteAllMarkers();
     });
 
     $("#aggiungi_FIltri").click( function(ev){
@@ -38,18 +39,16 @@ $(document).ready(function(){
             success: function(){console.log("filtri aggiunti")},
           });*/
           $.ajax({
-            type: "POST",
-            url: "http://localhost:8000/addRule",
+            type: "GET",
+            url: "http://localhost:8000/c",
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function(res){
-                console.log(res)
-                $("#filtri").html("");
-                numeroFiltri = 0;
-                Add_Filter();  
+                console.log("done")
+                var data = res;
             },
             error: function(error){
-                alert(error);
+                console.log(error);
             }
           });
 
@@ -58,7 +57,7 @@ $(document).ready(function(){
     $("#cerca").click( function(ev){
         ev.preventDefault();
         //alert("work in progress")
-        AddMarker(markers[i].lat, markers[i].long, "marker n:" + i);
+        map.AddMarker(markers[i].lat, markers[i].long, "marker n:" + i);
         i++;
     });
 });

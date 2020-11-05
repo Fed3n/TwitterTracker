@@ -2,7 +2,10 @@ node_modules/*
 package-lock.json
 launch.json
 sus
+.env
 
 #volatile files for testing/program output
 search_dump.txt
 stream_dump.txt
+
+newdump.json

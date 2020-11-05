@@ -1,6 +1,3 @@
-var marker = [];
-var mymap;
-
 /*
 questo serve nel caso si voglia una icona personalizzata, la tengo che sai mai 
 ############################ 
@@ -35,23 +32,48 @@ queste cose sono da includere
         ></script>
 
 
+
+        <div id="extra">
+            <table>
+                <tr>
+                    <th>Utente</th><th>Contenuto</th><th>Data-Ora</th><th></th>
+                </tr>
+                <tr>
+                    <td> {{tweet.author_id}} </td>
+                    <td> {{tweet.text}} </td>
+                    <td> {{tweet.created_at}} </td>
+                </tr>
+            </table> 
+        </div>
+
+        			console.log(data);
+			
+			$("#extra").html(data.author_id + " " + data.text + " " + data.created_at + " " + data.entities.media.length);
 */
 
+var map = {
+    marker: [],
+    mymap: null,
+    SetMap : function(){
+        console.log("inizio set mappa");
+        mymap = L.map('mappa').setView([0, 0], 1.5);
+        const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const tiles = L.tileLayer(tileUrl, { attribution });
+        tiles.addTo(mymap);
+    },
+    
+    
+    AddMarker : function(lat, long, tweet){
+        let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(mymap);
+        new_Marker.message =tweet;
+        new_Marker.on('click', function(e){alert(e.sourceTarget.message)});
+        map.marker.push(new_Marker);
+    },
 
-
-function SetMap(){
-    console.log("inizio set mappa");
-    mymap = L.map('mappa').setView([0, 0], 1.5);
-    const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    const tiles = L.tileLayer(tileUrl, { attribution });
-    tiles.addTo(mymap);
+    DeleteAllMarkers : function () {
+        for(i=0;i<map.marker.length;i++) {
+            mymap.removeLayer(map.marker[i]);
+        }  
+    }
 };
-
-
-function AddMarker(lat, long, tweet){
-    let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(mymap);
-    new_Marker.message =tweet;
-    new_Marker.on('click', function(e){alert(e.sourceTarget.message)});
-    marker.push(new_Marker);
-}
