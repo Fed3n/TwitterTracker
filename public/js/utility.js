@@ -26,4 +26,6 @@ function exportfile(){
 $(document).ready(function(){
 	$("#import").change(importfile);
 	$("#export").click(exportfile);
+	$("#settings").hide();
+	$("#togglesettings").click(function(){$("#settings").toggle("slow")});
 })

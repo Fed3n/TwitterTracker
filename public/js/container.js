@@ -4,6 +4,8 @@ var container = new Vue({
 	data:{
 		labels: [],
 		tweets: [],
+		settings: ["id","username","text","replies","retweets","created_at"], //inserire i potenziali parametri utili
+		checkedsettings: ["username","text","created_at"],
 		stream_on: false,
         local_filters: ["Hashtag","Location"]
 	},
@@ -43,17 +45,17 @@ var container = new Vue({
 			this.stream_on=!this.stream_on;
 			if(this.stream_on){
 				let expr = this.$refs.streamfilter.value;
-				$.post("/stream/start",{expr:expr}).done(function(){
+				$.post("/new/stream/start",{track:expr}).done(function(){
 					console.log("start stream")
 					container.updatestream();
 				});
 			}else{
-				$.post("/stream/stop").done(function(){console.log("close stream");});
+				$.post("/new/stream/stop").done(function(){console.log("close stream");});
 			}
 		},
 		updatestream: function(){
 			if(this.stream_on){
-				$.get("/stream", function(data){
+				$.get("/new/stream", function(data){
 					console.log("Richiesta");
 					container.appendtweets(data);
 					window.setTimeout(container.updatestream,1000);
@@ -67,7 +69,7 @@ var container = new Vue({
 		},
 		search: function(){
 			let newexpr = this.$refs.searchfilter.value;
-			$.get("/search", {expr:newexpr, lim:100}).done(function(newtweets){
+			$.get("/new/search", {q:newexpr, count:100}).done(function(newtweets){
 				container.appendtweets(newtweets);
 			});
 		},
@@ -77,7 +79,7 @@ var container = new Vue({
 			for(label of this.labels){
 				let contains=false;
 				for(tag of tweet.entities.hashtags){
-					if(label.type=="Hashtag" && tag.tag == label.value) contains=true;
+					if(label.type=="Hashtag" && tag.text == label.value) contains=true;
 				}
 				if(!contains) {return false}
 			};
@@ -122,6 +124,13 @@ var container = new Vue({
 				}
             };
             return comp;
+		},
+		computedcheck:{
+			get(){
+				return this.checkedsettings.length>0;
+		  	},
+		  	set(){
+			} 
 		}
     }
 })
