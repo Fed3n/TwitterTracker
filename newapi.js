@@ -1,15 +1,27 @@
 const Twitter = require('twitter-lite');
+require('dotenv').config();
 
-let app = new Twitter({
-    bearer_token: 'AAAAAAAAAAAAAAAAAAAAAIfdIwEAAAAAO5RY%2FGsvF4lZlch0Wv%2Bf65NQc%2Bg%3DmFVfzJK1AHQbtvsP3khEEaJLhZxmloBcefCcN0FI49jz67lE1V' 
+const BEARER_TOKEN = process.env.BEARER_TOKEN;
+const CONSUMER_KEY = process.env.CONSUMER_KEY;
+const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
+const ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY;
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+
+const app = new Twitter({
+    bearer_token: BEARER_TOKEN
 });
 
-let auth = new Twitter({
-    consumer_key: 'Wrtou6UjN3chR74gRRKUJL866',
-    consumer_secret: 'kRF2kSJMhYvI5BLLI5rIaRsxnWsg8f2Ppnc5CU52uzCxJmqOnl'
+const usr = new Twitter({
+    consumer_key: CONSUMER_KEY,
+    consumer_secret: CONSUMER_SECRET,
+    access_token_key: ACCESS_TOKEN_KEY,
+    access_token_secret: ACCESS_TOKEN_SECRET
 });
 
 module.exports = {
+
+    stream: null,
+    stream_arr: [],
 
     recentSearch: async function(params){
         try{
@@ -20,5 +32,20 @@ module.exports = {
             console.log(err);
             return null;
         }
+    },
+
+    startStream: async function(params){
+        this.stream = usr.stream("statuses/filter", params)
+            .on("start", response => console.log("start"))
+            .on("data", tweet => {
+                console.log(tweet);
+                this.stream_arr.push(tweet);
+          })
+            .on("error", error => console.log("error", error))
+            .on("end", response => console.log("end"));
+    },
+
+    closeStream: async function(){
+        this.stream.destroy();
     }
 }

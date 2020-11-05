@@ -177,8 +177,13 @@ app.get("/search", async function (req, res) {
     else return res.status(500).send("Errore in search.");
 });
 
-app.get("/newsearch", async function (req, res) {
+//###NEW API###
+
+/* vd https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/api-reference/get-search-tweets per parametri da passare a search
+ * passate uno per uno quelli che volete usare nella query e la funzione fa parsing e li mette in un oggetto params*/
+app.get("/new/search", async function (req, res) {
     let params = {};
+    console.log(req.query);
     for(let field in req.query){
         params[field] = req.query[field];
     }
@@ -192,6 +197,45 @@ app.get("/newsearch", async function (req, res) {
         else return res.status(404).send("Nessun tweet corrisponde alla ricerca.");
     }
     else return res.status(500).send("Errore in search.");
+});
+
+/* vd https://developer.twitter.com/en/docs/twitter-api/v1/tweets/filter-realtime/api-reference/post-statuses-filter per parametri da passare a search
+ * passate uno per uno quelli che volete usare nella query e la funzione fa parsing e li mette in un oggetto params*/
+app.post("/new/stream/start", async function (req, res) {
+    console.log("in stream");
+    let params = {};
+    console.log(req.query);
+    for(let field in req.query){
+        params[field] = req.query[field];
+    }
+    console.log('Stream params: ' + params);
+    try {
+        console.log("yay");
+        newapi.startStream(params);
+        return res.status(200).send("Stream started.");
+    } catch(err) {
+        console.log(err);
+        return res.status(500).send("Whoops @ stream");
+    }
+});
+
+//ferma lo stream
+app.post("/new/stream/stop", async function(req, res) {
+    try{
+        await newapi.closeStream();
+        return res.status(200).send("Stream stopped.");
+    } catch(err){
+        console.log(err);
+        return res.status(500).send("Very very bad");
+    }
+});
+
+//svuota il buffer dello stream e lo restituisce
+app.get("/new/stream", function (req,res) {
+    let arr = newapi.stream_arr.slice();
+    newapi.stream_arr = [];
+    res.setHeader('Content-Type', 'application/json');  
+    return res.status(200).send(arr);
 });
 
 app.listen(8000, () => {
