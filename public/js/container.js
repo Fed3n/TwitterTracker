@@ -96,7 +96,7 @@ var container = new Vue({
 			this.stream_on=!this.stream_on;
 			if(this.stream_on){
 				let expr = this.$refs.streamfilter.value;
-				$.post("/new/stream/start",{track:expr}).done(function(){
+				$.post("/new/stream/start?"+$.param({track:expr})).done(function(){
 					console.log("start stream")
 					container.updatestream();
 				});
