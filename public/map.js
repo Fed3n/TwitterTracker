@@ -31,24 +31,6 @@ queste cose sono da includere
         crossorigin=""
         ></script>
 
-
-
-        <div id="extra">
-            <table>
-                <tr>
-                    <th>Utente</th><th>Contenuto</th><th>Data-Ora</th><th></th>
-                </tr>
-                <tr>
-                    <td> {{tweet.author_id}} </td>
-                    <td> {{tweet.text}} </td>
-                    <td> {{tweet.created_at}} </td>
-                </tr>
-            </table> 
-        </div>
-
-        			console.log(data);
-			
-			$("#extra").html(data.author_id + " " + data.text + " " + data.created_at + " " + data.entities.media.length);
 */
 
 var map = {
