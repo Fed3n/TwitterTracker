@@ -96,7 +96,6 @@ app.post("/new/stream/start", async function (req, res) {
     }
     console.log('Stream params: ' + params);
     try {
-        console.log("yay");
         newapi.startStream(params);
         return res.status(200).send("Stream started.");
     } catch(err) {
