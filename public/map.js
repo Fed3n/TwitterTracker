@@ -36,20 +36,39 @@ queste cose sono da includere
 var map = {
     marker: [],
     mymap: null,
-    SetMap : function(){
-        console.log("inizio set mappa");
-        mymap = L.map('mappa').setView([0, 0], 1.5);
+    SetMap : function(div){
+        mymap = L.map(div).setView([0, 0], 1.5);
         const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
         const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         const tiles = L.tileLayer(tileUrl, { attribution });
         tiles.addTo(mymap);
     },
     
+
+    AddMap : function(div, tweets){
+        map.SetMap(div);
+        let nonJeolocated = 0;
+        for(let i = 0;i < tweets.length; i++){
+            if(tweets[i].geoLocation.latitude && tweets[i].geoLocation.longitude)
+                map.AddMarker(tweets[i].geoLocation.latitude, tweets[i].geoLocation.longitude,  tweets[i].text);
+            else{
+                nonJeolocated ++;
+            }
+        }
+        if(nonJeolocated > 0)
+            alert(nonJeolocated + " tweets non inseriti per mancanza di dati");
+    },
     
     AddMarker : function(lat, long, tweet){
         let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(mymap);
-        new_Marker.message =tweet;
-        new_Marker.on('click', function(e){alert(e.sourceTarget.message)});
+        new_Marker.message = tweet;
+        new_Marker.on('click', function(e){
+            if(e.sourceTarget.getPopup())    
+                e.sourceTarget.getPopup().openPopup();
+            else
+                e.sourceTarget.bindPopup(e.sourceTarget.message).openPopup();
+
+        });
         map.marker.push(new_Marker);
     },
 
