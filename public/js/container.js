@@ -130,6 +130,7 @@ var container = new Vue({
 			for(label of this.labels){
 				let contains=false;
 				for(tag of tweet.entities.hashtags){
+					console.log(tag.text)
 					if(label.type=="Hashtag" && tag.text == label.value) contains=true;
 				}
 				if(!contains) {return false}
@@ -141,27 +142,31 @@ var container = new Vue({
 			for(label of this.labels){
 				if(label.type=="Location"){
 
-					var place_ids = [];
 					var bbox = label.boundingBox;
 					bbox = bbox.map(function (x) { 
 						return parseFloat(x, 10); 
 					});
-					
-					for (place of tweet.places) { //inserire giusto campo con la posizione
-						let place_bbox = place.geo.bbox;
-						let coords = [
-							(place_bbox[0]+place_bbox[2])/2,
-							(place_bbox[1]+place_bbox[3])/2
-						];
-						if(bbox[2] <= coords[0] && bbox[3] >= coords[0] && 
-							bbox[0] <= coords[1] && bbox[1] >= coords[1]){
-							place_ids.push(place.id);
-						}
-					};
-						
-					if(tweet.geo != undefined && place_ids.indexOf(tweet.geo.place_id) > -1) return true;
+
+					if (tweet.place != undefined && tweet.place.bounding_box != undefined && tweet.place.bounding_box.coordinates != undefined){
+						coords = tweet.place.bounding_box.coordinates[0];
+						coords = [
+							parseFloat(coords[0][1], 10),
+							parseFloat(coords[2][1], 10),
+							parseFloat(coords[0][0], 10),
+							parseFloat(coords[1][0], 10)
+						]
+						parsedCoords = [
+							(coords[0] + coords[1])/2,
+							(coords[2] + coords[3])/2
+						]
+
+						if(bbox[0] <= parsedCoords[0] && bbox[1] >= parsedCoords[0] && 
+							bbox[2] <= parsedCoords[1] && bbox[3] >= parsedCoords[1]){
+								return true;
+						}	
+					}					
 				}
-			};
+			}
 			return false;
 		}
     },
