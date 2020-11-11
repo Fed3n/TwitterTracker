@@ -34,10 +34,10 @@ queste cose sono da includere
 */
 
 var map = {
-    marker: [],
+    marker: [], 
     mymap: null,
     SetMap : function(div){
-        mymap = L.map(div).setView([0, 0], 1.5);
+        mymap = L.map(div).setView([0, 0], 1.5); //inizializza la mappa 
         const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
         const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         const tiles = L.tileLayer(tileUrl, { attribution });
@@ -46,33 +46,38 @@ var map = {
     
 
     AddMap : function(div, tweets){
+        if(map.mymap){ //se la mappa è già stata inizializzata una volta la elimina e riconfigura
+            map.DeleteAllMarkers();
+            map.mymap.off();
+            map.mymap.remove();
+        }
         map.SetMap(div);
-        let nonJeolocated = 0;
-        for(let i = 0;i < tweets.length; i++){
+        let nonJeolocated = 0; 
+        for(let i = 0;i < tweets.length; i++){ //aggiungiungo un marker per ogni tweet passato (se ha il campo geolacation settato)
             if(tweets[i].geoLocation.latitude && tweets[i].geoLocation.longitude)
                 map.AddMarker(tweets[i].geoLocation.latitude, tweets[i].geoLocation.longitude,  tweets[i].text);
-            else{
+            else{ 
                 nonJeolocated ++;
             }
         }
-        if(nonJeolocated > 0)
+        if(nonJeolocated > 0) //se ci sono tweet non geolocati stampo quanti sono con un allert
             alert(nonJeolocated + " tweets non inseriti per mancanza di dati");
     },
     
-    AddMarker : function(lat, long, tweet){
+    AddMarker : function(lat, long, tweet){ //aggiunge un singolo marker
         let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(mymap);
-        new_Marker.message = tweet;
-        new_Marker.on('click', function(e){
+        new_Marker.message = tweet; 
+        new_Marker.on('click', function(e){ //aggiungo l'evento click che apre un popup al marker
             if(e.sourceTarget.getPopup())    
                 e.sourceTarget.getPopup().openPopup();
             else
                 e.sourceTarget.bindPopup(e.sourceTarget.message).openPopup();
 
         });
-        map.marker.push(new_Marker);
+        map.marker.push(new_Marker); //aggiungo il marker all'array dei marker 
     },
 
-    DeleteAllMarkers : function () {
+    DeleteAllMarkers : function () { //rimuove tutti i marker
         for(i=0;i<map.marker.length;i++) {
             mymap.removeLayer(map.marker[i]);
         }  
