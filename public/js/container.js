@@ -7,7 +7,12 @@ var container = new Vue({
 		settings: ["id","username","text","replies","retweets","created_at"], //inserire i potenziali parametri utili
 		checkedsettings: ["username","text","created_at"],
 		stream_on: false,
-        local_filters: ["Hashtag","Location"]
+		local_filters: ["Hashtag","Location"],
+
+		//queries
+		is_stream: true,	
+		stream_query: {},
+		search_query: {}
 	},
 	methods:{
 		addfilter: function(){
@@ -95,12 +100,25 @@ var container = new Vue({
 		toggleStream: function(){
 			this.stream_on=!this.stream_on;
 			if(this.stream_on){
-				let expr = this.$refs.streamfilter.value;
-				$.post("/new/stream/start?"+$.param({track:expr})).done(function(){
-					console.log("start stream")
-					container.updatestream();
-				});
-			}else{
+				let params = {};
+				if(this.$refs.streamtrack.value) params["track"] = this.$refs.streamtrack.value;
+				if(this.$refs.streamfollow.value) params["follow"] = this.$refs.streamfollow.value;
+				if(this.$refs.streamlocations.value) params["location"] = this.$refs.streamlocations.value;
+				
+				if(Object.keys(params).length){
+					$.post("/new/stream/start?"+$.param(params)).done(function(){
+						console.log("start stream");
+						container.updatestream();
+					}).fail(function() {
+						window.alert("Stream querying failed. Please check your parameters.");
+						this.stream_on = false;
+					});
+				}
+				else {
+					window.alert("Insert at least one field.");
+					this.stream_on = false;
+				}
+			} else {
 				$.post("/new/stream/stop").done(function(){console.log("close stream");});
 			}
 		},
@@ -119,10 +137,22 @@ var container = new Vue({
 			};
 		},
 		search: function(){
-			let newexpr = this.$refs.searchfilter.value;
-			$.get("/new/search", {q:newexpr, count:100}).done(function(newtweets){
-				container.appendtweets(newtweets);
-			});
+			let params = {};
+			if(this.$refs.searchquery.value) params["q"] = this.$refs.searchquery.value;
+			else {
+				window.alert("Query field is mandatory");
+				return;
+			}
+
+			if(this.$refs.searchgeo.value) params["geocode"] = this.$refs.searchgeo.value;
+			if(this.$refs.searchlan.value) params["lang"] = this.$refs.searchlan.value;
+			if(this.$refs.searchcount.value) params["count"] = this.$refs.searchcount.value;
+			
+			if(Object.keys(params).length){
+				$.get("/new/search", params).done(function(newtweets){
+					container.appendtweets(newtweets);
+				});
+			}
 		},
 		righthashtags:function(tweet){ //ora deve combaciare con tutti gli hashtag, chiedere se va bene
 			if(!filtercounter["Hashtag"]||filtercounter["Hashtag"]==0) {return true;}
@@ -171,22 +201,22 @@ var container = new Vue({
 		}
     },
     computed:{
-		computedtweets:function() {
+	computedtweets: function() {
             comp = [];
             for (tweet of this.tweets){
-				if(this.righthashtags(tweet)&&this.rightlocation(tweet)){
-					console.log(tweet);
-					comp.push(tweet);
-				}
+		if(this.righthashtags(tweet)&&this.rightlocation(tweet)){
+			console.log(tweet);
+			comp.push(tweet);
+		}
             };
             return comp;
+	},
+	computedcheck:{
+		get(){
+			return this.checkedsettings.length>0;
 		},
-		computedcheck:{
-			get(){
-				return this.checkedsettings.length>0;
-		  	},
-		  	set(){
-			} 
-		}
-    }
+		set(){
+	} 
+	}
+}
 })
