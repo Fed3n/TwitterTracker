@@ -5,117 +5,155 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Twitter Analytics</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     </head>
-<body>
-    <div id="container">
-        
-        <!-- SETTINGS -->
-        <button id="togglesettings">Edit view</button>
-        <div id="settings">
-            <input type="checkbox" id="multiple" value="multiple" v-model="computedcheck" @change="checkedsettings.length>0 ? checkedsettings=[] : checkedsettings=settings">
-            <label for="multiple">{{computedcheck? "Deseleziona tutto" : "Seleziona Tutto"}}</label>
-            <div v-for="setting in settings">
-                <input type="checkbox" v-bind:id="setting" v-bind:value="setting" v-model="checkedsettings">
-                <label v-bind:for="setting">{{setting}}</label>
+<body class="container-fluid">
+    <h1 class="m-3">Un bellissimo titolo m8b in un jumbotron?</h1>
+
+    <div id="container" class="row">
+        <div class="col-8">
+
+            <!--STREAM/SEARCH QUERYING AND START-->
+            <div id="gathering" class="container border rounded p-3 mb-2 mt-2">
+                <div id="switchquery" class="btn-group">
+                    <button class="btn btn-light" :disabled="is_stream" @click="is_stream = !is_stream">Stream</button>
+                    <button class="btn btn-light" :disabled="!is_stream" @click="is_stream = !is_stream">Search</button>
+                </div>
+
+                <div v-if="is_stream" id="stream" class="container">
+                    <h3>Stream Query</h3>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label for="streamfollow">Follow</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" id="streamfollow" ref="streamfollow" :disabled="stream_on" placeholder="Insert , separated user IDs">
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label for="streamtrack">Track</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" id="streamtrack" ref="streamtrack" :disabled="stream_on" placeholder="Insert , separated keywords">
+                        </div>
+                    </div>
+                    <!--Da fare poi con click su mappa ovviamente // oppure si inserisce nome di citta' e si usa qualche API per trovarne coordinate?-->
+                    <div class="row mb-1">
+                        <div class="col-2">
+                          <label for="streamlocations">Locations</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" id="streamlocations" ref="streamlocations" :disabled="stream_on" placeholder="lmao">
+                        </div>
+                    </div>
+                    <button class="btn" :class="stream_on ? 'btn-danger' : 'btn-primary'" @click="toggleStream">
+                        {{ stream_on ? "Close Stream" : "Start Stream"}}
+                    </button>
+                </div>
+
+                <div v-else id="search" class="container">
+                    <h3>Search Settings</h3>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label for="searchquery">Query</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" id="searchquery" ref="searchquery" placeholder="Insert query expression">
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label for="searchgeo">Geo</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" id="searchgeo" ref="searchgeo" placeholder="Insert geo parameters">
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label for="searchlan">Language</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" id="searchlan" ref="searchlan" placeholder="Insert language">
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label for="searchcount">Count</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" step="1" max="100" min="1"  id="searchcount" ref="searchcount" value="100" placeholder="Number of tweets">
+                        </div>
+                    </div>
+                    <!--Sarebbe da mettere una data limitata a max 7 giorni antecedenti come ultima query-->
+                    <button class="btn btn-primary" @click="search" id="search">Search</button>
+                </div>
+            </div>
+            
+            <!-- SETTINGS -->
+            <button id="togglesettings">Edit view</button>
+            <div id="settings">
+                <input type="checkbox" id="multiple" value="multiple" v-model="computedcheck" @change="checkedsettings.length>0 ? checkedsettings=[] : checkedsettings=settings">
+                <label for="multiple">{{computedcheck? "Deseleziona tutto" : "Seleziona Tutto"}}</label>
+                <div v-for="setting in settings">
+                    <input type="checkbox" v-bind:id="setting" v-bind:value="setting" v-model="checkedsettings">
+                    <label v-bind:for="setting">{{setting}}</label>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div id="filterlabels">
+                <div>
+                    <label for="inputfilter">Tag:</label>
+                    <select ref="filtertype">
+                        <option v-for="filter in local_filters">{{filter}}</option>
+                    </select>
+                    <input type="text" id="filerinput" ref="filterinput">
+                    <button id="addlabel" v-on:click="addfilter">Aggiungi</button>
+                </div>
+                <div id="labelscontainer">
+                    <div class="label" v-for="label in labels">
+                        {{label.type}}: {{label.value}} <button class="delete" @click="removefilter(label)">x</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPORT -->
+            <button id="export">Export</button>
+            <label for="import">Import</label>
+            <input type="file" id="import" value="Import" />
+
+            <!-- TWEET LIST -->
+            <div id="tweetslist">
+                <table>
+                    <tr>
+                        <th v-for="setting in checkedsettings">{{setting}}</th>
+                        <th></th>
+                    </tr>
+                    <tr v-for="tweet in computedtweets">
+                        <td v-for="setting in checkedsettings">
+                            <template v-if="setting=='username'">{{tweet.user.name}}</template>
+                            <template v-else-if="setting=='replies' || setting=='retweets'">{{tweet[setting+"_count"]}}</template>
+                            <template v-else>{{tweet[setting]}}</template>
+                        </td>
+                        <td> <button @click="showinfo(tweet)"> ... </button> </td>
+                    </tr>
+                </table> 
             </div>
         </div>
-
-        <!--STREAM/SEARCH QUERYING AND START-->
-        <div id="gathering" style="border:solid black; margin:1em; padding:1em;">
-            <div id="switchquery">
-                <button :disabled="is_stream" @click="is_stream = !is_stream">Stream</button>
-                <button :disabled="!is_stream" @click="is_stream = !is_stream">Search</button>
-            </div>
-
-            <div v-if="is_stream" id="stream">
-                <h3>Stream Query</h3>
-                <div>
-                    <label for="streamfollow">Follow</label>
-                    <input type="text" id="streamfollow" ref="streamfollow" :disabled="stream_on" placeholder="Insert , separated Users IDs">
-                </div>
-                <div>
-                    <label for="streamtrack">Track</label>
-                    <input type="text" id="streamtrack" ref="streamtrack" :disabled="stream_on" placeholder="Insert , separated keywords">
-                </div>
-                <!--Da fare poi con click su mappa ovviamente // oppure si inserisce nome di citta' e si usa qualche API per trovarne coordinate?-->
-                <div>
-                    <label for="streamlocations">Locations</label>
-                    <input type="text" id="streamlocations" ref="streamlocations" :disabled="stream_on" placeholder="lmao">
-                </div>
-                <button @click="toggleStream">
-                    {{ stream_on ? "Close Stream" : "Start Stream"}}
-                </button>
-            </div>
-
-            <div v-else id="search">
-                <h3>Search Settings</h3>
-                <div>
-                    <label for="searchquery">Query</label>
-                    <input type="text" id="searchquery" ref="searchquery" placeholder="Insert query expression">
-                </div>
-                <div>
-                    <label for="searchgeo">Geo</label>
-                    <input type="text" id="searchgeo" ref="searchgeo" placeholder="Insert geo parameters">
-                </div>
-                <div>
-                    <label for="searchlan">Language</label>
-                    <input type="text" id="searchlan" ref="searchlan" placeholder="Insert language">
-                </div>
-                <div>
-                    <label for="searchcount">Count</label>
-                    <input type="number" step="5" max="100" min="1"  id="searchcount" ref="searchcount" value="100" placeholder="Number of tweets">
-                </div>
-                <!--Sarebbe da mettere una data limitata a max 7 giorni antecedenti come ultima query-->
-                <button @click="search" id="search">Search</button>
-            </div>
+        <div class="col-4">
+            <p>Bellissima colonna in cui mettere mappa/grafici/statistiche idk</p>
+            <div id="map"></div>
+            <div id="extra"></div>
         </div>
-
-        <!-- Filters -->
-        <div id="filterlabels">
-            <div>
-                <label for="inputfilter">Tag:</label>
-                <select ref="filtertype">
-                    <option v-for="filter in local_filters">{{filter}}</option>
-                </select>
-                <input type="text" id="filerinput" ref="filterinput">
-                <button id="addlabel" v-on:click="addfilter">Aggiungi</button>
-            </div>
-            <div id="labelscontainer">
-                <div class="label" v-for="label in labels">
-                    {{label.type}}: {{label.value}} <button class="delete" @click="removefilter(label)">x</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- EXPORT -->
-        <button id="export">Export</button>
-        <label for="import">Import</label>
-        <input type="file" id="import" value="Import" />
-
-        <!-- TWEET LIST -->
-        <div id="tweetslist">
-            <table>
-                <tr>
-                    <th v-for="setting in checkedsettings">{{setting}}</th>
-                    <th></th>
-                </tr>
-                <tr v-for="tweet in computedtweets">
-                    <td v-for="setting in checkedsettings">
-                        <template v-if="setting=='username'">{{tweet.user.name}}</template>
-                        <template v-else-if="setting=='replies' || setting=='retweets'">{{tweet[setting+"_count"]}}</template>
-                        <template v-else>{{tweet[setting]}}</template>
-                    </td>
-                    <td> <button @click="showinfo(tweet)"> ... </button> </td>
-                </tr>
-            </table> 
-        </div>
-        <div id="map"></div>
-        <div id="extra"></div>
 
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="/js/container.js"></script>
     <script src="/js/utility.js"></script>
 
