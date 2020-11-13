@@ -36,12 +36,19 @@ queste cose sono da includere
 var map = {
     marker: [], 
     mymap: null,
+    lastLat: null,
+    lastLong:null,
     SetMap : function(div){
         mymap = L.map(div).setView([0, 0], 1.5); //inizializza la mappa 
         const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
         const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         const tiles = L.tileLayer(tileUrl, { attribution });
         tiles.addTo(mymap);
+        mymap.on('click', function(e) { //alla pressione vengono salvati i dati di latitudine e longitudine 
+            alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
+            lastLat = e.latlng.lat;
+            lastLong = e.latlng.lng;
+        });
     },
     
 
