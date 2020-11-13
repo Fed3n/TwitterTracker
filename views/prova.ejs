@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Twitter Analytics</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src= "/map.js"></script>
     </head>
 <body class="container-fluid">
     <h1 class="m-3">Un bellissimo titolo m8b in un jumbotron?</h1>
@@ -44,7 +45,7 @@
                           <label for="streamlocations">Locations</label>
                         </div>
                         <div class="col-3">
-                            <input type="text" id="streamlocations" ref="streamlocations" :disabled="stream_on" placeholder="lmao">
+                            <input type="text" id="streamlocations" ref="streamlocations" :disabled="stream_on" placeholder="Insert , separated locations">
                         </div>
                     </div>
                     <button class="btn" :class="stream_on ? 'btn-danger' : 'btn-primary'" @click="toggleStream">
@@ -67,7 +68,7 @@
                             <label for="searchgeo">Geo</label>
                         </div>
                         <div class="col-3">
-                            <input type="text" id="searchgeo" ref="searchgeo" placeholder="Insert geo parameters">
+                            <input type="text" id="searchgeo" ref="searchgeo" placeholder="Insert a single location name">
                         </div>
                     </div>
                     <div class="row mb-1">
