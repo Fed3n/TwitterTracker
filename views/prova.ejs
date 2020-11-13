@@ -20,21 +20,54 @@
             </div>
         </div>
 
-        <!-- STREAM -->
-        <div id="stream">
-            <label for="streamfilter">Stream Settings</label>
-            <input type="text" id="streamfilter" ref="streamfilter" :disabled="stream_on">
-            <button @click="toggleStream">
-                {{ stream_on ? "Close Stream" : "Start Stream"}}
-            </button>
-        </div>
+        <!--STREAM/SEARCH QUERYING AND START-->
+        <div id="gathering" style="border:solid black; margin:1em; padding:1em;">
+            <div id="switchquery">
+                <button :disabled="is_stream" @click="is_stream = !is_stream">Stream</button>
+                <button :disabled="!is_stream" @click="is_stream = !is_stream">Search</button>
+            </div>
 
-        <!-- SEARCH / FILE-->
-        <div id="addTweet">
-            <label for="searchfilter">Search Settings</label>
-            <input type="text" id="searchfilter" ref="searchfilter">
-            <button @click="search" id="search">Search</button>
-            <input type="file" id="import" value="Import" />
+            <div v-if="is_stream" id="stream">
+                <h3>Stream Query</h3>
+                <div>
+                    <label for="streamfollow">Follow</label>
+                    <input type="text" id="streamfollow" ref="streamfollow" :disabled="stream_on" placeholder="Insert , separated Users IDs">
+                </div>
+                <div>
+                    <label for="streamtrack">Track</label>
+                    <input type="text" id="streamtrack" ref="streamtrack" :disabled="stream_on" placeholder="Insert , separated keywords">
+                </div>
+                <!--Da fare poi con click su mappa ovviamente // oppure si inserisce nome di citta' e si usa qualche API per trovarne coordinate?-->
+                <div>
+                    <label for="streamlocations">Locations</label>
+                    <input type="text" id="streamlocations" ref="streamlocations" :disabled="stream_on" placeholder="lmao">
+                </div>
+                <button @click="toggleStream">
+                    {{ stream_on ? "Close Stream" : "Start Stream"}}
+                </button>
+            </div>
+
+            <div v-else id="search">
+                <h3>Search Settings</h3>
+                <div>
+                    <label for="searchquery">Query</label>
+                    <input type="text" id="searchquery" ref="searchquery" placeholder="Insert query expression">
+                </div>
+                <div>
+                    <label for="searchgeo">Geo</label>
+                    <input type="text" id="searchgeo" ref="searchgeo" placeholder="Insert geo parameters">
+                </div>
+                <div>
+                    <label for="searchlan">Language</label>
+                    <input type="text" id="searchlan" ref="searchlan" placeholder="Insert language">
+                </div>
+                <div>
+                    <label for="searchcount">Count</label>
+                    <input type="number" step="5" max="100" min="1"  id="searchcount" ref="searchcount" value="100" placeholder="Number of tweets">
+                </div>
+                <!--Sarebbe da mettere una data limitata a max 7 giorni antecedenti come ultima query-->
+                <button @click="search" id="search">Search</button>
+            </div>
         </div>
 
         <!-- Filters -->
@@ -56,6 +89,8 @@
 
         <!-- EXPORT -->
         <button id="export">Export</button>
+        <label for="import">Import</label>
+        <input type="file" id="import" value="Import" />
 
         <!-- TWEET LIST -->
         <div id="tweetslist">
