@@ -61,7 +61,7 @@
         <div id="tweetslist">
             <table>
                 <tr>
-                    <th v-for="setting in checkedsettings">{{setting}}</th>
+                    <th v-for="setting in checkedsettings" v-on:click="sortTweets(setting)">{{setting}}</th>
                     <th></th>
                 </tr>
                 <tr v-for="tweet in computedtweets">
