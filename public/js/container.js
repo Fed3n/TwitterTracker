@@ -4,10 +4,11 @@ var container = new Vue({
 	data:{
 		labels: [],
 		tweets: [],
-		settings: ["id","username","text","replies","retweets","created_at"], //inserire i potenziali parametri utili
+		settings: ["id","username","text","replies","retweets","created_at","likes"], //inserire i potenziali parametri utili
 		checkedsettings: ["username","text","created_at"],
 		stream_on: false,
 		local_filters: ["Hashtag","Location"],
+		lastSorted: "",
 
 		//queries
 		is_stream: true,	
@@ -198,6 +199,33 @@ var container = new Vue({
 				}
 			}
 			return false;
+		},
+		sortTweets:function(setting){
+			if(setting == this.lastSorted){
+				this.tweets = this.tweets.reverse();
+			} else {
+				this.lastSorted = setting;
+				switch(setting){
+					case "id":
+						this.tweets.sort((x,y) => {if(x.id < y.id) return -1; else return 1});
+						break;
+					case "username":
+						this.tweets.sort((x,y) => {if(x.user.name < y.user.name) return -1; else return 1});
+						break;
+					case "text":
+						this.tweets.sort((x,y) => {if(x.text < y.text) return -1; else return 1});
+						break;
+					case "likes":
+						this.tweets.sort((x,y) => {if(x.favoriteCount < y.favoriteCount) return -1; else return 1});
+						break;
+					case "retweets":
+						this.tweets.sort((x,y) => {if(x.retweetCount < y.retweetCount) return -1; else return 1});
+						break;
+					case "created_at":
+						this.tweets.sort((x,y) => {if(Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1}); 
+						break;
+				}
+			}
 		}
     },
     computed:{

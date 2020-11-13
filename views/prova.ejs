@@ -90,7 +90,7 @@
                     <button class="btn btn-primary" @click="search" id="search">Search</button>
                 </div>
             </div>
-            
+
             <!-- SETTINGS -->
             <button id="togglesettings">Edit view</button>
             <div id="settings">
@@ -101,7 +101,7 @@
                     <label v-bind:for="setting">{{setting}}</label>
                 </div>
             </div>
-            
+
             <!-- Filters -->
             <div id="filterlabels">
                 <div>
@@ -126,20 +126,20 @@
 
             <!-- TWEET LIST -->
             <div id="tweetslist">
-                <table>
-                    <tr>
-                        <th v-for="setting in checkedsettings">{{setting}}</th>
-                        <th></th>
-                    </tr>
-                    <tr v-for="tweet in computedtweets">
-                        <td v-for="setting in checkedsettings">
-                            <template v-if="setting=='username'">{{tweet.user.name}}</template>
-                            <template v-else-if="setting=='replies' || setting=='retweets'">{{tweet[setting+"_count"]}}</template>
-                            <template v-else>{{tweet[setting]}}</template>
-                        </td>
-                        <td> <button @click="showinfo(tweet)"> ... </button> </td>
-                    </tr>
-                </table> 
+              <table>
+                  <tr>
+                      <th v-for="setting in checkedsettings" v-on:click="sortTweets(setting)">{{setting}}</th>
+                      <th></th>
+                  </tr>
+                  <tr v-for="tweet in computedtweets">
+                      <td v-for="setting in checkedsettings">
+                          <template v-if="setting=='username'">{{tweet.user.name}}</template>
+                          <template v-else-if="setting=='replies' || setting=='retweets'">{{tweet[setting+"_count"]}}</template>
+                          <template v-else>{{tweet[setting]}}</template>
+                      </td>
+                      <td> <button @click="showinfo(tweet)"> ... </button> </td>
+                  </tr>
+              </table>  
             </div>
         </div>
         <div class="col-4">
@@ -172,7 +172,7 @@
                 <td>$COUNT</td>
                 <td>$MEDIA</td>
             </tr>
-        </table> 
+        </table>
     </template>
 </body>
 </html>
