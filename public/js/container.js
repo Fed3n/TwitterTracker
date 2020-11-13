@@ -98,13 +98,24 @@ var container = new Vue({
 
 			$("#extra").html(tabella);
         },
-		toggleStream: function(){
+		toggleStream: async function(){
 			this.stream_on=!this.stream_on;
 			if(this.stream_on){
 				let params = {};
 				if(this.$refs.streamtrack.value) params["track"] = this.$refs.streamtrack.value;
 				if(this.$refs.streamfollow.value) params["follow"] = this.$refs.streamfollow.value;
-				if(this.$refs.streamlocations.value) params["location"] = this.$refs.streamlocations.value;
+				//per ogni citta' nella query sostituisco il boundingbox
+				if(this.$refs.streamlocations.value) {
+					let queries = '';
+					for(loc of this.$refs.streamlocations.value.split(',')){
+						let box = await map.getCoordsFromLoc(loc,"box");
+						if(box){
+							queries += `${box["2"]},${box["0"]},${box["3"]},${box["1"]},`;
+						}
+					}
+					console.log(queries.slice(0,queries.length-1));
+					params["locations"] = queries.slice(0,queries.length-1);
+				}
 				
 				if(Object.keys(params).length){
 					$.post("/new/stream/start?"+$.param(params)).done(function(){
@@ -126,7 +137,6 @@ var container = new Vue({
 		updatestream: function(){
 			if(this.stream_on){
 				$.get("/new/stream", function(data){
-					console.log("Richiesta");
 					container.appendtweets(data);
 					window.setTimeout(container.updatestream,1000);
 				},"json")
@@ -137,7 +147,7 @@ var container = new Vue({
 				this.tweets.push(elem);
 			};
 		},
-		search: function(){
+		search: async function(){
 			let params = {};
 			if(this.$refs.searchquery.value) params["q"] = this.$refs.searchquery.value;
 			else {
@@ -145,7 +155,11 @@ var container = new Vue({
 				return;
 			}
 
-			if(this.$refs.searchgeo.value) params["geocode"] = this.$refs.searchgeo.value;
+			if(this.$refs.searchgeo.value) {
+				let coords = await map.getCoordsFromLoc(this.$refs.searchgeo.value, "coords");
+				//per ora 1mile ma dovrebbe essere settabile ~~
+				params["geocode"] = `${coords.lat},${coords.lon},1mi`;
+			}
 			if(this.$refs.searchlan.value) params["lang"] = this.$refs.searchlan.value;
 			if(this.$refs.searchcount.value) params["count"] = this.$refs.searchcount.value;
 			
@@ -233,7 +247,6 @@ var container = new Vue({
             comp = [];
             for (tweet of this.tweets){
 		if(this.righthashtags(tweet)&&this.rightlocation(tweet)){
-			console.log(tweet);
 			comp.push(tweet);
 		}
             };

@@ -88,5 +88,30 @@ var map = {
         for(i=0;i<map.marker.length;i++) {
             mymap.removeLayer(map.marker[i]);
         }  
+    },
+    
+    //richiesta ad openstreetmap API di location, coords rida' coordinate (lat,lon), box rida' boundingbox
+    getCoordsFromLoc : async function(location,type) {
+        let url = "http://nominatim.openstreetmap.org/search?";
+        params = {
+            "q": location,
+            "format": "json",
+            "limit": 1
+        }
+        try {
+            let data = await $.get(url+$.param(params));
+            console.log(data);
+            if(type == "coords"){
+                return {"lat": data[0].lat, "lon": data[0].lon};
+            }
+            if(type == "box"){
+                //south Latitude, north Latitude, west Longitude, east Longitude
+                return {"0":data[0].boundingbox["0"],"1":data[0].boundingbox["1"],"2":data[0].boundingbox["2"],"3":data[0].boundingbox["3"]};
+            }
+            return null;
+        } catch(err) {
+            console.log(err);
+            return null;
+        }
     }
 };
