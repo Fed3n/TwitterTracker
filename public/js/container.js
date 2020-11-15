@@ -6,14 +6,16 @@ var container = new Vue({
 		tweets: [],
 		settings: ["id","username","text","replies","retweets","created_at","likes"], //inserire i potenziali parametri utili
 		checkedsettings: ["username","text","created_at"],
+		checkedFilters: [],
 		stream_on: false,
-		local_filters: ["Hashtag","Location"],
+		local_filters: ["Contains","Hashtag","Location"],
 		lastSorted: "",
 
 		//queries
 		is_stream: true,	
 		stream_query: {},
-		search_query: {}
+		search_query: {},
+		prova: 0
 	},
 	methods:{
 		addfilter: function(){
@@ -31,7 +33,6 @@ var container = new Vue({
 				filtercounter[type]=1;
 
 			this.$refs.filterinput.value="";
-			this.tweets.sort();
 		},
 		removefilter: function(elem){
 			let index=0;
@@ -170,49 +171,86 @@ var container = new Vue({
 			}
 		},
 		righthashtags:function(tweet){ //ora deve combaciare con tutti gli hashtag, chiedere se va bene
+			console.log("Hashtags")
 			if(!filtercounter["Hashtag"]||filtercounter["Hashtag"]==0) {return true;}
 			if(!tweet.entities || !tweet.entities.hashtags) {return false;}
-			for(label of this.labels){
-				let contains=false;
-				for(tag of tweet.entities.hashtags){
-					console.log(tag.text)
-					if(label.type=="Hashtag" && tag.text == label.value) contains=true;
+			let contains;
+			for(label of this.computedfilters()){
+				if(label.type=="Hashtag"){
+					contains = false;
+					for(tag of tweet.entities.hashtags){
+						if(tag.text == label.value) {
+							if(this.checkedFilters.length==0)
+								return true;
+							contains = true;
+						}
+						else
+						{
+							if(this.checkedFilters.length>0)
+								return false;
+						}
+					}
 				}
-				if(!contains) {return false}
 			};
-			return true;
+			return contains;
 		},
 		rightlocation:function(tweet){ //da debuggare
+			console.log("Location")
 			if(!filtercounter["Location"]||filtercounter["Location"]==0) {return true;}
-			for(label of this.labels){
+			if (!tweet.place || !tweet.place.bounding_box || !tweet.place.bounding_box.coordinates){return false;}
+			let contains;
+			for(label of this.computedfilters()){
 				if(label.type=="Location"){
+					contains = false;
 
 					var bbox = label.boundingBox;
 					bbox = bbox.map(function (x) { 
 						return parseFloat(x, 10); 
 					});
 
-					if (tweet.place != undefined && tweet.place.bounding_box != undefined && tweet.place.bounding_box.coordinates != undefined){
-						coords = tweet.place.bounding_box.coordinates[0];
-						coords = [
-							parseFloat(coords[0][1], 10),
-							parseFloat(coords[2][1], 10),
-							parseFloat(coords[0][0], 10),
-							parseFloat(coords[1][0], 10)
-						]
-						parsedCoords = [
-							(coords[0] + coords[1])/2,
-							(coords[2] + coords[3])/2
-						]
-
-						if(bbox[0] <= parsedCoords[0] && bbox[1] >= parsedCoords[0] && 
-							bbox[2] <= parsedCoords[1] && bbox[3] >= parsedCoords[1]){
-								return true;
-						}	
-					}					
+					coords = tweet.place.bounding_box.coordinates[0];
+					coords = [
+						parseFloat(coords[0][1], 10),
+						parseFloat(coords[2][1], 10),
+						parseFloat(coords[0][0], 10),
+						parseFloat(coords[1][0], 10)
+					]
+					parsedCoords = [
+						(coords[0] + coords[1])/2,
+						(coords[2] + coords[3])/2
+					]
+					if(bbox[0] <= parsedCoords[0] && bbox[1] >= parsedCoords[0] && bbox[2] <= parsedCoords[1] && bbox[3] >= parsedCoords[1]){
+						if(this.checkedFilters.length==0)
+							return true;
+						contains=true;
+					}else{
+						if(this.checkedFilters.length>0)
+							return false;
+					}						
 				}
 			}
-			return false;
+			return contains;
+		},
+		rightcontains: function(tweet){
+			console.log("Contains");
+			if(!filtercounter["Contains"]||filtercounter["Contains"]==0) {return true;}
+			if (!tweet.text){return false;}
+			let contains;
+			for(label of this.computedfilters()){
+				contains=false;
+				if(label.type=="Contains"){
+					if(tweet.text.includes(label.value)) {
+						if(this.checkedFilters.length==0)
+							return true;
+						contains = true
+					}else{
+						if(this.checkedFilters.length>0)
+							return false;
+					}
+				}
+			}
+			return contains;
+
 		},
 		sortTweets:function(setting){
 			if(setting == this.lastSorted){
@@ -240,24 +278,38 @@ var container = new Vue({
 						break;
 				}
 			}
+		},
+		computedfilters: function() {
+			console.log("cambiano i filtri")
+			if(this.checkedFilters.length>0){
+				let comp = [];
+				for(index of this.checkedFilters){
+					comp.push(this.labels[index]);
+				}
+				return comp;
+			}
+			return this.labels;
 		}
     },
     computed:{
-	computedtweets: function() {
-            comp = [];
-            for (tweet of this.tweets){
-		if(this.righthashtags(tweet)&&this.rightlocation(tweet)){
-			comp.push(tweet);
-		}
-            };
-            return comp;
-	},
-	computedcheck:{
-		get(){
-			return this.checkedsettings.length>0;
+		computedtweets: function() {
+			//TODO Locations si bugga se non esiste (per riprodurre aggiungi filtro location:"aidahsodabosdasb")
+			this.labels;
+			this.checkedFilters;
+			let comp = [];
+			console.log("computedtweets");
+			for(tweet of this.tweets){
+				if(this.righthashtags(tweet)&&this.rightlocation(tweet)&&this.rightcontains(tweet)){
+					comp.push(tweet);
+				}
+			};
+    	    return comp;
 		},
-		set(){
-	} 
+		computedchecks:{
+			get(){
+				return this.checkedsettings.length>0;
+			},
+			set(){}
+		}
 	}
-}
 })

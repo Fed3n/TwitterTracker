@@ -13,7 +13,6 @@
 
     <div id="container" class="row">
         <div class="col-8">
-
             <!--STREAM/SEARCH QUERYING AND START-->
             <div id="gathering" class="container border rounded p-3 mb-2 mt-2">
                 <div id="switchquery" class="btn-group">
@@ -92,42 +91,49 @@
                 </div>
             </div>
 
-            <!-- SETTINGS -->
-            <button id="togglesettings">Edit view</button>
-            <div id="settings">
-                <input type="checkbox" id="multiple" value="multiple" v-model="computedcheck" @change="checkedsettings.length>0 ? checkedsettings=[] : checkedsettings=settings">
-                <label for="multiple">{{computedcheck? "Deseleziona tutto" : "Seleziona Tutto"}}</label>
-                <div v-for="setting in settings">
-                    <input type="checkbox" v-bind:id="setting" v-bind:value="setting" v-model="checkedsettings">
-                    <label v-bind:for="setting">{{setting}}</label>
+            <div class="d-flex justify-content-between">
+                <!-- Filters -->
+                <div id="filterlabels" class="col-md-6">
+                    <div>
+                        <label for="inputfilter">Tag:</label>
+                        <select ref="filtertype">
+                            <option v-for="filter in local_filters">{{filter}}</option>
+                        </select>
+                        <input type="text" ref="filterinput">
+                        <button id="addlabel" class="btn btn-primary" v-on:click="addfilter">Aggiungi</button>
+                    </div>
+                    <div id="labelscontainer">
+                        <div class="label" v-for="(label, index) in labels">
+                            <input type="checkbox" v-bind:value="index" v-model="checkedFilters">
+                            {{label.type}}: {{label.value}} <button class="delete btn btn-sm btn-outline-danger" @click="removefilter(label)">x</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Filters -->
-            <div id="filterlabels">
-                <div>
-                    <label for="inputfilter">Tag:</label>
-                    <select ref="filtertype">
-                        <option v-for="filter in local_filters">{{filter}}</option>
-                    </select>
-                    <input type="text" id="filerinput" ref="filterinput">
-                    <button id="addlabel" v-on:click="addfilter">Aggiungi</button>
-                </div>
-                <div id="labelscontainer">
-                    <div class="label" v-for="label in labels">
-                        {{label.type}}: {{label.value}} <button class="delete" @click="removefilter(label)">x</button>
+                
+                <!-- SETTINGS -->
+                <div class="col-md-6">
+                    <button id="togglesettings" class="btn btn-secondary dropdown-toggle">Edit view</button>
+                    <div id="settings">
+                        <input type="checkbox" id="multiple" value="multiple" v-model="computedchecks" @change="checkedsettings.length>0 ? checkedsettings=[] : checkedsettings=settings">
+                        <label for="multiple">{{computedchecks? "Deseleziona tutto" : "Seleziona Tutto"}}</label>
+                        <div v-for="setting in settings">
+                            <input type="checkbox" v-bind:id="setting" v-bind:value="setting" v-model="checkedsettings">
+                            <label v-bind:for="setting">{{setting}}</label>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- EXPORT -->
-            <button id="export">Export</button>
-            <label for="import">Import</label>
-            <input type="file" id="import" value="Import" />
+            <div class="d-flex justify-content-between col-md-2">
+                <input type="file" id="import" hidden/>
+                <button id="importButton" class="btn btn-primary">Import</button>
+                <button id="export" class="btn btn-primary">Export</button>
+            </div>
 
             <!-- TWEET LIST -->
             <div id="tweetslist">
-              <table>
+              <table class="table table-striped">
                   <tr>
                       <th v-for="setting in checkedsettings" v-on:click="sortTweets(setting)">{{setting}}</th>
                       <th></th>
