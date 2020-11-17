@@ -59,26 +59,40 @@ var map = {
             map.mymap.remove();
         }
         map.SetMap(div);
-        let nonJeolocated = 0; 
+        let nonGeolocated = 0; 
         for(let i = 0;i < tweets.length; i++){ //aggiungiungo un marker per ogni tweet passato (se ha il campo geolacation settato)
-            if(tweets[i].geoLocation.latitude && tweets[i].geoLocation.longitude)
-                map.AddMarker(tweets[i].geoLocation.latitude, tweets[i].geoLocation.longitude,  tweets[i].text);
-            else{ 
-                nonJeolocated ++;
+            if(tweets[i].geoLocation.latitude && tweets[i].geoLocation.longitude){
+                if(tweets[i].entities.media != null){
+                    map.AddMarker(tweets[i].geoLocation.latitude, tweets[i].geoLocation.longitude,  tweets[i].text, tweets[i].entities.media);
+                }else{
+                    map.AddMarker(tweets[i].geoLocation.latitude, tweets[i].geoLocation.longitude,  tweets[i].text, null);
+                }
+            }else{ 
+                nonGeolocated ++;
             }
         }
         if(nonJeolocated > 0) //se ci sono tweet non geolocati stampo quanti sono con un allert
-            alert(nonJeolocated + " tweets non inseriti per mancanza di dati");
+            alert(nonGeolocated + " tweets non inseriti per mancanza di dati");
     },
     
-    AddMarker : function(lat, long, tweet){ //aggiunge un singolo marker
+    AddMarker : function(lat, long, tweet, img){ //aggiunge un singolo marker
         let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(mymap);
         new_Marker.message = tweet; 
+        new_Marker.img = img; 
         new_Marker.on('click', function(e){ //aggiungo l'evento click che apre un popup al marker
             if(e.sourceTarget.getPopup())    
                 e.sourceTarget.getPopup().openPopup();
-            else
-                e.sourceTarget.bindPopup(e.sourceTarget.message).openPopup();
+            else{
+                let message;
+                message = "<p>" + e.sourceTarget.message +"</p>";
+                if(new_Marker.img){
+                    message += `<p><button Onclick = '$(".img").toggle()'>Show Image</button>`;
+                    for(let i = 0; i < e.sourceTarget.img.length; i++){
+                        message += `<image class = "img" style = "display: none;" src= "` + e.sourceTarget.img[i].media_url + `"></p>`;
+                    }
+                }
+                e.sourceTarget.bindPopup(message).openPopup();
+            }
 
         });
         map.marker.push(new_Marker); //aggiungo il marker all'array dei marker 
