@@ -33,7 +33,7 @@ queste cose sono da includere
 
 */
 
-var map = {
+const map = {
     marker: [], 
     mymap: null,
     lastLat: null,

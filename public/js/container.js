@@ -109,17 +109,17 @@ var container = new Vue({
 				if(this.$refs.streamlocations.value) {
 					let queries = '';
 					for(loc of this.$refs.streamlocations.value.split(',')){
-						let box = await map.getCoordsFromLoc(loc,"box");
+						let geoloc = await geoutils.getCoordsFromLoc(loc);
+						let box = geoloc.box; 
 						if(box){
-							queries += `${box["2"]},${box["0"]},${box["3"]},${box["1"]},`;
+							queries += `${box.sw.lon},${box.sw.lat},${box.ne.lon},${box.ne.lat},`;
 						}
 					}
-					console.log(queries.slice(0,queries.length-1));
 					params["locations"] = queries.slice(0,queries.length-1);
 				}
 				
 				if(Object.keys(params).length){
-					$.post("/new/stream/start?"+$.param(params)).done(function(){
+					$.post("/stream/start?"+$.param(params)).done(function(){
 						console.log("start stream");
 						container.updatestream();
 					}).fail(function() {
@@ -132,12 +132,12 @@ var container = new Vue({
 					this.stream_on = false;
 				}
 			} else {
-				$.post("/new/stream/stop").done(function(){console.log("close stream");});
+				$.post("/stream/stop").done(function(){console.log("close stream");});
 			}
 		},
 		updatestream: function(){
 			if(this.stream_on){
-				$.get("/new/stream", function(data){
+				$.get("/stream", function(data){
 					container.appendtweets(data);
 					window.setTimeout(container.updatestream,1000);
 				},"json")
@@ -157,21 +157,22 @@ var container = new Vue({
 			}
 
 			if(this.$refs.searchgeo.value) {
-				let coords = await map.getCoordsFromLoc(this.$refs.searchgeo.value, "coords");
+				let geoloc = await geoutils.getCoordsFromLoc(this.$refs.searchgeo.value);
+				let coords = geoloc.coords;
+				let boxrad = geoloc.radius;
 				//per ora 1mile ma dovrebbe essere settabile ~~
-				params["geocode"] = `${coords.lat},${coords.lon},1mi`;
+				params["geocode"] = `${coords.lat},${coords.lon},${boxrad}km`;
 			}
 			if(this.$refs.searchlan.value) params["lang"] = this.$refs.searchlan.value;
 			if(this.$refs.searchcount.value) params["count"] = this.$refs.searchcount.value;
 			
 			if(Object.keys(params).length){
-				$.get("/new/search", params).done(function(newtweets){
+				$.get("/search", params).done(function(newtweets){
 					container.appendtweets(newtweets);
 				});
 			}
 		},
 		righthashtags:function(tweet){ //ora deve combaciare con tutti gli hashtag, chiedere se va bene
-			console.log("Hashtags")
 			if(!filtercounter["Hashtag"]||filtercounter["Hashtag"]==0) {return true;}
 			if(!tweet.entities || !tweet.entities.hashtags) {return false;}
 			let contains;
@@ -195,7 +196,6 @@ var container = new Vue({
 			return contains;
 		},
 		rightlocation:function(tweet){ //da debuggare
-			console.log("Location")
 			if(!filtercounter["Location"]||filtercounter["Location"]==0) {return true;}
 			if (!tweet.place || !tweet.place.bounding_box || !tweet.place.bounding_box.coordinates){return false;}
 			let contains;
@@ -232,7 +232,6 @@ var container = new Vue({
 			return contains;
 		},
 		rightcontains: function(tweet){
-			console.log("Contains");
 			if(!filtercounter["Contains"]||filtercounter["Contains"]==0) {return true;}
 			if (!tweet.text){return false;}
 			let contains;
@@ -280,7 +279,6 @@ var container = new Vue({
 			}
 		},
 		computedfilters: function() {
-			console.log("cambiano i filtri")
 			if(this.checkedFilters.length>0){
 				let comp = [];
 				for(index of this.checkedFilters){
@@ -297,7 +295,6 @@ var container = new Vue({
 			this.labels;
 			this.checkedFilters;
 			let comp = [];
-			console.log("computedtweets");
 			for(tweet of this.tweets){
 				if(this.righthashtags(tweet)&&this.rightlocation(tweet)&&this.rightcontains(tweet)){
 					comp.push(tweet);
