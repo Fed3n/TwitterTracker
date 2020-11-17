@@ -45,7 +45,6 @@ var map = {
         const tiles = L.tileLayer(tileUrl, { attribution });
         tiles.addTo(mymap);
         mymap.on('click', function(e) { //alla pressione vengono salvati i dati di latitudine e longitudine 
-            alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
             lastLat = e.latlng.lat;
             lastLong = e.latlng.lng;
         });
@@ -61,17 +60,17 @@ var map = {
         map.SetMap(div);
         let nonGeolocated = 0; 
         for(let i = 0;i < tweets.length; i++){ //aggiungiungo un marker per ogni tweet passato (se ha il campo geolacation settato)
-            if(tweets[i].geoLocation.latitude && tweets[i].geoLocation.longitude){
+            if(tweets[i].geo){
                 if(tweets[i].entities.media != null){
-                    map.AddMarker(tweets[i].geoLocation.latitude, tweets[i].geoLocation.longitude,  tweets[i].text, tweets[i].entities.media);
+                    map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, tweets[i].entities.media);
                 }else{
-                    map.AddMarker(tweets[i].geoLocation.latitude, tweets[i].geoLocation.longitude,  tweets[i].text, null);
+                    map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, null);
                 }
             }else{ 
                 nonGeolocated ++;
             }
         }
-        if(nonJeolocated > 0) //se ci sono tweet non geolocati stampo quanti sono con un allert
+        if(nonGeolocated > 0) //se ci sono tweet non geolocati stampo quanti sono con un allert
             alert(nonGeolocated + " tweets non inseriti per mancanza di dati");
     },
     
@@ -88,7 +87,7 @@ var map = {
                 if(new_Marker.img){
                     message += `<p><button Onclick = '$(".img").toggle()'>Show Image</button>`;
                     for(let i = 0; i < e.sourceTarget.img.length; i++){
-                        message += `<image class = "img" style = "display: none;" src= "` + e.sourceTarget.img[i].media_url + `"></p>`;
+                        message += `<image class = "img" style = "display: none;" height="150" src= "` + e.sourceTarget.img[i].media_url + `"></p>`;
                     }
                 }
                 e.sourceTarget.bindPopup(message).openPopup();
