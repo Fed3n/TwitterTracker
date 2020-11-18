@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const twitter_api = require('./twitter_api.js');
 const newapi = require('./newapi.js');
 const fs = require('fs');
 const https = require('https');
@@ -20,7 +19,15 @@ app.get("/", function (req, res) {
 
 
 
-//###NEW API###
+//###TWITTER API###
+
+
+app.get("/user", async function (req, res) {
+    let user = await newapi.getUser(req.query);
+    res.setHeader('Content-Type', 'application/json');  
+    if(user) return res.status(200).send(user)
+    else return res.status(404).send("Could not find user.");
+});
 
 /* vd https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/api-reference/get-search-tweets per parametri da passare a search
  * passate uno per uno quelli che volete usare nella query e la funzione fa parsing e li mette in un oggetto params*/

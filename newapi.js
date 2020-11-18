@@ -47,5 +47,17 @@ module.exports = {
 
     closeStream: async function(){
         this.stream.destroy();
+    },
+
+    getUser: async function(query){
+        try {
+            let res = await app.get('users/show', query);
+            console.log(res);
+            return res;
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
     }
 }

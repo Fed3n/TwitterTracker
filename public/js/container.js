@@ -104,7 +104,17 @@ var container = new Vue({
 			if(this.stream_on){
 				let params = {};
 				if(this.$refs.streamtrack.value) params["track"] = this.$refs.streamtrack.value;
-				if(this.$refs.streamfollow.value) params["follow"] = this.$refs.streamfollow.value;
+				if(this.$refs.streamfollow.value) {
+					let queries = '';
+					for(name of this.$refs.streamfollow.value.split(',')){
+						console.log(`looking for ${name}`);
+						let user = await $.get(`/user?screen_name=${name}`);
+						console.log(`response is ${user.id}`);
+						queries += `${user.id},`;
+					}
+					console.log(queries);
+					params["follow"] = queries.slice(0,queries.length-1);
+				}
 				//per ogni citta' nella query sostituisco il boundingbox
 				if(this.$refs.streamlocations.value) {
 					let queries = '';
