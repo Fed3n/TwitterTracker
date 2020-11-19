@@ -28,4 +28,5 @@ $(document).ready(function(){
 	$("#export").click(exportfile);
 	$("#settings").hide();
 	$("#togglesettings").click(function(){$("#settings").toggle("slow")});
+	$("#clearTweets").click(()=>{if(confirm("Do you want to clear all the tweets?")){container.tweets=[];}});
 })

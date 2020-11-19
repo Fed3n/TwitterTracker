@@ -46,58 +46,8 @@ var container = new Vue({
 			}
 		},
 		showinfo: function(data){
-
-			let tabella = $("#tabella").html();
-
-			if(data.user.name)
-				tabella = tabella.replace("$UTENTE",data.user.name);
-			else
-				tabella =tabella.replace("$UTENTE","info non disponibile");
-
-			if(data.text)
-				tabella =tabella.replace("$CONTENUTO",data.text);
-			else
-				tabella = tabella.replace("$CONTENUTO","info non disponibile");
-
-			if(data.created_at)
-				tabella = tabella.replace("$DATA",data.created_at);
-			else
-				tabella = tabella.replace("$DATA","info non disponibile");
-
-			if(data.entities.hashtags){
-				let hashtags = ""
-				for(let i = 0; i < data.entities.hashtags.length; i++){
-					hashtags += '<p>'+data.entities.hashtags[i].text+' '+data.entities.hashtags[i].indices+'</p>'
-				}
-				tabella = tabella.replace("$HASHTAG",hashtags);}
-			else
-				tabella = tabella.replace("$HASHTAG","info non disponibile");
-
-			if(data.user_mentions)
-				tabella = tabella.replace("$USERM",data.user_mentions);
-			else
-				tabella = tabella.replace("$USERM","0");
-
-			if(data.retweeted)
-				tabella = tabella.replace("$RETWEETED",data.retweeted);
-			else
-				tabella = tabella.replace("$RETWEETED","false");
-
-			if(data.retweet_count)
-				tabella = tabella.replace("$COUNT",data.retweet_count);
-			else
-				tabella = tabella.replace("$COUNT","info non disponibile");
-
-			if(data.entities.media){
-				let media = ""
-				for(let i = 0; i < data.entities.media.length; i++){
-					media += '<img src="'+data.entities.media[i].media_url+'" alt="tweet image">'
-				}
-				tabella = tabella.replace("$MEDIA",media);}
-			else
-				tabella = tabella.replace("$MEDIA","non ci sono media in questo tweet");
-
-			$("#extra").html(tabella);
+			singleTweet.tweet=data;
+			$(".modal").modal();
         },
 		toggleStream: async function(){
 			this.stream_on=!this.stream_on;
@@ -154,8 +104,12 @@ var container = new Vue({
 			}
 		},
 		appendtweets: function(newtweets){
-			for(elem of newtweets){
-				this.tweets.push(elem);
+			for(newTweet of newtweets){
+				let isin = false;
+				for(oldTweet of this.tweets){
+					if(oldTweet.id==newTweet.id){isin=true;}
+				}
+				if(!isin){this.tweets.push(newTweet);}
 			};
 		},
 		search: async function(){
