@@ -27,13 +27,10 @@ $(document).ready(function(){
 	$("#import").change(importfile);
 	$("#importButton").click(()=>{$("#import").click();});
 	$("#export").click(exportfile);
-	$("#settings").hide();
 	$("#togglesettings").click(function(){$("#settings").toggle("slow")});
 	$("#clearTweets").click(()=>{if(confirm("Do you want to clear all the tweets?")){container.tweets=[];}});
 	$("#mapbutton").click(()=>{modal.showMap();});
+	$('.dropdown-menu').click((e)=>{e.stopPropagation();});
 	map.SetMap("map");
 
-	$('.dropdown-menu').on('click', function(e) {
-		e.stopPropagation();
-	});
 })
