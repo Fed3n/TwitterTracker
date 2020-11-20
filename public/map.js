@@ -51,28 +51,29 @@ const map = {
     },
     
 
-    AddMap : function(div, tweets){
-        if(map.mymap){ //se la mappa è già stata inizializzata una volta la elimina e riconfigura
-            map.DeleteAllMarkers();
-            map.mymap.off();
-            map.mymap.remove();
-        }
-        map.SetMap(div);
-        let nonGeolocated = 0; 
-        for(let i = 0;i < tweets.length; i++){ //aggiungiungo un marker per ogni tweet passato (se ha il campo geolacation settato)
-            if(tweets[i].geo){
-                if(tweets[i].entities.media != null){
-                    map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, tweets[i].entities.media);
-                }else{
-                    map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, null);
-                }
-            }else{ 
-                nonGeolocated ++;
-            }
-        }
-        if(nonGeolocated > 0) //se ci sono tweet non geolocati stampo quanti sono con un allert
-            alert(nonGeolocated + " tweets non inseriti per mancanza di dati");
-    },
+    // AddMap : function(div, tweets){
+    //     if(map.mymap){ //se la mappa è già stata inizializzata una volta la elimina e riconfigura
+    //         map.DeleteAllMarkers();
+    //         map.mymap.off();
+    //         map.mymap.remove();
+    //         map.mymap = null;
+    //     }
+    //     map.SetMap(div);
+    //     let nonGeolocated = 0; 
+    //     for(let i = 0;i < tweets.length; i++){ //aggiungiungo un marker per ogni tweet passato (se ha il campo geolacation settato)
+    //         if(tweets[i].geo){
+    //             if(tweets[i].entities.media != null){
+    //                 map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, tweets[i].entities.media);
+    //             }else{
+    //                 map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, null);
+    //             }
+    //         }else{ 
+    //             nonGeolocated ++;
+    //         }
+    //     }
+    //     if(nonGeolocated > 0 && tweets.length > 1) //se ci sono tweet non geolocati stampo quanti sono con un allert
+    //         alert(nonGeolocated + " tweets non inseriti per mancanza di dati");
+    // },
     
     AddMarker : function(lat, long, tweet, img){ //aggiunge un singolo marker
         let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(mymap);
@@ -98,8 +99,8 @@ const map = {
     },
 
     DeleteAllMarkers : function () { //rimuove tutti i marker
-        for(i=0;i<map.marker.length;i++) {
-            mymap.removeLayer(map.marker[i]);
+        for(marker of this.marker) {
+            mymap.removeLayer(marker);
         }  
     },
     

@@ -4,8 +4,8 @@ var container = new Vue({
 	data:{
 		labels: [],
 		tweets: [],
-		settings: ["id","username","text","replies","retweets","created_at","likes"], //inserire i potenziali parametri utili
-		checkedsettings: ["username","text","created_at"],
+		settings: ["Id","Username","Text","Replies","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
+		checkedsettings: ["Username","Text","Date"],
 		checkedFilters: [],
 		stream_on: false,
 		local_filters: ["Contains","Hashtag","Location"],
@@ -46,8 +46,7 @@ var container = new Vue({
 			}
 		},
 		showinfo: function(data){
-			singleTweet.tweet=data;
-			$(".modal").modal();
+			modal.showTweet(data);
         },
 		toggleStream: async function(){
 			this.stream_on=!this.stream_on;
