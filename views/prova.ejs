@@ -157,10 +157,9 @@
                   </tr>
                   <tr v-for="tweet in computedtweets" class="clickable" @click="showinfo(tweet)">
                       <td v-for="setting in checkedsettings">
-                          <template v-if="setting=='Username'">{{tweet.user.username}}</template>
+                          <template v-if="setting=='Username'">{{tweet.user.name}}</template>
                           <template v-else-if="setting=='Id'">{{tweet.id}}</template>
                           <template v-else-if="setting=='Text'">{{tweet.text}}</template>
-                          <template v-else-if="setting=='Replies'">{{tweet}}</template>
                           <template v-else-if="setting=='Retweets'">{{tweet.retweet_count}}</template>
                           <template v-else-if="setting=='Date'">{{tweet.created_at}}</template>
                           <template v-else-if="setting=='Likes'">{{tweet.favorite_count}}</template>

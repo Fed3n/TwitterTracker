@@ -4,7 +4,7 @@ var container = new Vue({
 	data:{
 		labels: [],
 		tweets: [],
-		settings: ["Id","Username","Text","Replies","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
+		settings: ["Id","Username","Text","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
 		checkedsettings: ["Username","Text","Date"],
 		checkedFilters: [],
 		stream_on: false,
