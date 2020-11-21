@@ -49,35 +49,17 @@ var container = new Vue({
 			modal.showTweet(data);
         },
 		toggleStream: async function(){
+			//se lo stream e' off parte, se e' on si interrompe
 			this.stream_on=!this.stream_on;
 			if(this.stream_on){
-				let params = {};
-				if(this.$refs.streamtrack.value) params["track"] = this.$refs.streamtrack.value;
-				if(this.$refs.streamfollow.value) {
-					let queries = '';
-					for(name of this.$refs.streamfollow.value.split(',')){
-						console.log(`looking for ${name}`);
-						let user = await $.get(`/user?screen_name=${name}`);
-						console.log(`response is ${user.id}`);
-						queries += `${user.id},`;
-					}
-					console.log(queries);
-					params["follow"] = queries.slice(0,queries.length-1);
-				}
-				//per ogni citta' nella query sostituisco il boundingbox
-				if(this.$refs.streamlocations.value) {
-					let queries = '';
-					for(loc of this.$refs.streamlocations.value.split(',')){
-						let geoloc = await geoutils.getCoordsFromLoc(loc);
-						let box = geoloc.box; 
-						if(box){
-							queries += `${box.sw.lon},${box.sw.lat},${box.ne.lon},${box.ne.lat},`;
-						}
-					}
-					params["locations"] = queries.slice(0,queries.length-1);
-				}
+				//passa valori dei campi al parser
+				let params = queryparser.parseStreamQuery(
+					this.$refs.streamtrack.value,
+					this.$refs.streamfollow.value,
+					this.$refs.streamlocations.value);
 				
-				if(Object.keys(params).length){
+				//se il parser ha ridato parametri allora si puo' eseguire query
+				if(params){
 					$.post("/stream/start?"+$.param(params)).done(function(){
 						console.log("start stream");
 						container.updatestream();
@@ -112,27 +94,23 @@ var container = new Vue({
 			};
 		},
 		search: async function(){
-			let params = {};
-			if(this.$refs.searchquery.value) params["q"] = this.$refs.searchquery.value;
-			else {
+			if(!this.$refs.searchquery.value){ 
 				window.alert("Query field is mandatory");
 				return;
 			}
-
-			if(this.$refs.searchgeo.value) {
-				let geoloc = await geoutils.getCoordsFromLoc(this.$refs.searchgeo.value);
-				let coords = geoloc.coords;
-				let boxrad = geoloc.radius;
-				//per ora 1mile ma dovrebbe essere settabile ~~
-				params["geocode"] = `${coords.lat},${coords.lon},${boxrad}km`;
-			}
-			if(this.$refs.searchlan.value) params["lang"] = this.$refs.searchlan.value;
-			if(this.$refs.searchcount.value) params["count"] = this.$refs.searchcount.value;
 			
-			if(Object.keys(params).length){
+			let params = queryparser.parseSearchQuery(
+				this.$refs.searchquery.value,
+				this.$refs.searchgeo.value,
+				this.$refs.searchlan.value,
+				this.$refs.searchcount.value);
+
+			if(params){
 				$.get("/search", params).done(function(newtweets){
 					container.appendtweets(newtweets);
 				});
+			} else {
+				window.alert("Not enough parameters or something went wrong.\n");
 			}
 		},
 		righthashtags:function(tweet){ //ora deve combaciare con tutti gli hashtag, chiedere se va bene
