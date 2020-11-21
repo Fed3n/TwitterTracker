@@ -4,7 +4,7 @@ const queryparser = {
     //il parser semplifica l'uso
     //follow richiede ID -> utente inserisce username
     //location richiede boundingbox -> utente inserisce luoghi
-    parseStreamQuery: function(track, follow, location){
+    parseStreamQuery: async function(track, follow, location){
         let params = {};
         if(track) params["track"] = track;
         if(follow) {
@@ -38,7 +38,7 @@ const queryparser = {
     },
     
     //per ora unica cosa da parsare nella search e' la location 
-    parseSearchQuery: function(q, geo, lan, count){
+    parseSearchQuery: async function(q, geo, lan, count){
         let params = {};
         params["q"] = q;
         if(geo) {

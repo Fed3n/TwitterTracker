@@ -48,12 +48,13 @@ var container = new Vue({
 		showinfo: function(data){
 			modal.showTweet(data);
         },
+		//queries a tweets stream by parameters to the server
 		toggleStream: async function(){
 			//se lo stream e' off parte, se e' on si interrompe
 			this.stream_on=!this.stream_on;
 			if(this.stream_on){
 				//passa valori dei campi al parser
-				let params = queryparser.parseStreamQuery(
+				let params = await queryparser.parseStreamQuery(
 					this.$refs.streamtrack.value,
 					this.$refs.streamfollow.value,
 					this.$refs.streamlocations.value);
@@ -93,13 +94,14 @@ var container = new Vue({
 				if(!isin){this.tweets.push(newTweet);}
 			};
 		},
+		//queries a tweets search by parameters to the server
 		search: async function(){
 			if(!this.$refs.searchquery.value){ 
 				window.alert("Query field is mandatory");
 				return;
 			}
 			
-			let params = queryparser.parseSearchQuery(
+			let params = await queryparser.parseSearchQuery(
 				this.$refs.searchquery.value,
 				this.$refs.searchgeo.value,
 				this.$refs.searchlan.value,
