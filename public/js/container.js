@@ -198,22 +198,22 @@ var container = new Vue({
 			} else {
 				this.lastSorted = setting;
 				switch(setting){
-					case "id":
+					case "Id":
 						this.tweets.sort((x,y) => {if(x.id < y.id) return -1; else return 1});
 						break;
-					case "username":
+					case "Username":
 						this.tweets.sort((x,y) => {if(x.user.name < y.user.name) return -1; else return 1});
 						break;
-					case "text":
+					case "Text":
 						this.tweets.sort((x,y) => {if(x.text < y.text) return -1; else return 1});
 						break;
-					case "likes":
-						this.tweets.sort((x,y) => {if(x.favoriteCount < y.favoriteCount) return -1; else return 1});
+					case "Likes":
+						this.tweets.sort((x,y) => {if(x.favorite_count < y.favorite_count) return -1; else return 1});
 						break;
-					case "retweets":
-						this.tweets.sort((x,y) => {if(x.retweetCount < y.retweetCount) return -1; else return 1});
+					case "Retweets":
+						this.tweets.sort((x,y) => {if(x.retweet_count < y.retweet_count) return -1; else return 1});
 						break;
-					case "created_at":
+					case "Date":
 						this.tweets.sort((x,y) => {if(Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1}); 
 						break;
 				}

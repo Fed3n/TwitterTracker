@@ -1,9 +1,0 @@
-.clickable:hover{
-	background-color:  slategrey !important;
-	color: white;
-	cursor: pointer;
-}
-
-.dropdown-menu div{
-	margin: 1em;
-}
