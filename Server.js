@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const newapi = require('./newapi.js');
+const newapi = require('./tweeter_api.js');
 const fs = require('fs');
 const https = require('https');
 
@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 
 app.get("/", function (req, res) {
-    res.render("prova");
+    res.render("index");
 });
 
 
