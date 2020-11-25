@@ -13,11 +13,15 @@ var modal = new Vue({
 			if(data.entities.media){
 				images = [];
 				for(img of data.entities.media){
-					images.push(data.entities.media.media_url);
+					images.push(img.media_url);
+					console.log()
 				}
 			}
-			console.log("ciao mamma")
-			map.AddMarker(data.geo.coordinates[0], data.geo.coordinates[1], data.text, null);
+			console.log(images)
+			if(images && images.length > 0)
+				map.AddMarker(data.geo.coordinates[0], data.geo.coordinates[1], data.text, images);
+			else
+				map.AddMarker(data.geo.coordinates[0], data.geo.coordinates[1], data.text, null);
 		},
 		reset: function(){
 			this.removeMarkers();
