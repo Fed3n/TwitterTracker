@@ -47,7 +47,27 @@ var container = new Vue({
 		},
 		showinfo: function(data){
 			modal.showTweet(data);
-        },
+		},
+		
+		//switches query view from stream to search and viceversa
+		switchQuery: function(){
+			if(this.is_stream){
+				//before switching view makes sure steam is off
+				if(this.stream_on)
+					$.post("/stream/stop").done(function(){console.log("close stream");});
+				this.$refs.streamtrack.value = "";
+				this.$refs.streamfollow.value = "";
+				this.$refs.streamlocations.value = "";
+				this.is_stream = false;
+			} else {
+				this.$refs.searchquery.value = "";
+				this.$refs.searchgeo.value = "";
+				this.$refs.searchlan.value = "";
+				this.$refs.searchcount.value = 100;
+				this.is_stream = true;
+			}
+		},
+
 		//queries a tweets stream by parameters to the server
 		toggleStream: async function(){
 			//se lo stream e' off parte, se e' on si interrompe
@@ -91,7 +111,7 @@ var container = new Vue({
 				for(oldTweet of this.tweets){
 					if(oldTweet.id==newTweet.id){isin=true;}
 				}
-				if(!isin){this.tweets.push(newTweet);}
+				if(!isin){this.tweets.unshift(newTweet);}
 			};
 		},
 		//queries a tweets search by parameters to the server
