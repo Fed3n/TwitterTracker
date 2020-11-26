@@ -87,6 +87,29 @@ app.get("/stream", function (req,res) {
     return res.status(200).send(arr);
 });
 
+/*WATCH MODE*/
+
+app.post("/watch/start", function (req, res) {
+    if(req.query.name && req.query.params && req.query.timer){
+        req.query.name;
+        req.query.params;
+        req.query.timer;
+        if(watch.addWatcher(req.query.name, req.query.timer, req.query.params) < 0)
+            return res.status(400).send("Watcher name already in use.");
+        return res.status(200).send("New watcher added.");
+    }
+});
+
+app.post("/watch/stop", function (req, res) {
+    if(req.query.name){
+        watch.removeWatcher(req.query.name);
+        return res.status(200).send("Removed watcher.");
+    }
+    else return res.status(500).send("Invalid query, watcher name needed.");
+});
+
+
 app.listen(8000, () => {
     console.log(`app listening at http://localhost:8000`);
 });
+
