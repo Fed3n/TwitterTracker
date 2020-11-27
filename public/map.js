@@ -88,7 +88,7 @@ const map = {
                 if(new_Marker.img){
                     message += `<p><button Onclick = '$(".img").toggle()'>Show Image</button>`;
                     for(let i = 0; i < e.sourceTarget.img.length; i++){
-                        message += `<image class = "img" style = "display: none;" height="150" src= "` + e.sourceTarget.img[i].media_url + `"></p>`;
+                        message += `<image class = "img" style = "display: none;" height="150" src= "` + e.sourceTarget.img[i] + `"></p>`;
                     }
                 }
                 e.sourceTarget.bindPopup(message).openPopup();

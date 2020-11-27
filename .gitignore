@@ -4,12 +4,12 @@ package-lock.json
 launch.json
 sus
 .env
+covid_italia.json
 
 
 #volatile files for testing/program output
 search_dump.txt
 stream_dump.txt
 sonar.txt
-
 newdump.json
 node_modules
