@@ -56,7 +56,7 @@ var modal = new Vue({
 				if(tweet.geo && tweet.geo.coordinates)
 					this.addMarker(tweet);
 			}
-
+			map.AddCircleMarker(container.computedtweets)
 			$("#map").show();
 			this.show();
 		},
@@ -69,6 +69,7 @@ var modal = new Vue({
 		//once the modal info are set, the modal can be shown
 		show: function(){
 			$(".modal").modal();
+
 		}
 	}
 })

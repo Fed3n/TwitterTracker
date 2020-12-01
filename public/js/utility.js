@@ -31,6 +31,7 @@ $(document).ready(function(){
 	$("#clearTweets").click(()=>{if(confirm("Do you want to clear all the tweets?")){container.tweets=[];}});
 	$("#mapbutton").click(()=>{modal.showMap();});
 	$('.dropdown-menu').click((e)=>{e.stopPropagation();});
+	$('.modal').on('shown.bs.modal', () => {map.mymap.invalidateSize();});
 	map.SetMap("map");
 
 })
