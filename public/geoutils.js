@@ -5,6 +5,7 @@ const geoutils = {
     },
 
     //grazie stackoverflow
+    //dato un boundingbox ritorna un suo diametro approssimato
     haversineDistance: function(box){
         let lat1 = box.sw.lat;
         let lon1 = box.sw.lon;
@@ -49,7 +50,8 @@ const geoutils = {
                         }
                     }
                 };
-                res["radius"] = this.haversineDistance(res.box);
+                //haversine distance e' un diametro, ci serve il raggio
+                res["radius"] = (this.haversineDistance(res.box)/2);
                 return res;
             }
             else return null;
