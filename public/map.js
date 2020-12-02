@@ -41,7 +41,7 @@ const map = {
     lastLong:null,
     nonLocated:0,
     SetMap : function(div){
-        this.mymap = L.map(div).setView([41.2925, 12.5736], 2); //inizializza la mappa 
+        this.mymap = L.map(div).setView([41.2925, 12.5736], 5); //inizializza la mappa 
         const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
         const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         const tiles = L.tileLayer(tileUrl, { attribution });
@@ -125,13 +125,13 @@ const map = {
         console.log(keys)
         console.log(dict)
         for(let i = 0; i < keys.length; i ++){
-            this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius));
+            this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / keys.length * 100));
         }
     },
 
     CreateCircleMarker: function(lat, long, radius){
         let mark = L.circleMarker([lat, long], {
-            "radius": radius * 10,
+            "radius": radius,
             "fillColor": "#ff7800",
             "color": "#ff7800",
             "weight": 1,
