@@ -7,6 +7,7 @@ var container = new Vue({
 		settings: ["Id","Username","Text","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
 		checkedsettings: ["Username","Text","Date"],
 		checkedFilters: [],
+		onlyLocated: false,
 		stream_on: false,
 		local_filters: ["Contains","Hashtag","Location"],
 		lastSorted: "",
@@ -21,12 +22,6 @@ var container = new Vue({
 		addfilter: function(){
 			let type = this.$refs.filtertype.value;
 			let input = this.$refs.filterinput.value;
-			let hasLocation = this.$refs.hasLocation.checked;
-			
-			if(hasLocation != filtercounter["hasLocation"]){
-				filtercounter["hasLocation"] = hasLocation;
-				return;
-			}
 			if(type=="Location"){
 				let url = "http://nominatim.openstreetmap.org/search/"+input.split(' ').join('%20')+'?format=json&addressdetails=1&limit=1';
 				$.get(url,function(data){ container.labels.push({type:"Location", value: input, boundingBox:data[0].boundingbox}); }, "json");
@@ -265,8 +260,7 @@ var container = new Vue({
 			this.checkedFilters;
 			let comp = [];
 			for(tweet of this.tweets){
-				if(this.righthashtags(tweet)&&this.rightlocation(tweet)&&this.rightcontains(tweet)&& ((filtercounter["hasLocation"] && tweet.geo) || filtercounter["hasLocation"] == false)){
-
+				if(this.righthashtags(tweet)&&this.rightlocation(tweet)&&this.rightcontains(tweet) && !(this.onlyLocated && !tweet.geo)){
 					comp.push(tweet);
 				}
 			};

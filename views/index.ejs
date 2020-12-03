@@ -107,8 +107,8 @@
                         </select>
                         <input type="text" ref="filterinput">
                         <button id="addlabel" class="btn btn-primary" v-on:click="addfilter">Aggiungi</button>
-                        <input type="checkbox" id="hasLocation" name="hasLocation" value="location" ref="hasLocation" v-on:click="addfilter">
-                        <label for="hasLocation">Is located</label>
+                        <input type="checkbox" id="hasLocation" v-model="onlyLocated">
+                        <label for="hasLocation">Is Located</label>
                     </div>
                     <div id="labelscontainer">
                         <div class="label" v-for="(label, index) in labels">
