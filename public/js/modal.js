@@ -33,16 +33,18 @@ var modal = new Vue({
 		reset: function(){
 			//remove markers, tweets and messages
 			this.removeMarkers();
-			this.tweet=null;
+			$("#tweetmodal").hide();
+			$("#watchermodal").hide();
+			//this.tweet=null;
 			this.errormsg="";
-			this.watcher_setup = false;
+			//this.watcher_setup = false;
 			//hide map
 			$("#map").hide();
 		},
 		//show modal with a single tweet info
 		showTweet: function(tweet){
 			this.reset();
-
+			$("#tweetmodal").show();
 			this.tweet=tweet;
 			if(tweet.geo && tweet.geo.coordinates){
 				this.addMarker(tweet);
@@ -65,7 +67,8 @@ var modal = new Vue({
 		//show new watcher setup
 		showWatcher: function(){
 			this.reset();
-			this.watcher_setup = true;
+			$("#watchermodal").show();
+			//this.watcher_setup = true;
 			this.show();
 		},
 		//requests the addition of a new watcher and then adds it as a tab in the page
@@ -116,7 +119,7 @@ var modal = new Vue({
 		},
 		//once the modal info are set, the modal can be shown
 		show: function(){
-			$(".modal").modal();
+			$(".modal").modal('show');
 
 		}
 	}

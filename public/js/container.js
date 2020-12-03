@@ -151,7 +151,17 @@ var container = new Vue({
 		//and updates page watchers
 		updateWatchers: function(){
 			$.get("/watch").then(function(res){
-				container.allwatchers = res;	
+				watchers = [];
+				//dont ask its ok dw about this unless you're me then fk
+				for(el of res){
+					for(aw of container.allwatchers)
+						if(el.name == aw.name && (!el.new) && (aw.new)){
+							el.new = true;
+							break;
+						}
+					watchers.push(el);
+				}
+				container.allwatchers = watchers;	
 			})
 			.catch(function (err){
 				console.log("in updateWatchers: " + err);
@@ -162,12 +172,27 @@ var container = new Vue({
 			}
 			if(namelist.length > 0){
 				$.get("watch/data?"+$.param({"namelist":namelist})).then(function(res){
-					container.pagewatchers = res;	
+					let reqwatchers = res;
+					for(let i=0; i < container.pagewatchers.length; i++){
+						if(reqwatchers[i]){
+							if(container.pagewatchers[i].new && !reqwatchers[i].new) reqwatchers[i].new = true;
+						}
+					}
+					container.pagewatchers = reqwatchers;
 				})
 				.catch(function(err){
 					console.log("in updateWatchers: " + err);
 				});
 			}
+		},
+		//takes an existing watcher name not loaded on page and loads it by querying server
+		bringWatcher: function(name){	
+			$.get("watch/data?"+$.param({"namelist":[name]})).then(function(res){
+				if(res.length > 0)	container.pagewatchers.push(res[0]);
+			})
+			.catch(function(err){
+				console.log(err);
+			});
 		},
 		removeWatcher: function(index){
 			$.post("watch/stop?name="+this.pagewatchers[index].name);
@@ -310,6 +335,22 @@ var container = new Vue({
 				return this.checkedsettings.length>0;
 			},
 			set(){}
+		},
+		computedwatchers: function() {
+			watchers = [];
+			for(watcher of this.allwatchers){
+				let is_in = false;
+				for(pw of this.pagewatchers){
+					if(watcher.name == pw.name){
+						is_in = true;
+						break;
+					}
+				}
+				if(!is_in){
+					watchers.push(watcher);
+				}
+			}
+			return watchers;
 		}
 	}
 })

@@ -34,6 +34,19 @@
                         <i class="fas fa-plus-circle"></i>
                     </button>
                 </li>
+                <li class="breadcrumb-item dropdown show">
+                    <button class="btn btn-link" data-toggle="dropdown">
+                        BG Watchers
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a v-for="watcher in computedwatchers" class="dropdown-item" @click="bringWatcher(watcher.name)">
+                            <span>
+                                {{ watcher.name }}
+                                <span v-if="watcher.new" class="badge badge-primary">New</span>
+                            </span>
+                        </a>
+                    </div>
+                </li>
             </ol>
         </nav>
         <div class="col-8">
@@ -262,7 +275,7 @@
                     <div class="alert alert-danger" v-if="errormsg!=''">
                         {{errormsg}}
                     </div>
-                    <div v-if="tweet" class="container-fluid">
+                    <div id="tweetmodal" v-if="tweet" class="container-fluid">
                         <div class="row">
                             <table class="col-md-12">
                                 <tr>
@@ -316,7 +329,7 @@
                     <div id="map" style="width: 40vw; height: 40vw;">
 
                     </div>
-                    <div v-if="watcher_setup" class="container-fluid">
+                    <div id="watchermodal" class="container-fluid">
                         <div class="container">
                             <h3>Watcher Launch</h3>
                             <div class="row mb-1">
