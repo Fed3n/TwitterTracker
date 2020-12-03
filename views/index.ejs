@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
         <link rel="stylesheet" href="/css/style.css"/>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
         <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin="" ></script>
     </head>
 <body class="container-fluid">
@@ -19,14 +20,30 @@
     </div>
 
     <div id="container" class="row">
+        <!--REAL-TIME / WATCHER SELECTION AND INFO-->
+        <nav class="container-fluid mb-3 mt-2">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <button class="btn" :class="current_tab==0? 'btn-primary' : 'btn-secondary'" @click="switchTab(0)">RealTime</button>
+                </li>
+                <li v-for="(tab,index) in pagewatchers" class="breadcrumb-item" @click="switchTab(index+1)">
+                    <button class="btn" :class="(current_tab==(index+1))? 'btn-primary' : 'btn-secondary'">{{ tab.name }}</button>
+                </li>
+                <li class="breadcrumb-item">
+                    <button class="btn btn-success" title="Add Watcher" @click="showWatcherModal()" data-toggle="tooltip">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                </li>
+            </ol>
+        </nav>
         <div class="col-8">
             <!--STREAM/SEARCH QUERYING AND START-->
-            <div id="gathering" class="container border rounded p-3 mb-2 mt-2">
+            <div v-if="current_tab==0" id="gathering" class="container border rounded p-3 mb-2 mt-2">
                 <div id="switchquery" class="btn-group">
                     <button class="btn btn-light" :disabled="is_stream" @click="switchQuery">Stream</button>
                     <button class="btn btn-light" :disabled="!is_stream" @click="switchQuery">Search</button>
                 </div>
-
+                
                 <div v-if="is_stream" id="stream" class="container">
                     <h3>Stream Query</h3>
                     <div class="row mb-1">
@@ -45,7 +62,6 @@
                             <input type="text" id="streamtrack" ref="streamtrack" :disabled="stream_on" placeholder="Insert , separated keywords">
                         </div>
                     </div>
-                    <!--Da fare poi con click su mappa ovviamente // oppure si inserisce nome di citta' e si usa qualche API per trovarne coordinate?-->
                     <div class="row mb-1">
                         <div class="col-2">
                           <label for="streamlocations">Locations</label>
@@ -97,7 +113,61 @@
                     <button class="btn btn-primary" @click="search" id="search">Search</button>
                 </div>
             </div>
-
+            <!--WATCHER SETTINGS-->
+            <div v-else id="gathering" class="container border rounded p-3 mb-2 mt-2">
+                <div id="search" class="container">
+                    <h3>{{ pagewatchers[current_tab-1].name }} Settings</h3>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label>Name</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" v-model="pagewatchers[current_tab-1].name" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label>Query</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" v-model="pagewatchers[current_tab-1].params.q" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label>Geo</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" v-model="pagewatchers[current_tab-1].params.geocode" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label>Language</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="text" v-model="pagewatchers[current_tab-1].params.lang" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label>Count</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" step="1" max="100" min="1" v-model="pagewatchers[current_tab-1].params.count" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-2">
+                            <label>Interval</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" step="1" max="100" min="1" v-model="pagewatchers[current_tab-1].timer" readonly>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" @click="removeWatcher(current_tab-1)" id="rmwatcher">Remove Watcher</button>
+                </div>
+            </div>
             <div class="d-flex justify-content-between">
                 <!-- Filters -->
                 <div id="filterlabels" class="col-md-6">
@@ -152,7 +222,7 @@
                     <button id="export" class="btn btn-primary">Export</button>
                 </div>
                 <div class="d-flex justify-content-between col-md-2">
-                    <p class="border rounded p-1 m-1">Raccolti {{ tweets.length }} tweets!</p>
+                    <p class="border rounded p-1 m-1">Raccolti {{ computedtweets.length }} tweets!</p>
                 </div>
                 <button id="clearTweets" class="btn btn-danger">Clear All</button>
             </div>
@@ -185,7 +255,7 @@
         -->
     </div>
 
-    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="modal" current_tab="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-body">
@@ -245,6 +315,59 @@
                     </div>
                     <div id="map" style="width: 40vw; height: 40vw;">
 
+                    </div>
+                    <div v-if="watcher_setup" class="container-fluid">
+                        <div class="container">
+                            <h3>Watcher Launch</h3>
+                            <div class="row mb-1">
+                                <div class="col-2">
+                                    <label for="watchername">Name</label>
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" id="watchername" ref="watchername" placeholder="Insert watcher name">
+                                </div>
+                            </div><div class="row mb-1">
+                                <div class="col-2">
+                                    <label for="watcherquery">Query</label>
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" id="watcherquery" ref="watcherquery" placeholder="Insert query expression">
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-2">
+                                    <label for="wachergeo">Geo</label>
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" id="watchergeo" ref="watchergeo" placeholder="Insert a single location name">
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-2">
+                                    <label for="watcherlan">Language</label>
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" id="watcherlan" ref="watcherlan" placeholder="Insert language">
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-2">
+                                    <label for="watchercount">Count</label>
+                                </div>
+                                <div class="col-3">
+                                    <input type="number" step="1" max="100" min="1"  id="watchercount" ref="watchercount" value="100">
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-2">
+                                    <label for="watchertimer">Interval</label>
+                                </div>
+                                <div class="col-3">
+                                    <input type="number" step="1000" max="1000000" min="1000"  id="watchertimer" ref="watchertimer" value="1000">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" @click="addWatcher" id="addwatch">Start</button>
+                        </div> 
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -10,9 +10,7 @@ const queryparser = {
         if(follow) {
                 let queries = '';
                 for(name of follow.split(',')){
-                        console.log(`looking for ${name}`);
                         let user = await $.get(`/user?screen_name=${name}`);
-                        console.log(`response is ${user.id}`);
                         queries += `${user.id},`;
                 }
                 console.log(queries);
@@ -32,7 +30,7 @@ const queryparser = {
         }
         
         //Se ho abbastanza parametri ritorno l'oggetto, senno' null
-        if(Object.keys(params).length) return params;
+        if(Object.keys(params).length > 0) return params;
         else return null;
         
     },
@@ -40,20 +38,20 @@ const queryparser = {
     //per ora unica cosa da parsare nella search e' la location 
     parseSearchQuery: async function(q, geo, lan, count){
         let params = {};
+        //il parametro q (query) e' obbligatorio nella search
+        if(!q) return null;
         params["q"] = q;
         if(geo) {
+                //il parametro dell'utente e' un nome ma l'api vuole coordinate e range
+                //la funzione restituisce un'approssimazione di coordinate,box,raggio
                 let geoloc = await geoutils.getCoordsFromLoc(geo);
                 let coords = geoloc.coords;
                 let boxrad = geoloc.radius;
-                //per ora 1mile ma dovrebbe essere settabile ~~
                 params["geocode"] = `${coords.lat},${coords.lon},${boxrad}km`;
         }
         if(lan) params["lang"] = lan;
         if(count) params["count"] = count;
-        
-        if(Object.keys(params).length){
-            return params;
-        }
+        if(Object.keys(params).length > 0) return params;
         else return null;
 
     }

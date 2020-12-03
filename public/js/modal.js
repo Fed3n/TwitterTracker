@@ -3,6 +3,7 @@ var modal = new Vue({
 	data:{
 		//when tweet != null tweet informations shown on modal
 		tweet: null,
+		watcher_setup: false,
 		//when errormsg != null modal shows the error message
 		errormsg: "",
 	},
@@ -34,6 +35,7 @@ var modal = new Vue({
 			this.removeMarkers();
 			this.tweet=null;
 			this.errormsg="";
+			this.watcher_setup = false;
 			//hide map
 			$("#map").hide();
 		},
@@ -59,6 +61,52 @@ var modal = new Vue({
 			map.AddCircleMarker(container.computedtweets)
 			$("#map").show();
 			this.show();
+		},
+		//show new watcher setup
+		showWatcher: function(){
+			this.reset();
+			this.watcher_setup = true;
+			this.show();
+		},
+		//requests the addition of a new watcher and then adds it as a tab in the page
+		addWatcher: async function(){
+			if(!this.$refs.watcherquery.value){ 
+				window.alert("Query field is mandatory");
+				return;
+			}
+			if(!this.$refs.watchername.value){ 
+				window.alert("Name field is mandatory");
+				return;
+			}
+			
+			let params = await queryparser.parseSearchQuery(
+				this.$refs.watcherquery.value,
+				this.$refs.watchergeo.value,
+				this.$refs.watcherlan.value,
+				this.$refs.watchercount.value);
+			
+			let name = this.$refs.watchername.value;
+			let timer = this.$refs.watchertimer.value;
+
+			if(params && name && timer){
+				$.post("/watch/start", {"name":name, "params":params, "timer":timer})
+				.then(function(){
+					$.get("/watch/data?"+$.param({"namelist":[name]})).then(function(res){
+						console.log(res);
+						container.pagewatchers.push(res[0]);
+						$('#modal').modal('hide');
+					})
+					.catch(function(err){
+						console.log(err);
+					});
+				})
+				.catch(function(err){
+					console.log(err);
+					window.alert("Watcher name already in use or something went wrong.");
+				});
+			} else {
+				window.alert("Not enough parameters or something went wrong.\n");
+			}
 		},
 		//show an error window
 		showError: function(msg){

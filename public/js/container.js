@@ -4,6 +4,11 @@ var container = new Vue({
 	data:{
 		labels: [],
 		tweets: [],
+		//WATCHERS//
+		current_tab: 0,
+		pagewatchers: [],
+		allwatchers: [],
+		//
 		settings: ["Id","Username","Text","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
 		checkedsettings: ["Username","Text","Date"],
 		checkedFilters: [],
@@ -14,8 +19,11 @@ var container = new Vue({
 		//queries
 		is_stream: true,	
 		stream_query: {},
-		search_query: {},
-		prova: 0
+		search_query: {}
+	},
+	mounted: function(){
+		window.setInterval(this.updateStream, 1000);
+		window.setInterval(this.updateWatchers, 1000);
 	},
 	methods:{
 		addfilter: function(){
@@ -48,7 +56,13 @@ var container = new Vue({
 		showinfo: function(data){
 			modal.showTweet(data);
 		},
-		
+		showWatcherModal(){
+			modal.showWatcher();
+		},
+		switchTab: function(index){
+				this.current_tab = index;
+		},
+
 		//switches query view from stream to search and viceversa
 		switchQuery: function(){
 			if(this.is_stream){
@@ -83,7 +97,6 @@ var container = new Vue({
 				if(params){
 					$.post("/stream/start?"+$.param(params)).done(function(){
 						console.log("start stream");
-						container.updatestream();
 					}).fail(function() {
 						window.alert("Stream querying failed. Please check your parameters.");
 						this.stream_on = false;
@@ -97,11 +110,10 @@ var container = new Vue({
 				$.post("/stream/stop").done(function(){console.log("close stream");});
 			}
 		},
-		updatestream: function(){
+		updateStream: function(){
 			if(this.stream_on){
 				$.get("/stream", function(data){
 					container.appendtweets(data);
-					window.setTimeout(container.updatestream,1000);
 				},"json")
 			}
 		},
@@ -134,6 +146,33 @@ var container = new Vue({
 			} else {
 				window.alert("Not enough parameters or something went wrong.\n");
 			}
+		},
+		//to be called at intervals, updates info on server side watchers
+		//and updates page watchers
+		updateWatchers: function(){
+			$.get("/watch").then(function(res){
+				container.allwatchers = res;	
+			})
+			.catch(function (err){
+				console.log("in updateWatchers: " + err);
+			});
+			let namelist = [];
+			for(watcher of this.pagewatchers){
+				namelist.push(watcher.name);
+			}
+			if(namelist.length > 0){
+				$.get("watch/data?"+$.param({"namelist":namelist})).then(function(res){
+					container.pagewatchers = res;	
+				})
+				.catch(function(err){
+					console.log("in updateWatchers: " + err);
+				});
+			}
+		},
+		removeWatcher: function(index){
+			$.post("watch/stop?name="+this.pagewatchers[index].name);
+			this.pagewatchers.slice(index,1);
+			this.current_tab = 0;
 		},
 		righthashtags:function(tweet){ //ora deve combaciare con tutti gli hashtag, chiedere se va bene
 			if(!filtercounter["Hashtag"]||filtercounter["Hashtag"]==0) {return true;}
@@ -254,11 +293,12 @@ var container = new Vue({
     },
     computed:{
 		computedtweets: function() {
-			//TODO Locations si bugga se non esiste (per riprodurre aggiungi filtro location:"aidahsodabosdasb")
+			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
+			let tweets = this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab-1].tweets;
 			this.labels;
 			this.checkedFilters;
 			let comp = [];
-			for(tweet of this.tweets){
+			for(tweet of tweets){
 				if(this.righthashtags(tweet)&&this.rightlocation(tweet)&&this.rightcontains(tweet)){
 					comp.push(tweet);
 				}
