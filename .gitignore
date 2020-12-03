@@ -5,7 +5,8 @@ launch.json
 sus
 .env
 covid_italia.json
-
+.*.swp
+.*.swo
 
 #volatile files for testing/program output
 search_dump.txt
