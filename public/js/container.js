@@ -155,8 +155,8 @@ var container = new Vue({
 				//dont ask its ok dw about this unless you're me then fk
 				for(el of res){
 					for(aw of container.allwatchers)
-						if(el.name == aw.name && (!el.new) && (aw.new)){
-							el.new = true;
+						if(el.name == aw.name && (!el.news) && (aw.news)){
+							el.news = true;
 							break;
 						}
 					watchers.push(el);
@@ -175,7 +175,7 @@ var container = new Vue({
 					let reqwatchers = res;
 					for(let i=0; i < container.pagewatchers.length; i++){
 						if(reqwatchers[i]){
-							if(container.pagewatchers[i].new && !reqwatchers[i].new) reqwatchers[i].new = true;
+							if(container.pagewatchers[i].news && !reqwatchers[i].news) reqwatchers[i].news = true;
 						}
 					}
 					container.pagewatchers = reqwatchers;

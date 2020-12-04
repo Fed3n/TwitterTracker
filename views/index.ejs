@@ -27,7 +27,7 @@
                     <button class="btn" :class="current_tab==0? 'btn-primary' : 'btn-secondary'" @click="switchTab(0)">RealTime</button>
                 </li>
                 <li v-for="(tab,index) in pagewatchers" class="breadcrumb-item" @click="switchTab(index+1)">
-                    <button class="btn" :class="(current_tab==(index+1))? 'btn-primary' : 'btn-secondary'">{{ tab.name }}</button>
+                    <button class="btn" :class="(current_tab==(index+1))? 'btn-primary' : (tab.news ? 'btn-alert' : 'btn-secondary')">{{ tab.name }}</button>
                 </li>
                 <li class="breadcrumb-item">
                     <button class="btn btn-success" title="Add Watcher" @click="showWatcherModal()" data-toggle="tooltip">
@@ -42,7 +42,7 @@
                         <a v-for="watcher in computedwatchers" class="dropdown-item" @click="bringWatcher(watcher.name)">
                             <span>
                                 {{ watcher.name }}
-                                <span v-if="watcher.new" class="badge badge-primary">New</span>
+                                <span v-if="watcher.news" class="badge badge-primary">New</span>
                             </span>
                         </a>
                     </div>
