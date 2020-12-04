@@ -13,11 +13,10 @@ module.exports = {
         }
         //adds a new timed function and returns its token
         var token = setInterval(function (){
-            console.log(`watcher ${name}`);
             newapi.recentSearch(params).then((arr) => {
                 for(el of arr){
                     let is_in = false;
-                    //when a new tweet is added, new property becomes true as a notification
+                    //when a new tweet is added, news property becomes true as a notification
                     for(tw of watchers[name]["tweets"]){
                         if(el.id == tw.id){
                             is_in = true;
@@ -26,7 +25,7 @@ module.exports = {
                     }
                     if(!is_in){
                         watchers[name]["tweets"].push(el);
-                        watchers[name]["new"] = true;
+                        watchers[name]["news"] = true;
                     }
                 }
             });
@@ -34,7 +33,7 @@ module.exports = {
         watchers[name] = {
             "token": token,
             "tweets": [],
-            "new": false,
+            "news": false,
             "timer": timer,
             "params": params
         };
@@ -54,7 +53,7 @@ module.exports = {
         for(let name in watchers)
             list.push({
                 "name": name,
-                "new": watchers[name]["new"]
+                "news": watchers[name]["news"]
             });
         return list;
     },
@@ -67,10 +66,12 @@ module.exports = {
                 data.push({
                     "name": name,
                     "tweets": watchers[name]["tweets"],
-                    "new": watchers[name]["new"],
+                    "news": watchers[name]["news"],
                     "timer": watchers[name]["timer"],
                     "params": watchers[name]["params"]
                 });
+                //not quite REST but w/e GET shouldn't change status
+                watchers[name]["news"] = false;
             }
         }
         return data;

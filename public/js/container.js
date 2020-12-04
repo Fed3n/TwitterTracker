@@ -60,7 +60,8 @@ var container = new Vue({
 			modal.showWatcher();
 		},
 		switchTab: function(index){
-				this.current_tab = index;
+			this.current_tab = index;
+			if(index > 0) this.pagewatchers[index-1].news = false;
 		},
 
 		//switches query view from stream to search and viceversa
@@ -164,7 +165,7 @@ var container = new Vue({
 				container.allwatchers = watchers;	
 			})
 			.catch(function (err){
-				console.log("in updateWatchers: " + err);
+				console.log(err);
 			});
 			let namelist = [];
 			for(watcher of this.pagewatchers){
@@ -173,7 +174,9 @@ var container = new Vue({
 			if(namelist.length > 0){
 				$.get("watch/data?"+$.param({"namelist":namelist})).then(function(res){
 					let reqwatchers = res;
+					//same as above m8b worse
 					for(let i=0; i < container.pagewatchers.length; i++){
+						//asynchronicity misteries so better check
 						if(reqwatchers[i]){
 							if(container.pagewatchers[i].news && !reqwatchers[i].news) reqwatchers[i].news = true;
 						}
@@ -181,7 +184,7 @@ var container = new Vue({
 					container.pagewatchers = reqwatchers;
 				})
 				.catch(function(err){
-					console.log("in updateWatchers: " + err);
+					console.log(err);
 				});
 			}
 		},
