@@ -161,20 +161,21 @@
             <!-- TWEET LIST -->
             <div id="tweetslist">
               <table class="table table-striped">
-                  <tr>
+                  <thead>
                       <th v-for="setting in checkedsettings" v-on:click="sortTweets(setting)">{{setting}}</th>
-                  </tr>
-                  <tr v-for="tweet in computedtweets" class="clickable" @click="showinfo(tweet)">
-                      <td v-for="setting in checkedsettings">
-                          <template v-if="setting=='Username'">{{tweet.user.name}}</template>
-                          <template v-else-if="setting=='Id'">{{tweet.id}}</template>
-                          <template v-else-if="setting=='Text'">{{tweet.text}}</template>
-                          <template v-else-if="setting=='Retweets'">{{tweet.retweet_count}}</template>
-                          <template v-else-if="setting=='Date'">{{tweet.created_at}}</template>
-                          <template v-else-if="setting=='Likes'">{{tweet.favorite_count}}</template>
-                          <template v-else-if="setting=='Images'">{{tweet.entities.media ? 'yes' : 'no'}}</template>
-                      </td>
-                  </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="tweet in computedtweets" class="clickable" @click="showinfo(tweet)">
+                        <td v-for="setting in checkedsettings">
+                            <template v-if="setting=='Username'">{{tweet.user.name}}</template>
+                            <template v-else-if="setting=='Text'">{{tweet.text}}</template>
+                            <template v-else-if="setting=='Retweets'">{{tweet.retweet_count}}</template>
+                            <template v-else-if="setting=='Date'">{{tweet.created_at}}</template>
+                            <template v-else-if="setting=='Likes'">{{tweet.favorite_count}}</template>
+                            <template v-else-if="setting=='Images'">{{tweet.entities.media ? 'yes' : 'no'}}</template>
+                        </td>
+                    </tr>
+                  </tbody>
               </table>  
             </div>
         </div>
@@ -189,36 +190,30 @@
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-body">
+                <div class="modal-body flex-column align-items-center">
                     <div class="alert alert-danger" v-if="errormsg!=''">
                         {{errormsg}}
                     </div>
-                    <div v-if="tweet" class="container-fluid">
-                        <div class="row">
-                            <table class="col-md-12">
-                                <tr>
-                                    <th>Utente</th><th>Contenuto</th><th>Data-Ora</th><th>hashtag</th><th>user mentions</th><th>is retweetted</th><th>retweet count</th>
-                                </tr>
-                                <tr>
-                                    <td>{{tweet.user.name ? tweet.user.name : "non disponibile"}}</td>
-                                    <td>{{tweet.text ? tweet.text : "non disponibile"}}</td>
-                                    <td>{{tweet.created_at ? tweet.created_at : "non disponibile"}}</td>
-                                    <td>
-                                        <template v-if="tweet.entities.hashtags">
-                                            <ul>
-                                                <li v-for="hashtag in tweet.entities.hashtags">#{{hashtag.text}}</li>
-                                            </ul>
-                                        </template>
-                                        <template v-else>
-                                            non disponibile
-                                        </template>
-                                    </td>
-                                    <td>{{tweet.user_mentions ? tweet.user_mentions : "0"}}</td>
-                                    <td>{{tweet.retweeted ? tweet.retweeted : "false"}}</td>
-                                    <td>{{tweet.retweet_count ? tweet.retweet_count : "non disponibile"}}</td>
-                                </tr>
-                            </table>
-                        </div>
+                    <div v-if="tweet" id="modalTweet" class="container-fluid">
+                        <ul class="list-group col-md-11 mx-auto row" v-if="tweet">
+                            <li class="list-group-item"><span class="font-weight-bold">Utente:</span> {{tweet.user.name ? tweet.user.name : "non disponibile"}}</li>
+                            <li class="list-group-item"><span class="font-weight-bold">Contenuto:</span> {{tweet.text ? tweet.text : "non disponibile"}}</li>
+                            <li class="list-group-item"><span class="font-weight-bold">Data-Ora:</span> {{tweet.created_at ? tweet.created_at : "non disponibile"}}</li>
+                            <li class="list-group-item"><span class="font-weight-bold">Hashtag:</span>
+                                <template v-if="tweet.entities.hashtags">
+                                    <ul>
+                                        <li v-for="hashtag in tweet.entities.hashtags">#{{hashtag.text}}</li>
+                                    </ul>
+                                </template>
+                                <template v-else>
+                                    non disponibile
+                                </template>
+                            </li>
+                            <li class="list-group-item"><span class="font-weight-bold">User Mentions:</span> {{tweet.user_mentions ? tweet.user_mentions : "0"}}</li>
+                            <li class="list-group-item"><span class="font-weight-bold">Retweetted:</span> {{tweet.retweeted ? tweet.retweeted : "Non Disponibile"}}</li>
+                            <li class="list-group-item"><span class="font-weight-bold">Retweets:</span> {{tweet.retweet_count ? tweet.retweet_count : "0"}}</li>
+                        </ul>
+                        <hr v-if="tweet.entities.media">
                         <div class="row" v-if="tweet.entities.media">
                             <div class="col-md-10 mx-auto">
                                 <div id="carousel" class="carousel slide" data-ride="carousel">
@@ -244,9 +239,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="map" style="width: 40vw; height: 40vw;">
-
-                    </div>
+                    <div id="map" class="mx-auto" style="width: 40vw; height: 40vw;"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

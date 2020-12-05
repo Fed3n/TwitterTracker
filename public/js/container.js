@@ -4,7 +4,7 @@ var container = new Vue({
 	data:{
 		labels: [],
 		tweets: [],
-		settings: ["Id","Username","Text","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
+		settings: ["Username","Text","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
 		checkedsettings: ["Username","Text","Date"],
 		checkedFilters: [],
 		onlyLocated: false,
@@ -24,7 +24,11 @@ var container = new Vue({
 			let input = this.$refs.filterinput.value;
 			if(type=="Location"){
 				let url = "http://nominatim.openstreetmap.org/search/"+input.split(' ').join('%20')+'?format=json&addressdetails=1&limit=1';
-				$.get(url,function(data){ container.labels.push({type:"Location", value: input, boundingBox:data[0].boundingbox}); }, "json");
+				$.get(url,function(data){ 
+					console.log(data[0]);
+					if(data[0] && data[0].boundingbox){ container.labels.push({type:"Location", value: input, boundingBox:data[0].boundingbox}); }
+					else {modal.showError("There's an error with your location");}
+				}, "json");
 			}
 			else 
 				this.labels.push({type:type, value:input});
