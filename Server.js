@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const newapi = require('./tweeter_api.js');
+const watch = require('./watch.js');
 const fs = require('fs');
 const https = require('https');
 
@@ -87,25 +88,44 @@ app.get("/stream", function (req,res) {
     return res.status(200).send(arr);
 });
 
-/*WATCH MODE*/
 
+/*WATCH METHODS*/
+
+//mette in azione un nuovo watcher con nome name, che fa una search di tweets con parametri
+//params ogni timer millisecondi
 app.post("/watch/start", function (req, res) {
-    if(req.query.name && req.query.params && req.query.timer){
-        req.query.name;
-        req.query.params;
-        req.query.timer;
-        if(watch.addWatcher(req.query.name, req.query.timer, req.query.params) < 0)
+    if(req.body.name && req.body.params && req.body.timer){
+        req.body.name;
+        req.body.params;
+        req.body.timer;
+        if(watch.addWatcher(req.body.name, req.body.timer, req.body.params) < 0)
             return res.status(400).send("Watcher name already in use.");
         return res.status(200).send("New watcher added.");
     }
+    else return res.status(400).send("Invalid or missing parameters in request");
 });
 
+//ferma e rimuove il watcher con nome name
 app.post("/watch/stop", function (req, res) {
     if(req.query.name){
         watch.removeWatcher(req.query.name);
         return res.status(200).send("Removed watcher.");
     }
-    else return res.status(500).send("Invalid query, watcher name needed.");
+    else return res.status(400).send("Invalid query, watcher name needed.");
+});
+
+//ritorna nome e status(nuovi tweets?) di ogni watcher in un oggetto {name: nome, new: boolean}
+app.get("/watch", function (req, res) {
+    return res.status(200).send(watch.listWatchers());
+});
+
+//prende namelist=list_of_names come parametro di query, ritorna una lista di dati di quei watcher
+app.get("/watch/data", function (req, res) {
+    if(req.query.namelist){
+        let data = watch.getWatchersData(req.query.namelist);
+        return res.status(200).send(data);
+    }
+    else return res.status(400).send("List of watcher names needed.");
 });
 
 
