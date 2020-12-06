@@ -165,7 +165,7 @@ var container = new Vue({
 				container.allwatchers = watchers;	
 			})
 			.catch(function (err){
-				console.log(err);
+				throw(err);
 			});
 			let namelist = [];
 			for(watcher of this.pagewatchers){
@@ -184,7 +184,7 @@ var container = new Vue({
 					container.pagewatchers = reqwatchers;
 				})
 				.catch(function(err){
-					console.log(err);
+					throw(err);
 				});
 			}
 		},
@@ -194,7 +194,7 @@ var container = new Vue({
 				if(res.length > 0)	container.pagewatchers.push(res[0]);
 			})
 			.catch(function(err){
-				console.log(err);
+				throw(err);
 			});
 		},
 		removeWatcher: function(index){

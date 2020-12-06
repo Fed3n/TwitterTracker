@@ -54,6 +54,30 @@ const queryparser = {
         if(Object.keys(params).length > 0) return params;
         else return null;
 
+    },
+    
+    //parse 'd:h:m:s' string > ms (beware of overflow)
+    parseDHMSInterval: function(str){
+        let t = str.split(':');
+        let timer = 0;
+        if(t[0]){
+            let n = parseInt(t[0]);
+            if(n !== NaN) timer += (24*60*60*1000)*n;
+        }
+        if(t[1]){
+            let n = parseInt(t[1]);
+            if(n !== NaN) timer += (60*60*1000)*n;
+        }
+        if(t[2]){
+            let n = parseInt(t[2]);
+            if(n !== NaN) timer += (60*1000)*n;
+        }
+        if(t[3]){
+            let n = parseInt(t[3]);
+            if(n !== NaN) timer += (1000)*n;
+        }
+        //defaults to 10seconds
+        return timer ? timer : 10000;
     }
 
 }

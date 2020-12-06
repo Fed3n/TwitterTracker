@@ -89,7 +89,7 @@ var modal = new Vue({
 				this.$refs.watchercount.value);
 			
 			let name = this.$refs.watchername.value;
-			let timer = this.$refs.watchertimer.value;
+			let timer = queryparser.parseDHMSInterval(this.$refs.watchertimer.value);
 
 			if(params && name && timer){
 				$.post("/watch/start", {"name":name, "params":params, "timer":timer})
