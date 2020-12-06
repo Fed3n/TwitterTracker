@@ -106,6 +106,12 @@ const map = {
         }  
     },
 
+    DeleteAllCircleMarkers : function(){
+        for(CircleMarker of this.circleMarker){
+            CircleMarker.remove();
+        }
+    },
+
     AddCircleMarker: function(tweets){
         let dict = {};
         for(let i = 0; i < tweets.length; i++){

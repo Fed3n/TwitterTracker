@@ -11,6 +11,7 @@ var modal = new Vue({
 		//delete markers from map
 		removeMarkers: function(){
 			map.DeleteAllMarkers();
+			map.DeleteAllCircleMarkers();
 		},
 		//add marker to map with tweet info
 		addMarker: function(data){
