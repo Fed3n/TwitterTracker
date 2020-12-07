@@ -369,7 +369,17 @@ var container = new Vue({
 			return posts;
 		},
 		postsPerWeekday: function(compTweets) {
-			
+			var posts = {Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0}
+
+			for (var i in compTweets) {
+				var tweet = compTweets[i];
+				if (tweet.created_at != undefined) {
+					date = tweet.created_at.split(" ")
+					day = date[0]
+					posts[day]++;
+				}
+			}
+			return posts;
 		},
 		genColors: function (n) {
 			var chartColors = [];
@@ -410,10 +420,12 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('doughnut').getContext('2d');
+			if(window.myDoughnut != undefined)
+				window.myDoughnut.destroy()
 			window.myDoughnut = new Chart(ctx, doughnutG);
 		},
 		buildLine: function(data) {
-			var col = this.genColors(1);
+			var col = this.genColors(7);
 			lineG = {
 				type: 'line',
 				data: {
@@ -458,14 +470,69 @@ var container = new Vue({
 					}
 				}
 			};
-			var ctx = document.getElementById('line').getContext('2d');
+			var ctx = document.getElementById('line').getContext('2d')
+			if(window.myLine != undefined)
+				window.myLine.destroy()
 			window.myLine = new Chart(ctx, lineG);
+		},
+		buildBar: function(data) {
+			var col = this.genColors(data.length);
+			barG = {
+				type: 'bar',
+				data: {
+					labels: Object.keys(data),
+					datasets: [{
+						label: "test",
+						backgroundColor: col,
+						borderColor: col,
+						data: Object.values(data),
+						fill: true,
+					}]
+				},
+				options: {
+					responsive: true,
+					title: {
+						display: true,
+						text: 'Number of tweets in time'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false,
+					},
+					hover: {
+						mode: 'nearest',
+						intersect: true
+					},
+					scales: {
+						xAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Day'
+							}
+						}],
+						yAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Number'
+							}
+						}]
+					}
+				}
+			};
+			var ctx = document.getElementById('bar').getContext('2d')
+			if(window.myBar != undefined)
+				window.myBar.destroy()
+			window.myBar = new Chart(ctx, barG);
 		},
 		updateGraphs: function (compTweets) {
 			var dData = this.countHashtags(compTweets);
 			this.buildDoughnut(dData);
-			var lData = this.postsAtDay(compTweets);
+			var lData = this.postsPerWeekday(compTweets);
 			this.buildLine(lData);
+			var bData = this.postsAtDay(compTweets);
+			this.buildBar(bData);
 		}
 	},
 	computed: {
