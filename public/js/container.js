@@ -4,18 +4,27 @@ var container = new Vue({
 	data:{
 		labels: [],
 		tweets: [],
-		settings: ["Id","Username","Text","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
+		//WATCHERS//
+		current_tab: 0,
+		pagewatchers: [],
+		allwatchers: [],
+		//
+		settings: ["Username","Text","Retweets","Date","Likes", "Images"], //inserire i potenziali parametri utili
 		checkedsettings: ["Username","Text","Date"],
 		checkedFilters: [],
+		onlyLocated: false,
 		stream_on: false,
 		local_filters: ["Contains","Hashtag","Location"],
 		lastSorted: "",
 
 		//queries
-		is_stream: true,	
+		is_stream: true,
 		stream_query: {},
-		search_query: {},
-		prova: 0
+		search_query: {}
+	},
+	mounted: function(){
+		window.setInterval(this.updateStream, 1000);
+		window.setInterval(this.updateWatchers, 1000);
 	},
 	methods:{
 		addfilter: function(){
@@ -23,9 +32,13 @@ var container = new Vue({
 			let input = this.$refs.filterinput.value;
 			if(type=="Location"){
 				let url = "http://nominatim.openstreetmap.org/search/"+input.split(' ').join('%20')+'?format=json&addressdetails=1&limit=1';
-				$.get(url,function(data){ container.labels.push({type:"Location", value: input, boundingBox:data[0].boundingbox}); }, "json");
+				$.get(url,function(data){
+					console.log(data[0]);
+					if(data[0] && data[0].boundingbox){ container.labels.push({type:"Location", value: input, boundingBox:data[0].boundingbox}); }
+					else {modal.showError("There's an error with your location");}
+				}, "json");
 			}
-			else 
+			else
 				this.labels.push({type:type, value:input});
 			if(filtercounter[type])
 				filtercounter[type]++;
@@ -48,7 +61,14 @@ var container = new Vue({
 		showinfo: function(data){
 			modal.showTweet(data);
 		},
-		
+		showWatcherModal(){
+			modal.showWatcher();
+		},
+		switchTab: function(index){
+			this.current_tab = index;
+			if(index > 0) this.pagewatchers[index-1].news = false;
+		},
+
 		//switches query view from stream to search and viceversa
 		switchQuery: function(){
 			if(this.is_stream){
@@ -78,12 +98,11 @@ var container = new Vue({
 					this.$refs.streamtrack.value,
 					this.$refs.streamfollow.value,
 					this.$refs.streamlocations.value);
-				
+
 				//se il parser ha ridato parametri allora si puo' eseguire query
 				if(params){
 					$.post("/stream/start?"+$.param(params)).done(function(){
 						console.log("start stream");
-						container.updatestream();
 					}).fail(function() {
 						window.alert("Stream querying failed. Please check your parameters.");
 						this.stream_on = false;
@@ -97,11 +116,10 @@ var container = new Vue({
 				$.post("/stream/stop").done(function(){console.log("close stream");});
 			}
 		},
-		updatestream: function(){
+		updateStream: function(){
 			if(this.stream_on){
 				$.get("/stream", function(data){
 					container.appendtweets(data);
-					window.setTimeout(container.updatestream,1000);
 				},"json")
 			}
 		},
@@ -116,11 +134,11 @@ var container = new Vue({
 		},
 		//queries a tweets search by parameters to the server
 		search: async function(){
-			if(!this.$refs.searchquery.value){ 
+			if(!this.$refs.searchquery.value){
 				window.alert("Query field is mandatory");
 				return;
 			}
-			
+
 			let params = await queryparser.parseSearchQuery(
 				this.$refs.searchquery.value,
 				this.$refs.searchgeo.value,
@@ -134,6 +152,60 @@ var container = new Vue({
 			} else {
 				window.alert("Not enough parameters or something went wrong.\n");
 			}
+		},
+		//to be called at intervals, updates info on server side watchers
+		//and updates page watchers
+		updateWatchers: function(){
+			$.get("/watch").then(function(res){
+				watchers = [];
+				//dont ask its ok dw about this unless you're me then fk
+				for(el of res){
+					for(aw of container.allwatchers)
+						if(el.name == aw.name && (!el.news) && (aw.news)){
+							el.news = true;
+							break;
+						}
+					watchers.push(el);
+				}
+				container.allwatchers = watchers;
+			})
+			.catch(function (err){
+				throw(err);
+			});
+			let namelist = [];
+			for(watcher of this.pagewatchers){
+				namelist.push(watcher.name);
+			}
+			if(namelist.length > 0){
+				$.get("watch/data?"+$.param({"namelist":namelist})).then(function(res){
+					let reqwatchers = res;
+					//same as above m8b worse
+					for(let i=0; i < container.pagewatchers.length; i++){
+						//asynchronicity misteries so better check
+						if(reqwatchers[i]){
+							if(container.pagewatchers[i].news && !reqwatchers[i].news) reqwatchers[i].news = true;
+						}
+					}
+					container.pagewatchers = reqwatchers;
+				})
+				.catch(function(err){
+					throw(err);
+				});
+			}
+		},
+		//takes an existing watcher name not loaded on page and loads it by querying server
+		bringWatcher: function(name){
+			$.get("watch/data?"+$.param({"namelist":[name]})).then(function(res){
+				if(res.length > 0)	container.pagewatchers.push(res[0]);
+			})
+			.catch(function(err){
+				throw(err);
+			});
+		},
+		removeWatcher: function(index){
+			$.post("watch/stop?name="+this.pagewatchers[index].name);
+			this.pagewatchers.slice(index,1);
+			this.current_tab = 0;
 		},
 		righthashtags:function(tweet){ //ora deve combaciare con tutti gli hashtag, chiedere se va bene
 			if(!filtercounter["Hashtag"]||filtercounter["Hashtag"]==0) {return true;}
@@ -167,8 +239,8 @@ var container = new Vue({
 					contains = false;
 
 					var bbox = label.boundingBox;
-					bbox = bbox.map(function (x) { 
-						return parseFloat(x, 10); 
+					bbox = bbox.map(function (x) {
+						return parseFloat(x, 10);
 					});
 
 					coords = tweet.place.bounding_box.coordinates[0];
@@ -189,7 +261,7 @@ var container = new Vue({
 					}else{
 						if(this.checkedFilters.length>0)
 							return false;
-					}						
+					}
 				}
 			}
 			return contains;
@@ -236,7 +308,7 @@ var container = new Vue({
 						this.tweets.sort((x,y) => {if(x.retweet_count < y.retweet_count) return -1; else return 1});
 						break;
 					case "Date":
-						this.tweets.sort((x,y) => {if(Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1}); 
+						this.tweets.sort((x,y) => {if(Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1});
 						break;
 				}
 			}
@@ -254,12 +326,13 @@ var container = new Vue({
     },
     computed:{
 		computedtweets: function() {
-			//TODO Locations si bugga se non esiste (per riprodurre aggiungi filtro location:"aidahsodabosdasb")
+			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
+			let tweets = this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab-1].tweets;
 			this.labels;
 			this.checkedFilters;
 			let comp = [];
-			for(tweet of this.tweets){
-				if(this.righthashtags(tweet)&&this.rightlocation(tweet)&&this.rightcontains(tweet)){
+			for(tweet of tweets){
+				if(this.righthashtags(tweet)&&this.rightlocation(tweet)&&this.rightcontains(tweet) && !(this.onlyLocated && !tweet.geo)){
 					comp.push(tweet);
 				}
 			};
@@ -270,6 +343,22 @@ var container = new Vue({
 				return this.checkedsettings.length>0;
 			},
 			set(){}
+		},
+		computedwatchers: function() {
+			watchers = [];
+			for(watcher of this.allwatchers){
+				let is_in = false;
+				for(pw of this.pagewatchers){
+					if(watcher.name == pw.name){
+						is_in = true;
+						break;
+					}
+				}
+				if(!is_in){
+					watchers.push(watcher);
+				}
+			}
+			return watchers;
 		}
 	}
 })

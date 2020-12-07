@@ -34,17 +34,19 @@ queste cose sono da includere
 */
 
 const map = {
-    marker: [], 
+    marker: [],
+    circleMarker: [], 
     mymap: null,
     lastLat: null,
     lastLong:null,
+    nonLocated:0,
     SetMap : function(div){
-        mymap = L.map(div).setView([0, 0], 1.5); //inizializza la mappa 
+        this.mymap = L.map(div).setView([41.2925, 12.5736], 5); //inizializza la mappa 
         const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
         const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         const tiles = L.tileLayer(tileUrl, { attribution });
-        tiles.addTo(mymap);
-        mymap.on('click', function(e) { //alla pressione vengono salvati i dati di latitudine e longitudine 
+        tiles.addTo(this.mymap);
+        this.mymap.on('click', function(e) { //alla pressione vengono salvati i dati di latitudine e longitudine 
             lastLat = e.latlng.lat;
             lastLong = e.latlng.lng;
         });
@@ -76,7 +78,7 @@ const map = {
     // },
     
     AddMarker : function(lat, long, tweet, img){ //aggiunge un singolo marker
-        let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(mymap);
+        let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(this.mymap);
         new_Marker.message = tweet; 
         new_Marker.img = img; 
         new_Marker.on('click', function(e){ //aggiungo l'evento click che apre un popup al marker
@@ -100,8 +102,49 @@ const map = {
 
     DeleteAllMarkers : function () { //rimuove tutti i marker
         for(marker of this.marker) {
-            mymap.removeLayer(marker);
+            this.mymap.removeLayer(marker);
         }  
+    },
+
+    DeleteAllCircleMarkers : function(){
+        for(CircleMarker of this.circleMarker){
+            CircleMarker.remove();
+        }
+    },
+
+    AddCircleMarker: function(tweets){
+        let dict = {};
+        for(let i = 0; i < tweets.length; i++){
+            let coord = map.GetMediumLocationFromPlace(tweets[i]);
+            if(coord && dict[Math.round(coord[0]) + "" + Math.round(coord[1])]){
+                dict[Math.round(coord[0]) + "" + Math.round(coord[1])].radius += 1;
+            }else if(coord){
+                dict[Math.round(coord[0]) + "" + Math.round(coord[1])] = {
+                    coord : coord,
+                    radius : 1
+                }
+            }else{
+                map.nonLocated++;
+            }
+        }
+        let keys = Object.keys(dict);
+        console.log(keys)
+        console.log(dict)
+        for(let i = 0; i < keys.length; i ++){
+            this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / keys.length * 100));
+        }
+    },
+
+    CreateCircleMarker: function(lat, long, radius){
+        let mark = L.circleMarker([lat, long], {
+            "radius": radius,
+            "fillColor": "#ff7800",
+            "color": "#ff7800",
+            "weight": 1,
+            "opacity": 1
+          }).addTo(this.mymap);
+        console.log(mark);
+        return mark;
     },
     
     //richiesta ad openstreetmap API di location, coords rida' coordinate (lat,lon), box rida' boundingbox
@@ -127,5 +170,15 @@ const map = {
             console.log(err);
             return null;
         }
+    },
+
+    GetMediumLocationFromPlace(tweet){
+        if(tweet.place != null){
+            return [(tweet.place.bounding_box.coordinates[0][0][0] + tweet.place.bounding_box.coordinates[0][1][0] + 
+                tweet.place.bounding_box.coordinates[0][2][0] + tweet.place.bounding_box.coordinates[0][3][0]) / 4 , 
+            (tweet.place.bounding_box.coordinates[0][0][1] + tweet.place.bounding_box.coordinates[0][1][1] + 
+                tweet.place.bounding_box.coordinates[0][2][1] + tweet.place.bounding_box.coordinates[0][3][1]) / 4 ];
+        }
+        return null;
     }
 };

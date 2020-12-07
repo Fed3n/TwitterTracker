@@ -15,10 +15,17 @@ module.exports = {
         var token = setInterval(function (){
             newapi.recentSearch(params).then((arr) => {
                 for(el of arr){
-                    //when a new tweet is added, new property becomes true as a notification
-                    if(!watchers[name]["tweets"].includes(el)){
+                    let is_in = false;
+                    //when a new tweet is added, news property becomes true as a notification
+                    for(tw of watchers[name]["tweets"]){
+                        if(el.id == tw.id){
+                            is_in = true;
+                            break;
+                        }
+                    }
+                    if(!is_in){
                         watchers[name]["tweets"].push(el);
-                        watchers[name]["new"] = true;
+                        watchers[name]["news"] = true;
                     }
                 }
             });
@@ -26,8 +33,9 @@ module.exports = {
         watchers[name] = {
             "token": token,
             "tweets": [],
-            "new": false,
-            "timer": timer
+            "news": false,
+            "timer": timer,
+            "params": params
         };
         return 0;
     },
@@ -42,21 +50,28 @@ module.exports = {
 
     listWatchers: function(){
         list = [];
-        for(name in watchers)
-            list.push(name);
+        for(let name in watchers)
+            list.push({
+                "name": name,
+                "news": watchers[name]["news"]
+            });
         return list;
     },
 
     getWatchersData: function(namelist){
-        data = {};
-        for(name of namelist){
+        data = [];
+        for(let name of namelist){
             if(name in watchers){
                 //timer token is private and not to be used outside
-                data[name] = {
+                data.push({
+                    "name": name,
                     "tweets": watchers[name]["tweets"],
-                    "new": watchers[name]["new"],
-                    "timer": watchers[name]["timer"]
-                }
+                    "news": watchers[name]["news"],
+                    "timer": watchers[name]["timer"],
+                    "params": watchers[name]["params"]
+                });
+                //not quite REST but w/e GET shouldn't change status
+                watchers[name]["news"] = false;
             }
         }
         return data;
