@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="/css/style.css"/>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
         <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin="" ></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     </head>
 <body class="container-fluid">
     <div class="jumbotron rounded bg-primary">
@@ -263,12 +264,21 @@
               </table>
             </div>
         </div>
-        <!--
-        <div class="col-4">
-            <p>Bellissima colonna in cui mettere mappa/grafici/statistiche idk</p>
-            <div id="extra"></div>
+        <div class="col-4" style="position: sticky; top: 0;">
+            <p>Statistiche</p>
+            <div id="doughnut-holder">
+                <canvas id="doughnut"></canvas>
+            </div>
+            <div id="line-holder">
+                <p>Grafico a linea [numero tweet nel tempo]</p>
+                <canvas id="line"></canvas>
+            </div>
+            <div id="bar-holder">
+                <p>Grafico a barre</p>
+                <canvas id="bar"></canvas>
+            </div>
+            <button id="updateGraphs" class="" v-on:click="loadGraphs(computedtweets)">grafici</button>
         </div>
-        -->
     </div>
 
     <div class="modal fade" id="modal" current_tab="-1" role="dialog" aria-hidden="true">
