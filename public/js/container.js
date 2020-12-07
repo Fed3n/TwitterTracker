@@ -1,5 +1,5 @@
 //meme di martina per far andare values su tutti i browsers
-Object.values = Object.values || function(o){return Object.keys(o).map(function(k){return o[k]})};
+Object.values = Object.values || function (o) { return Object.keys(o).map(function (k) { return o[k] }) };
 
 var filtercounter = {};
 var container = new Vue({
@@ -26,7 +26,6 @@ var container = new Vue({
 		search_query: {},
 
 		//graphs
-		chartColors: [],
 		doughnutG: {},
 		lineG: {},
 		barG: {}
@@ -339,49 +338,61 @@ var container = new Vue({
 
 			for (var i in compTweets) {
 				var tweet = compTweets[i];
-				console.log(tweet);
-				if (tweet.entities != undefined && tweet.entities.hashtags != undefined){
-					
+				if (tweet.entities != undefined && tweet.entities.hashtags != undefined) {
+
 					for (var j in tweet.entities.hashtags) {
 						var hashtag = tweet.entities.hashtags[j];
 						if (!(hashtag.text.toLowerCase() in reps)) {
-							console.log(hashtag);
 							counter++;
 							reps[hashtag.text.toLowerCase()] = 0;
 						}
 						reps[hashtag.text.toLowerCase()]++;
-						console.log(reps[hashtag.text.toLowerCase()]);
 					}
 				}
 			}
 			return [counter, reps];
 		},
-		genColors: function(n) {
-			chartColors = [];
-			while (chartColors.length < n) {
-				do {
-					var color = Math.floor((Math.random() * 1000000) + 1);
-				} while (chartColors.indexOf(color) >= 0);
-				chartColors.push("#" + ("000000" + color.toString(16)).slice(-6));
+		postsAtDay: function (compTweets) {
+			var posts = {};
+
+			for (var i in compTweets) {
+				var tweet = compTweets[i];
+				if (tweet.created_at != undefined) {
+					date = tweet.created_at.split(" ")
+					day = date[1] + " " + date[2];
+					if (!(day in posts))
+						posts[day] = 0;
+					
+					posts[day]++;
+				}
 			}
+			return posts;
 		},
-		buildDoughnut: function() {
+		postsPerWeekday: function(compTweets) {
 			
 		},
-		loadGraphs: function (compTweets) {
-			console.log(compTweets);
-			var answer = this.countHashtags(compTweets);
-			this.genColors(answer[0]);
-			console.log(answer);
+		genColors: function (n) {
+			var chartColors = [];
+			while (chartColors.length < n) {
+				var letters = '0123456789ABCDEF';
+				var color = '#';
+				for (var i = 0; i < 6; i++) {
+					color += letters[Math.floor(Math.random() * 16)];
+				}
+				chartColors.push(color);
+			}
+			return chartColors;
+		},
+		buildDoughnut: function (data) {
 			doughnutG = {
 				type: 'doughnut',
 				data: {
 					datasets: [{
-						data: Object.values(answer[1]),
-						backgroundColor: chartColors,
+						data: Object.values(data[1]),
+						backgroundColor: this.genColors(data[0]),
 						label: 'Dataset 1'
 					}],
-					labels: Object.keys(answer[1])
+					labels: Object.keys(data[1])
 				},
 				options: {
 					responsive: true,
@@ -399,7 +410,62 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('doughnut').getContext('2d');
-            window.myDoughnut = new Chart(ctx, doughnutG);
+			window.myDoughnut = new Chart(ctx, doughnutG);
+		},
+		buildLine: function(data) {
+			var col = this.genColors(1);
+			lineG = {
+				type: 'line',
+				data: {
+					labels: Object.keys(data),
+					datasets: [{
+						label: 'My First dataset',
+						backgroundColor: col,
+						borderColor: col,
+						data: Object.values(data),
+						fill: false,
+					}]
+				},
+				options: {
+					responsive: true,
+					title: {
+						display: true,
+						text: 'Number of tweets in time'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false,
+					},
+					hover: {
+						mode: 'nearest',
+						intersect: true
+					},
+					scales: {
+						xAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Day'
+							}
+						}],
+						yAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Number'
+							}
+						}]
+					}
+				}
+			};
+			var ctx = document.getElementById('line').getContext('2d');
+			window.myLine = new Chart(ctx, lineG);
+		},
+		updateGraphs: function (compTweets) {
+			var dData = this.countHashtags(compTweets);
+			this.buildDoughnut(dData);
+			var lData = this.postsAtDay(compTweets);
+			this.buildLine(lData);
 		}
 	},
 	computed: {
