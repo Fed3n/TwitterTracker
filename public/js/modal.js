@@ -40,7 +40,7 @@ var modal = new Vue({
 			this.errormsg="";
 			//this.watcher_setup = false;
 			//hide map
-			$("#map").hide();
+			$("#mapDiv").hide();
 		},
 		//show modal with a single tweet info
 		showTweet: function(tweet){
@@ -49,20 +49,30 @@ var modal = new Vue({
 			this.tweet=tweet;
 			if(tweet.geo && tweet.geo.coordinates){
 				this.addMarker(tweet);
-				$("#map").show();
+				$("#mapDiv").show();
+				$("#bubbleCheck").hide();
 			}
 			this.show();
 		},
 		//show map with every tweet position
 		showMap: function(){
 			this.reset();
-
-			for(tweet of container.computedtweets){
+			tweets = numberThem(container.computedtweets)
+			for(tweet of tweets){
 				if(tweet.geo && tweet.geo.coordinates)
 					this.addMarker(tweet);
 			}
-			map.AddCircleMarker(container.computedtweets)
-			$("#map").show();
+			$("#bubbleCheck").show();
+			$("#bubble").prop( "checked", true );
+			$("#bubble").on("change", function(){
+				if($("#bubble").is(':checked')){
+					map.AddCircleMarker(tweets)
+				}else{
+					map.DeleteAllCircleMarkers();
+				}
+			});
+			map.AddCircleMarker(tweets)
+			$("#mapDiv").show();
 			this.show();
 		},
 		//show new watcher setup

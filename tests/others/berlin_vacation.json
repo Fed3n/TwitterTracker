@@ -1,0 +1,2433 @@
+[
+    {
+        "created_at": "Fri Dec 25 16:08:06 +0100 2020",
+        "id": 1.80089961713227e+18,
+        "id_str": "1800899617132270080",
+        "text": "#bestvacationever ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.479172135616174,
+                "1": 13.287372299006746
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.287372299006746,
+                "1": 52.479172135616174
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Sun Dec 27 17:33:51 +0100 2020",
+        "id": 1.6967200925844797e+18,
+        "id_str": "1696720092584479744",
+        "text": "#bestvacationever #stalking ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                },
+                {
+                    "tag": "stalking",
+                    "indices": [
+                        18,
+                        26
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.356154186608,
+                "1": 13.684821310287125
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.684821310287125,
+                "1": 52.356154186608
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Mon Dec 28 10:58:40 +0100 2020",
+        "id": 1.6004773201542748e+18,
+        "id_str": "1600477320154274816",
+        "text": "https://i.imgur.com/4M8Tos4.png ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": [],
+            "media": [
+                {
+                    "id": 1.446143198307781e+18,
+                    "id_str": "1446143198307781120",
+                    "media_url": "https://i.imgur.com/4M8Tos4.png",
+                    "media_url_https": "https://i.imgur.com/4M8Tos4.png",
+                    "indices": [
+                        0,
+                        2
+                    ],
+                    "type": "photo"
+                }
+            ]
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.34508215534444,
+                "1": 13.684905917135833
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.684905917135833,
+                "1": 52.34508215534444
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Tue Dec 29 02:16:13 +0100 2020",
+        "id": 1.0674684517690193e+18,
+        "id_str": "1067468451769019264",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.59090756243347,
+                "1": 13.552893706694958
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.552893706694958,
+                "1": 52.59090756243347
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Mon Dec 28 17:33:01 +0100 2020",
+        "id": 1.118502497266133e+18,
+        "id_str": "1118502497266132992",
+        "text": "#bestvacationever https://i.imgur.com/7tVYAeF.png ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": [],
+            "media": [
+                {
+                    "id": 1.225973833414772e+18,
+                    "id_str": "1225973833414771968",
+                    "media_url": "https://i.imgur.com/7tVYAeF.png",
+                    "media_url_https": "https://i.imgur.com/7tVYAeF.png",
+                    "indices": [
+                        18,
+                        34
+                    ],
+                    "type": "photo"
+                }
+            ]
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.43876672654344,
+                "1": 13.483175698788623
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.483175698788623,
+                "1": 52.43876672654344
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Fri Dec 25 06:07:01 +0100 2020",
+        "id": 1.1259106606761212e+18,
+        "id_str": "1125910660676121216",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.339442416656176,
+                "1": 13.433989527284277
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.433989527284277,
+                "1": 52.339442416656176
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Tue Dec 29 05:50:13 +0100 2020",
+        "id": 1.868657187166188e+18,
+        "id_str": "1868657187166188032",
+        "text": "https://i.imgur.com/4M8Tos4.png ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": [],
+            "media": [
+                {
+                    "id": 1.0334675137663167e+18,
+                    "id_str": "1033467513766316672",
+                    "media_url": "https://i.imgur.com/4M8Tos4.png",
+                    "media_url_https": "https://i.imgur.com/4M8Tos4.png",
+                    "indices": [
+                        0,
+                        2
+                    ],
+                    "type": "photo"
+                }
+            ]
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.5659539905597,
+                "1": 13.384251061501228
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.384251061501228,
+                "1": 52.5659539905597
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Thu Dec 24 08:27:29 +0100 2020",
+        "id": 1.0677009303704388e+18,
+        "id_str": "1067700930370438784",
+        "text": "#bestvacationever ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": null,
+        "coordinates": null,
+        "place": null,
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Thu Dec 24 09:19:36 +0100 2020",
+        "id": 1.634047668721851e+18,
+        "id_str": "1634047668721850880",
+        "text": "#bestvacationever https://i.imgur.com/7tVYAeF.png ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": [],
+            "media": [
+                {
+                    "id": 1.984163307587864e+18,
+                    "id_str": "1984163307587864064",
+                    "media_url": "https://i.imgur.com/7tVYAeF.png",
+                    "media_url_https": "https://i.imgur.com/7tVYAeF.png",
+                    "indices": [
+                        18,
+                        34
+                    ],
+                    "type": "photo"
+                }
+            ]
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": null,
+        "coordinates": null,
+        "place": null,
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Sun Dec 27 18:29:36 +0100 2020",
+        "id": 1.9532888617611653e+18,
+        "id_str": "1953288861761165312",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.59232168500883,
+                "1": 13.130521555082236
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.130521555082236,
+                "1": 52.59232168500883
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Thu Dec 24 16:48:14 +0100 2020",
+        "id": 1.7326952807578478e+18,
+        "id_str": "1732695280757847808",
+        "text": "#bestvacationever ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.42597266845536,
+                "1": 13.165358217298916
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.165358217298916,
+                "1": 52.42597266845536
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Tue Dec 29 21:09:59 +0100 2020",
+        "id": 1.7552861180138532e+18,
+        "id_str": "1755286118013853184",
+        "text": "https://i.imgur.com/7tVYAeF.png ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": [],
+            "media": [
+                {
+                    "id": 1.431644494752373e+18,
+                    "id_str": "1431644494752372992",
+                    "media_url": "https://i.imgur.com/7tVYAeF.png",
+                    "media_url_https": "https://i.imgur.com/7tVYAeF.png",
+                    "indices": [
+                        0,
+                        2
+                    ],
+                    "type": "photo"
+                }
+            ]
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.57168300285895,
+                "1": 13.597228701373501
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.597228701373501,
+                "1": 52.57168300285895
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Tue Dec 29 02:38:26 +0100 2020",
+        "id": 1.4266476461467382e+18,
+        "id_str": "1426647646146738176",
+        "text": "#bestvacationever ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": null,
+        "coordinates": null,
+        "place": null,
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Mon Dec 28 07:47:11 +0100 2020",
+        "id": 1.5309506379949043e+18,
+        "id_str": "1530950637994904320",
+        "text": "#bestvacationever #stalking ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                },
+                {
+                    "tag": "stalking",
+                    "indices": [
+                        18,
+                        26
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.515478404314834,
+                "1": 13.586173338256767
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.586173338256767,
+                "1": 52.515478404314834
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Sun Dec 27 06:40:23 +0100 2020",
+        "id": 1.3930848505177446e+18,
+        "id_str": "1393084850517744640",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.4861259777503,
+                "1": 13.197271042335457
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.197271042335457,
+                "1": 52.4861259777503
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Thu Dec 24 13:13:22 +0100 2020",
+        "id": 1.0132712028863126e+18,
+        "id_str": "1013271202886312576",
+        "text": "#bestvacationever ",
+        "truncated": false,
+        "entities": {
+            "hashtag": [
+                {
+                    "tag": "bestvacationever",
+                    "indices": [
+                        0,
+                        16
+                    ]
+                }
+            ],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.602055381841886,
+                "1": 13.256180825275388
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.256180825275388,
+                "1": 52.602055381841886
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Thu Dec 24 08:50:41 +0100 2020",
+        "id": 1.8646084141933507e+18,
+        "id_str": "1864608414193350656",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": null,
+        "coordinates": null,
+        "place": null,
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Mon Dec 28 12:56:15 +0100 2020",
+        "id": 1.3752523591121244e+18,
+        "id_str": "1375252359112124416",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.59278033136225,
+                "1": 13.38925689244132
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.38925689244132,
+                "1": 52.59278033136225
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    },
+    {
+        "created_at": "Mon Dec 28 10:38:00 +0100 2020",
+        "id": 1.549447172620967e+18,
+        "id_str": "1549447172620966912",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.46176479239803,
+                "1": 13.494326025504266
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.494326025504266,
+                "1": 52.46176479239803
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 535900042.77682245,
+            "id_str": "535900042",
+            "name": "Mike",
+            "screen_name": "Mike"
+        }
+    },
+    {
+        "created_at": "Wed Dec 30 02:52:36 +0100 2020",
+        "id": 1.5650450443204378e+18,
+        "id_str": "1565045044320437760",
+        "text": "no_text",
+        "truncated": false,
+        "entities": {
+            "hashtag": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": []
+        },
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "recent"
+        },
+        "source": "",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": {
+            "type": "Point",
+            "coordinates": {
+                "0": 52.51875080036868,
+                "1": 13.523797688496693
+            }
+        },
+        "coordinates": {
+            "type": "Point",
+            "coordinates": {
+                "0": 13.523797688496693,
+                "1": 52.51875080036868
+            }
+        },
+        "place": {
+            "id": "9753bd58a1395890",
+            "name": "Berlin",
+            "full_name": "Berlin, Germany",
+            "country": "Germany",
+            "country_code": "DE",
+            "url": "https://api.twitter.com/1.1/geo/id/9753bd58a1395890.json",
+            "place_type": "admin",
+            "attributes": {},
+            "bounding_box": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            13.088304,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.675323
+                        ],
+                        [
+                            13.760909,
+                            52.338079
+                        ],
+                        [
+                            13.088304,
+                            52.338079
+                        ]
+                    ]
+                ]
+            },
+            "centroid": [
+                13.397251080234483,
+                52.506701
+            ],
+            "contained_within": [
+                {
+                    "id": "fdcd221ac44fa326",
+                    "name": "Germany",
+                    "full_name": "Germany",
+                    "country": "Germany",
+                    "country_code": "DE",
+                    "url": "https://api.twitter.com/1.1/geo/id/fdcd221ac44fa326.json",
+                    "place_type": "country",
+                    "attributes": {},
+                    "bounding_box": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    55.056823
+                                ],
+                                [
+                                    15.0418536,
+                                    47.270127
+                                ],
+                                [
+                                    5.8663566,
+                                    47.270127
+                                ]
+                            ]
+                        ]
+                    },
+                    "centroid": [
+                        10.579070078110984,
+                        51.163475000000005
+                    ]
+                }
+            ]
+        },
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en",
+        "user": {
+            "id": 175131590.98096204,
+            "id_str": "175131590",
+            "name": "Willy",
+            "screen_name": "Willy"
+        }
+    }
+]

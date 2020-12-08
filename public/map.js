@@ -114,6 +114,7 @@ const map = {
 
     AddCircleMarker: function(tweets){
         let dict = {};
+        map.nonLocated = 0;
         for(let i = 0; i < tweets.length; i++){
             let coord = map.GetMediumLocationFromPlace(tweets[i]);
             if(coord && dict[Math.round(coord[0]) + "" + Math.round(coord[1])]){
@@ -128,14 +129,14 @@ const map = {
             }
         }
         let keys = Object.keys(dict);
-        console.log(keys)
-        console.log(dict)
         for(let i = 0; i < keys.length; i ++){
-            this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / keys.length * 100));
+            this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / (tweets.length - this.nonLocated) * 150));
         }
+
     },
 
     CreateCircleMarker: function(lat, long, radius){
+        console.log(radius)
         let mark = L.circleMarker([lat, long], {
             "radius": radius,
             "fillColor": "#ff7800",
