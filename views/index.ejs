@@ -179,7 +179,8 @@
                             <input type="number" step="1" max="100" min="1" v-model="pagewatchers[current_tab-1].timer" readonly>
                         </div>
                     </div>
-                    <button class="btn btn-danger" @click="removeWatcher(current_tab-1)" id="rmwatcher">Remove Watcher</button>
+                    <button class="btn btn-danger m-2" @click="removeWatcher(current_tab-1)" id="rmwatcher">Remove Watcher</button>
+                    <button class="btn btn-danger m-2" @click="disableWatcher(current_tab-1)" id="rmwatcher">Disable Watcher</button>
                 </div>
             </div>
             <div class="d-flex justify-content-between">
@@ -275,7 +276,7 @@
             <div id="bar-holder">
                 <canvas id="bar"></canvas>
             </div>
-            <button id="updateGraphs" class="" v-on:click="updateGraphs(computedtweets)">grafici</button>
+            <!--<button id="updateGraphs" class="" v-on:click="updateGraphs(computedtweets)">grafici</button>-->
         </div>
     </div>
 
