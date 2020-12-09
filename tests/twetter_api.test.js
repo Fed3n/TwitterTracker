@@ -5,11 +5,6 @@ test('test stream closed', ()=>{
 	expect(tweeter_api.stream).toBeNull();
 });
 
-test('test recent search error', async ()=>{
-	expect(await tweeter_api.recentSearch()).toBeNull();
-});
-
-
 test('test recent search', async ()=>{
 	let params = {
 		q:"ciao",
@@ -22,7 +17,6 @@ test('test recent search', async ()=>{
 
 test('test get user', async ()=>{
 	let data = await tweeter_api.getUser({screen_name:"r31458893"});
-	console.log(data.id);
 	expect(data.id).toBe(783649515832217600);
 })
 

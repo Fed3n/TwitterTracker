@@ -29,6 +29,7 @@ module.exports = {
             return res.statuses;
         }
         catch(err){
+            console.log(err);
             return null;
         }
     },
