@@ -29,7 +29,6 @@ module.exports = {
             return res.statuses;
         }
         catch(err){
-            console.log(err);
             return null;
         }
     },
@@ -38,7 +37,6 @@ module.exports = {
         this.stream = usr.stream("statuses/filter", params)
             .on("start", response => console.log("start"))
             .on("data", tweet => {
-                console.log(tweet);
                 this.stream_arr.push(tweet);
           })
             .on("error", error => console.log("error", error))
@@ -52,7 +50,6 @@ module.exports = {
     getUser: async function(query){
         try {
             let res = await app.get('users/show', query);
-            console.log(res);
             return res;
         }
         catch (err) {

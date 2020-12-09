@@ -322,8 +322,8 @@ var container = new Vue({
 			} else {
 				this.lastSorted = setting;
 				switch (setting) {
-					case "Id":
-						this.tweets.sort((x, y) => { if (x.id < y.id) return -1; else return 1 });
+					case "Images":
+						this.tweets.sort((x, y) => { if (x.entities.media && !y.entities.media) return -1; else return 1 });
 						break;
 					case "Username":
 						this.tweets.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
