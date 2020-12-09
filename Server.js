@@ -92,12 +92,12 @@ app.get("/stream", function (req,res) {
 
 //mette in azione un nuovo watcher con nome name, che fa una search di tweets con parametri
 //params ogni timer millisecondi
-app.post("/watch/start", function (req, res) {
+app.post("/watch/start", async function (req, res) {
     if(req.body.name && req.body.params && req.body.timer){
         req.body.name;
         req.body.params;
         req.body.timer;
-        if(watch.addWatcher(req.body.name, req.body.timer, req.body.params) < 0)
+        if(await watch.addWatcher(req.body.name, req.body.timer, req.body.params) < 0)
             return res.status(400).send("Watcher name already in use.");
         return res.status(200).send("New watcher added.");
     }

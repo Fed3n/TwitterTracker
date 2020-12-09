@@ -3,36 +3,37 @@ const newapi = require('./tweeter_api.js');
 
 var watchers = {};
 
+function watcherCallback(arr, name, params){
+    for(el of arr){
+        let is_in = false;
+        //when a new tweet is added, news property becomes true as a notification
+        for(tw of watchers[name]["tweets"]){
+            if(el.id == tw.id){
+                is_in = true;
+                break;
+            }
+        }
+        if(!is_in){
+            watchers[name]["tweets"].push(el);
+            watchers[name]["news"] = true;
+        }
+    }
+}
+
 module.exports = {
 
-
-    watcherSearch: function(name, params){
-        newapi.recentSearch(params).then((arr) => {
-            for(el of arr){
-                let is_in = false;
-                //when a new tweet is added, news property becomes true as a notification
-                for(tw of watchers[name]["tweets"]){
-                    if(el.id == tw.id){
-                        is_in = true;
-                        break;
-                    }
-                }
-                if(!is_in){
-                    watchers[name]["tweets"].push(el);
-                    watchers[name]["news"] = true;
-                }
-            }
-        });
-    },
-
     //adds a watcher to the this.watchers object given a unique name, time interval and tweet search parameters
-    addWatcher: function(name, timer, params){
+    addWatcher: async function(name, timer, params){
         if(name in watchers) {
             console.log("Watcher name already in use");
             return -1;
         }
         //adds a new timed function and returns its token
-        var token = setInterval(this.watcherSearch, timer, name, params);
+        var token = setInterval(function(){
+            newapi.recentSearch(params).then((arr) => {
+                watcherCallback(arr, name, params);
+            }).catch((err) => { console.log(err); });
+        }, timer, name, params);
         watchers[name] = {
             "token": token,
             "tweets": [],
@@ -40,7 +41,8 @@ module.exports = {
             "timer": timer,
             "params": params
         };
-        this.watcherSearch(name, params);
+        let arr = await newapi.recentSearch(params);
+        watcherCallback(arr, name, params);
         return 0;
     },
 
