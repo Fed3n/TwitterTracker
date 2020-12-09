@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="/css/style.css"/>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
         <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin="" ></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     </head>
 <body class="container-fluid">
     <div class="jumbotron rounded bg-primary">
@@ -178,7 +179,8 @@
                             <input type="number" step="1" max="100" min="1" v-model="pagewatchers[current_tab-1].timer" readonly>
                         </div>
                     </div>
-                    <button class="btn btn-danger" @click="removeWatcher(current_tab-1)" id="rmwatcher">Remove Watcher</button>
+                    <button class="btn btn-danger m-2" @click="removeWatcher(current_tab-1)" id="rmwatcher">Remove Watcher</button>
+                    <button class="btn btn-danger m-2" @click="disableWatcher(current_tab-1)" id="rmwatcher">Disable Watcher</button>
                 </div>
             </div>
             <div class="d-flex justify-content-between">
@@ -263,12 +265,19 @@
               </table>
             </div>
         </div>
-        <!--
-        <div class="col-4">
-            <p>Bellissima colonna in cui mettere mappa/grafici/statistiche idk</p>
-            <div id="extra"></div>
+        <div class="col-4" style="position: sticky; top: 0;">
+            <p>Statistiche</p>
+            <div id="doughnut-holder">
+                <canvas id="doughnut"></canvas>
+            </div>
+            <div id="line-holder">
+                <canvas id="line"></canvas>
+            </div>
+            <div id="bar-holder">
+                <canvas id="bar"></canvas>
+            </div>
+            <!--<button id="updateGraphs" class="" v-on:click="updateGraphs(computedtweets)">grafici</button>-->
         </div>
-        -->
     </div>
 
     <div class="modal fade" id="modal" current_tab="-1" role="dialog" aria-hidden="true">
@@ -323,7 +332,10 @@
                             </div>
                         </div>
                     </div>
-                    <div id="map" class="mx-auto" style="width: 40vw; height: 40vw;"></div>
+                    <div id="mapDiv" class="mx-auto"><div id="bubbleCheck"><input type="checkbox" id="bubble">
+                        <label for="bubble">show bubble</label></div>
+                         <div id="map" class="mx-auto" style="width: 40vw; height: 40vw;"></div>
+                    </div>
                     <div id="watchermodal" class="container-fluid">
                         <div class="container">
                             <h3>Watcher Launch</h3>
