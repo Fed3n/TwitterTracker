@@ -29,7 +29,16 @@ var container = new Vue({
 		//graphs
 		doughnutG: {},
 		lineG: {},
-		barG: {}
+		barG: {},
+		colors: [
+			0xFFB300, 
+			0x803E75, 
+			0xFF6800, 
+			0xA6BDD7, 
+			0xC10020, 
+			0xCEA262, 
+			0x817066
+		]
 	},
 	mounted: function () {
 		window.setInterval(this.updateStream, 1000);
@@ -422,7 +431,7 @@ var container = new Vue({
 				data: {
 					datasets: [{
 						data: Object.values(data[1]),
-						backgroundColor: this.genColors(data[0]),
+						backgroundColor: colors,
 						label: 'Dataset 1'
 					}],
 					labels: Object.keys(data[1])
@@ -448,15 +457,15 @@ var container = new Vue({
 			window.myDoughnut = new Chart(ctx, doughnutG);
 		},
 		buildLine: function(data) {
-			var col = this.genColors(7);
+			//var col = colors[Math.floor((Math.random() * 7) - 0.001)];
 			lineG = {
 				type: 'line',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
 						label: 'My First dataset',
-						backgroundColor: col,
-						borderColor: col,
+						backgroundColor: colors,
+						borderColor: colors[6],
 						data: Object.values(data),
 						fill: false,
 					}]
@@ -499,15 +508,14 @@ var container = new Vue({
 			window.myLine = new Chart(ctx, lineG);
 		},
 		buildBar: function(data) {
-			var col = this.genColors(data.length);
 			barG = {
 				type: 'bar',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
 						label: "test",
-						backgroundColor: col,
-						borderColor: col,
+						backgroundColor: colors,
+						borderColor: colors,
 						data: Object.values(data),
 						fill: true,
 					}]
