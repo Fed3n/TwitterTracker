@@ -34,15 +34,6 @@ var container = new Vue({
 		lineG: {},
 		barG: {},
 		wordcloudG: {},
-		colors: [
-			"#FFB300",
-			"#803E75",
-			"#FF6800",
-			"#A6BDD7",
-			"#C10020",
-			"#CEA262",
-			"#817066"
-		],
 
 		//wordcloud
 		words: []
@@ -408,11 +399,11 @@ var container = new Vue({
 				}
 			}
 			wd = []
-			for(let [key, value] of Object.entries(words)){
-				wd.push({"tag": key, "weight": value});
+			for (let [key, value] of Object.entries(words)) {
+				wd.push({ "tag": key, "weight": value });
 			}
-			
-			if(wd.length == 0) wd = "";
+
+			if (wd.length == 0) wd = "";
 			return wd;
 		},
 		postsAtDay: function (compTweets) {
@@ -444,45 +435,28 @@ var container = new Vue({
 			}
 			return posts;
 		},
-		genColors: function (n) {
-			var chartColors = [];
-			while (chartColors.length < n) {
-				var letters = '0123456789ABCDEF';
-				var color = '#';
-				for (var i = 0; i < 6; i++) {
-					color += letters[Math.floor(Math.random() * 16)];
-				}
-				chartColors.push(color);
-			}
-			return chartColors;
+		genColor: function (h) {
+			let f = (n, k = (n + h * 12) % 12) => .5 - .5 * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+			let rgb2hex = (r, g, b) => "#" + [r, g, b].map(x => Math.round(x * 255).toString(16).padStart(2, 0)).join('');
+			return (rgb2hex(f(0), f(8), f(4)));
 		},
-		genColors2: funciotn(numOfSteps, step) {
-			// This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
-			// Adam Cole, 2011-Sept-14
-			// HSV to RBG adapted from: http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
-			var r, g, b;
-			var h = step / numOfSteps;
-			var i = ~~(h * 6);
-			var f = h * 6 - i;
-			var q = 1 - f;
-			switch(i % 6){
-				case 0: r = 1; g = f; b = 0; break;
-				case 1: r = q; g = 1; b = 0; break;
-				case 2: r = 0; g = 1; b = f; break;
-				case 3: r = 0; g = q; b = 1; break;
-				case 4: r = f; g = 0; b = 1; break;
-				case 5: r = 1; g = 0; b = q; break;
+		genColors: function (stops) {
+			var colors = []
+			for (var i = 0; i < stops; i++) {
+				var c = i / stops;
+				colors.push(this.genColor(c, 1, 0.5));
 			}
-			var c = "#" + ("00" + (~ ~(r * 255)).toString(16)).slice(-2) + ("00" + (~ ~(g * 255)).toString(16)).slice(-2) + ("00" + (~ ~(b * 255)).toString(16)).slice(-2);
-			return (c);
+			colors.sort(() => {return Math.round(Math.random())-0.5});
+			return colors;
 		},
 		buildDoughnut: function (data) {
+			let colors = this.genColors(data[0]);
 			doughnutG = {
 				type: 'doughnut',
 				data: {
 					datasets: [{
 						data: Object.values(data[1]),
-						backgroundColor: this.colors,
+						backgroundColor: colors,
 						label: 'Dataset 1'
 					}],
 					labels: Object.keys(data[1])
@@ -509,14 +483,15 @@ var container = new Vue({
 		},
 		buildLine: function (data) {
 			//var col = colors[Math.floor((Math.random() * 7) - 0.001)];
+			let colors = this.genColors(7);
 			lineG = {
 				type: 'line',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
-						label: 'My First dataset',
-						backgroundColor: this.colors,
-						borderColor: this.colors[6],
+						label: '',
+						backgroundColor: colors,
+						borderColor: colors,
 						data: Object.values(data),
 						fill: false,
 					}]
@@ -562,14 +537,15 @@ var container = new Vue({
 			window.myLine = new Chart(ctx, lineG);
 		},
 		buildBar: function (data) {
+			let colors = this.genColors(Object.keys(data).length);
 			barG = {
 				type: 'bar',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
-						label: "test",
-						backgroundColor: this.colors,
-						borderColor: this.colors,
+						label: "",
+						backgroundColor: colors,
+						borderColor: colors,
 						data: Object.values(data),
 						fill: true,
 					}]
@@ -614,8 +590,7 @@ var container = new Vue({
 				window.myBar.destroy()
 			window.myBar = new Chart(ctx, barG);
 		},
-		buildWordCloud: function (data){
-			console.log(data);
+		buildWordCloud: function (data) {
 			//am4core.useTheme(am4themes_dark);
 			//am4core.useTheme(am4themes_animated);
 
@@ -625,21 +600,20 @@ var container = new Vue({
 			series.step = 15;
 			series.rotationThreshold = 0.7;
 			series.maxCount = 30;
-			series.minWordLength = 2;
+			series.minWordLength = 3;
 			series.labels.template.tooltipText = "{word}: {value}";
 			series.fontFamily = "Courier New";
-			series.minFontSize = am4core.percent(10);
-			series.maxFontSize = am4core.percent(60);
+			series.minFontSize = am4core.percent(8);
+			series.maxFontSize = am4core.percent(70);
 
 			series.dataFields.word = "tag";
 			series.dataFields.value = "weight";
 			txt = ""
-			for(let j = 0; j < data.length; j++){
+			for (let j = 0; j < data.length; j++) {
 				obj = data[j];
-				for(let i=0; i<obj["weight"]; i++)
-					txt += obj["tag"] + " "; 
+				for (let i = 0; i < obj["weight"]; i++)
+					txt += obj["tag"] + " ";
 			}
-			console.log(txt);
 			series.text = txt;
 
 		},
@@ -695,7 +669,7 @@ var container = new Vue({
 		}
 	},
 	watch: {
-		computedtweets: function (){
+		computedtweets: function () {
 			this.updateGraphs(this.computedtweets);
 		}
 	}
