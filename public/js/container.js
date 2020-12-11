@@ -1,5 +1,8 @@
+//const { WordCloudController } = require("chartjs-chart-wordcloud");
+
 //meme di martina per far andare values su tutti i browsers
 Object.values = Object.values || function (o) { return Object.keys(o).map(function (k) { return o[k] }) };
+
 
 var filtercounter = {};
 var container = new Vue({
@@ -30,15 +33,19 @@ var container = new Vue({
 		doughnutG: {},
 		lineG: {},
 		barG: {},
+		wordcloudG: {},
 		colors: [
-			0xFFB300, 
-			0x803E75, 
-			0xFF6800, 
-			0xA6BDD7, 
-			0xC10020, 
-			0xCEA262, 
-			0x817066
-		]
+			"#FFB300",
+			"#803E75",
+			"#FF6800",
+			"#A6BDD7",
+			"#C10020",
+			"#CEA262",
+			"#817066"
+		],
+
+		//wordcloud
+		words: []
 	},
 	mounted: function () {
 		window.setInterval(this.updateStream, 1000);
@@ -199,8 +206,8 @@ var container = new Vue({
 					let reqwatchers = res;
 					//same as above m8b worse
 					for (let i = 0; i < container.pagewatchers.length; i++) {
-						for(watcher of reqwatchers){
-							if(container.pagewatchers[i].name == watcher.name){
+						for (watcher of reqwatchers) {
+							if (container.pagewatchers[i].name == watcher.name) {
 								if (container.pagewatchers[i].news && !watcher.news) watcher.news = true;
 								if (container.pagewatchers[i].tweets.length < watcher.tweets.length) container.pagewatchers[i] = watcher;
 							}
@@ -313,7 +320,7 @@ var container = new Vue({
 			for (label of this.computedfilters()) {
 				contains = false;
 				if (label.type == "Username") {
-					if (tweet.user.name.toUpperCase()==label.value.toUpperCase()) {
+					if (tweet.user.name.toUpperCase() == label.value.toUpperCase()) {
 						if (this.checkedFilters.length == 0)
 							return true;
 						contains = true
@@ -384,6 +391,41 @@ var container = new Vue({
 			}
 			return [counter, reps];
 		},
+		countWords: function (compTweets) {
+			var words = {}
+
+			for (var i in compTweets) {
+				var tweet = compTweets[i];
+				if (tweet.text != undefined) {
+					var ww = tweet.text.split(' ');
+					for (var j in ww) {
+						var w = ww[j];
+						if (!(w.toLowerCase() in words)) {
+							words[w.toLowerCase()] = 0;
+						}
+						words[w.toLowerCase()]++;
+					}
+				}
+			}
+			wd = []
+			for(let [key, value] of Object.entries(words)){
+				wd.push({"tag": key, "weight": value});
+			}
+			/*è un casino: prima mappo l'oggetto in un array bidimensionale
+			var items = Object.keys(words).map(function (key) {
+				return [key, words[key]];
+			});
+			//così posso ordinarlo per prendere le parole più comuni presenti boh
+			items.sort(function (first, second) {
+				return second[1] - first[1];
+			});
+			items = items.slice(0, 50);
+			//e poi lo riconverto in oggetto perchè mi serve così per la wc
+			var wd = Object.assign([], ...items.map((x) => ({"tag": [x[0]], "weight": x[1]})));*/
+			console.log(wd);
+			if(wd.length == 0) wd = "";
+			return wd;
+		},
 		postsAtDay: function (compTweets) {
 			var posts = {};
 
@@ -394,14 +436,14 @@ var container = new Vue({
 					day = date[1] + " " + date[2];
 					if (!(day in posts))
 						posts[day] = 0;
-					
+
 					posts[day]++;
 				}
 			}
 			return posts;
 		},
-		postsPerWeekday: function(compTweets) {
-			var posts = {Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0}
+		postsPerWeekday: function (compTweets) {
+			var posts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 }
 
 			for (var i in compTweets) {
 				var tweet = compTweets[i];
@@ -431,7 +473,7 @@ var container = new Vue({
 				data: {
 					datasets: [{
 						data: Object.values(data[1]),
-						backgroundColor: colors,
+						backgroundColor: this.colors,
 						label: 'Dataset 1'
 					}],
 					labels: Object.keys(data[1])
@@ -452,11 +494,11 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('doughnut').getContext('2d');
-			if(window.myDoughnut != undefined)
+			if (window.myDoughnut != undefined)
 				window.myDoughnut.destroy()
 			window.myDoughnut = new Chart(ctx, doughnutG);
 		},
-		buildLine: function(data) {
+		buildLine: function (data) {
 			//var col = colors[Math.floor((Math.random() * 7) - 0.001)];
 			lineG = {
 				type: 'line',
@@ -464,8 +506,8 @@ var container = new Vue({
 					labels: Object.keys(data),
 					datasets: [{
 						label: 'My First dataset',
-						backgroundColor: colors,
-						borderColor: colors[6],
+						backgroundColor: this.colors,
+						borderColor: this.colors[6],
 						data: Object.values(data),
 						fill: false,
 					}]
@@ -474,7 +516,10 @@ var container = new Vue({
 					responsive: true,
 					title: {
 						display: true,
-						text: 'Number of tweets in time'
+						text: 'Tweeting tendencies'
+					},
+					legend: {
+						display: false,
 					},
 					tooltips: {
 						mode: 'index',
@@ -503,19 +548,19 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('line').getContext('2d')
-			if(window.myLine != undefined)
+			if (window.myLine != undefined)
 				window.myLine.destroy()
 			window.myLine = new Chart(ctx, lineG);
 		},
-		buildBar: function(data) {
+		buildBar: function (data) {
 			barG = {
 				type: 'bar',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
 						label: "test",
-						backgroundColor: colors,
-						borderColor: colors,
+						backgroundColor: this.colors,
+						borderColor: this.colors,
 						data: Object.values(data),
 						fill: true,
 					}]
@@ -524,7 +569,10 @@ var container = new Vue({
 					responsive: true,
 					title: {
 						display: true,
-						text: 'Number of tweets in time'
+						text: 'Tweets per day'
+					},
+					legend: {
+						display: false,
 					},
 					tooltips: {
 						mode: 'index',
@@ -553,10 +601,70 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('bar').getContext('2d')
-			if(window.myBar != undefined)
+			if (window.myBar != undefined)
 				window.myBar.destroy()
 			window.myBar = new Chart(ctx, barG);
 		},
+		buildWordCloud: function (data){
+			console.log(data);
+			//am4core.useTheme(am4themes_dark);
+			//am4core.useTheme(am4themes_animated);
+
+			let chart = am4core.create("wordcloud-holder", am4plugins_wordCloud.WordCloud);
+			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+			series.accuracy = 5;
+			series.step = 15;
+			series.rotationThreshold = 0.7;
+			series.maxCount = 30;
+			series.minWordLength = 2;
+			series.labels.template.tooltipText = "{word}: {value}";
+			series.fontFamily = "Courier New";
+			series.minFontSize = am4core.percent(10);
+			series.maxFontSize = am4core.percent(60);
+
+			series.dataFields.word = "tag";
+			series.dataFields.value = "weight";
+			txt = ""
+			for(let j = 0; j < data.length; j++){
+				obj = data[j];
+				for(let i=0; i<obj["weight"]; i++)
+					txt += obj["tag"] + " "; 
+			}
+			console.log(txt);
+			series.text = txt;
+
+		},
+		/*buildWc: function (data) {
+			wordcloudG = {
+				type: WordCloudController.id,
+				data: {
+					// text
+					labels: Object.keys(data),
+					datasets: [
+						{
+							label: 'DS',
+							// size in pixel
+							data: Object.values(data),
+						},
+					],
+				},
+				options: {
+					responsive: true,
+					legend: {
+						display: false,
+					},
+					title: {
+						display: true,
+						text: 'Word Cloud'
+					}
+				},
+			};
+
+			var ctx = document.getElementById('wordcloud').getContext('2d');
+			if (window.myWc != undefined)
+				window.myWc.destroy()
+			window.myWc = new Chart(ctx, wordcloudG);
+		},*/
 		updateGraphs: function (compTweets) {
 			var dData = this.countHashtags(compTweets);
 			this.buildDoughnut(dData);
@@ -564,8 +672,10 @@ var container = new Vue({
 			this.buildLine(lData);
 			var bData = this.postsAtDay(compTweets);
 			this.buildBar(bData);
+			var wcData = this.countWords(compTweets);
+			this.buildWordCloud(wcData);
 		},
-		currentTweets: function(){
+		currentTweets: function () {
 			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
 			return this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
 		}
@@ -577,11 +687,10 @@ var container = new Vue({
 			let comp = [];
 			for (tweet of this.currentTweets()) {
 				if (this.righthashtags(tweet) && this.rightlocation(tweet) && this.rightcontains(tweet) && this.rightUser(tweet)
-				  && !(this.onlyLocated && !tweet.geo) && !(this.onlyImages && !tweet.entities.media)) {
+					&& !(this.onlyLocated && !tweet.geo) && !(this.onlyImages && !tweet.entities.media)) {
 					comp.push(tweet);
 				}
 			};
-			this.updateGraphs(comp);
 			return comp;
 		},
 		computedchecks: {
@@ -590,6 +699,7 @@ var container = new Vue({
 			},
 			set() { }
 		},
+
 		computedwatchers: function () {
 			watchers = [];
 			for (watcher of this.allwatchers) {
@@ -605,6 +715,11 @@ var container = new Vue({
 				}
 			}
 			return watchers;
+		}
+	},
+	watch: {
+		computedtweets: function (){
+			this.updateGraphs(this.computedtweets);
 		}
 	}
 })
