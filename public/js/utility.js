@@ -21,7 +21,25 @@ function exportfile(){
 	document.body.appendChild(downloadAnchorNode);
 	downloadAnchorNode.click();
 	downloadAnchorNode.remove();
-}  
+}
+
+function numberThem(tweets_data){
+	let dict = {};
+	tweets = new Array();
+	tweets = tweets_data;
+	tweets.sort((x,y) => {if(Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1});
+	for(let i = 0; i < tweets.length; i++){
+		if(dict[tweets[i].user.id] && tweets[i].geo){
+			dict[tweets[i].user.id]++;
+			tweets[i].text = dict[tweets[i].user.id] + " : " + tweets[i].text;
+		}else if(tweets[i].geo){
+			dict[tweets[i].user.id] = 1;
+			console.log(tweets[i].text)
+			tweets[i].text = dict[tweets[i].user.id] + " : " + tweets[i].text;
+		}
+	}
+	return tweets;
+}
 
 $(document).ready(function(){
 	$("#import").change(importfile);
@@ -33,5 +51,4 @@ $(document).ready(function(){
 	$('.dropdown-menu').click((e)=>{e.stopPropagation();});
 	$('.modal').on('shown.bs.modal', () => {map.mymap.invalidateSize();});
 	map.SetMap("map");
-
 })

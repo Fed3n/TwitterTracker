@@ -16,8 +16,9 @@ var container = new Vue({
 		checkedsettings: ["Username", "Text", "Date"],
 		checkedFilters: [],
 		onlyLocated: false,
+		onlyImages: false,
 		stream_on: false,
-		local_filters: ["Contains", "Hashtag", "Location"],
+		local_filters: ["Contains", "Hashtag", "Location", "Username"],
 		lastSorted: "",
 
 		//queries
@@ -189,12 +190,13 @@ var container = new Vue({
 					let reqwatchers = res;
 					//same as above m8b worse
 					for (let i = 0; i < container.pagewatchers.length; i++) {
-						//asynchronicity misteries so better check
-						if (reqwatchers[i]) {
-							if (container.pagewatchers[i].news && !reqwatchers[i].news) reqwatchers[i].news = true;
+						for(watcher of reqwatchers){
+							if(container.pagewatchers[i].name == watcher.name){
+								if (container.pagewatchers[i].news && !watcher.news) watcher.news = true;
+								if (container.pagewatchers[i].tweets.length < watcher.tweets.length) container.pagewatchers[i] = watcher;
+							}
 						}
 					}
-					container.pagewatchers = reqwatchers;
 				})
 					.catch(function (err) {
 						throw (err);
@@ -210,9 +212,11 @@ var container = new Vue({
 					throw (err);
 				});
 		},
-		removeWatcher: function (index) {
+		disableWatcher: function (index) {
 			$.post("watch/stop?name=" + this.pagewatchers[index].name);
-			this.pagewatchers.slice(index, 1);
+		},
+		removeWatcher: function (index) {
+			this.pagewatchers.splice(index, 1);
 			this.current_tab = 0;
 		},
 		righthashtags: function (tweet) { //ora deve combaciare con tutti gli hashtag, chiedere se va bene
@@ -223,7 +227,7 @@ var container = new Vue({
 				if (label.type == "Hashtag") {
 					contains = false;
 					for (tag of tweet.entities.hashtags) {
-						if (tag.text == label.value) {
+						if (tag.text.toUpperCase() == label.value.toUpperCase()) {
 							if (this.checkedFilters.length == 0)
 								return true;
 							contains = true;
@@ -293,14 +297,33 @@ var container = new Vue({
 			return contains;
 
 		},
+		rightUser: function (tweet) {
+			if (!filtercounter["Username"] || filtercounter["Username"] == 0) { return true; }
+			if (!tweet.user.name) { return false; }
+			let contains;
+			for (label of this.computedfilters()) {
+				contains = false;
+				if (label.type == "Username") {
+					if (tweet.user.name.toUpperCase()==label.value.toUpperCase()) {
+						if (this.checkedFilters.length == 0)
+							return true;
+						contains = true
+					} else {
+						if (this.checkedFilters.length > 0)
+							return false;
+					}
+				}
+			}
+			return contains;
+		},
 		sortTweets: function (setting) {
 			if (setting == this.lastSorted) {
 				this.tweets = this.tweets.reverse();
 			} else {
 				this.lastSorted = setting;
 				switch (setting) {
-					case "Id":
-						this.tweets.sort((x, y) => { if (x.id < y.id) return -1; else return 1 });
+					case "Images":
+						this.tweets.sort((x, y) => { if (x.entities.media && !y.entities.media) return -1; else return 1 });
 						break;
 					case "Username":
 						this.tweets.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
@@ -533,20 +556,24 @@ var container = new Vue({
 			this.buildLine(lData);
 			var bData = this.postsAtDay(compTweets);
 			this.buildBar(bData);
+		},
+		currentTweets: function(){
+			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
+			return this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
 		}
 	},
 	computed: {
 		computedtweets: function () {
-			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
-			let tweets = this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
 			this.labels;
 			this.checkedFilters;
 			let comp = [];
-			for (tweet of tweets) {
-				if (this.righthashtags(tweet) && this.rightlocation(tweet) && this.rightcontains(tweet) && !(this.onlyLocated && !tweet.geo)) {
+			for (tweet of this.currentTweets()) {
+				if (this.righthashtags(tweet) && this.rightlocation(tweet) && this.rightcontains(tweet) && this.rightUser(tweet)
+				  && !(this.onlyLocated && !tweet.geo) && !(this.onlyImages && !tweet.entities.media)) {
 					comp.push(tweet);
 				}
 			};
+			this.updateGraphs(comp);
 			return comp;
 		},
 		computedchecks: {

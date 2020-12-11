@@ -37,12 +37,10 @@ app.get("/user", async function (req, res) {
  * passate uno per uno quelli che volete usare nella query e la funzione fa parsing e li mette in un oggetto params*/
 app.get("/search", async function (req, res) {
     let params = {};
-    console.log(req.query);
     for(let field in req.query){
         params[field] = req.query[field];
     }
     let arr = await newapi.recentSearch(params);
-    console.log(arr);
     if(arr) {
         if(arr.length > 0){
             res.setHeader('Content-Type', 'application/json');  
@@ -58,11 +56,9 @@ app.get("/search", async function (req, res) {
 app.post("/stream/start", async function (req, res) {
     console.log("in stream");
     let params = {};
-    console.log(req.query);
     for(let field in req.query){
         params[field] = req.query[field];
     }
-    console.log('Stream params: ' + params);
     try {
         newapi.startStream(params);
         return res.status(200).send("Stream started.");
@@ -96,12 +92,12 @@ app.get("/stream", function (req,res) {
 
 //mette in azione un nuovo watcher con nome name, che fa una search di tweets con parametri
 //params ogni timer millisecondi
-app.post("/watch/start", function (req, res) {
+app.post("/watch/start", async function (req, res) {
     if(req.body.name && req.body.params && req.body.timer){
         req.body.name;
         req.body.params;
         req.body.timer;
-        if(watch.addWatcher(req.body.name, req.body.timer, req.body.params) < 0)
+        if(await watch.addWatcher(req.body.name, req.body.timer, req.body.params) < 0)
             return res.status(400).send("Watcher name already in use.");
         return res.status(200).send("New watcher added.");
     }
