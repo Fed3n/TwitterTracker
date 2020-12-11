@@ -411,18 +411,7 @@ var container = new Vue({
 			for(let [key, value] of Object.entries(words)){
 				wd.push({"tag": key, "weight": value});
 			}
-			/*è un casino: prima mappo l'oggetto in un array bidimensionale
-			var items = Object.keys(words).map(function (key) {
-				return [key, words[key]];
-			});
-			//così posso ordinarlo per prendere le parole più comuni presenti boh
-			items.sort(function (first, second) {
-				return second[1] - first[1];
-			});
-			items = items.slice(0, 50);
-			//e poi lo riconverto in oggetto perchè mi serve così per la wc
-			var wd = Object.assign([], ...items.map((x) => ({"tag": [x[0]], "weight": x[1]})));*/
-			console.log(wd);
+			
 			if(wd.length == 0) wd = "";
 			return wd;
 		},
@@ -466,6 +455,26 @@ var container = new Vue({
 				chartColors.push(color);
 			}
 			return chartColors;
+		},
+		genColors2: funciotn(numOfSteps, step) {
+			// This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
+			// Adam Cole, 2011-Sept-14
+			// HSV to RBG adapted from: http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
+			var r, g, b;
+			var h = step / numOfSteps;
+			var i = ~~(h * 6);
+			var f = h * 6 - i;
+			var q = 1 - f;
+			switch(i % 6){
+				case 0: r = 1; g = f; b = 0; break;
+				case 1: r = q; g = 1; b = 0; break;
+				case 2: r = 0; g = 1; b = f; break;
+				case 3: r = 0; g = q; b = 1; break;
+				case 4: r = f; g = 0; b = 1; break;
+				case 5: r = 1; g = 0; b = q; break;
+			}
+			var c = "#" + ("00" + (~ ~(r * 255)).toString(16)).slice(-2) + ("00" + (~ ~(g * 255)).toString(16)).slice(-2) + ("00" + (~ ~(b * 255)).toString(16)).slice(-2);
+			return (c);
 		},
 		buildDoughnut: function (data) {
 			doughnutG = {
@@ -634,37 +643,6 @@ var container = new Vue({
 			series.text = txt;
 
 		},
-		/*buildWc: function (data) {
-			wordcloudG = {
-				type: WordCloudController.id,
-				data: {
-					// text
-					labels: Object.keys(data),
-					datasets: [
-						{
-							label: 'DS',
-							// size in pixel
-							data: Object.values(data),
-						},
-					],
-				},
-				options: {
-					responsive: true,
-					legend: {
-						display: false,
-					},
-					title: {
-						display: true,
-						text: 'Word Cloud'
-					}
-				},
-			};
-
-			var ctx = document.getElementById('wordcloud').getContext('2d');
-			if (window.myWc != undefined)
-				window.myWc.destroy()
-			window.myWc = new Chart(ctx, wordcloudG);
-		},*/
 		updateGraphs: function (compTweets) {
 			var dData = this.countHashtags(compTweets);
 			this.buildDoughnut(dData);
@@ -699,7 +677,6 @@ var container = new Vue({
 			},
 			set() { }
 		},
-
 		computedwatchers: function () {
 			watchers = [];
 			for (watcher of this.allwatchers) {
