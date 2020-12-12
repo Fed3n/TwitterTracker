@@ -1,5 +1,8 @@
+//const { WordCloudController } = require("chartjs-chart-wordcloud");
+
 //meme di martina per far andare values su tutti i browsers
 Object.values = Object.values || function (o) { return Object.keys(o).map(function (k) { return o[k] }) };
+
 
 var filtercounter = {};
 var container = new Vue({
@@ -29,7 +32,11 @@ var container = new Vue({
 		//graphs
 		doughnutG: {},
 		lineG: {},
-		barG: {}
+		barG: {},
+		wordcloudG: {},
+
+		//wordcloud
+		words: []
 	},
 	mounted: function () {
 		window.setInterval(this.updateStream, 1000);
@@ -190,8 +197,8 @@ var container = new Vue({
 					let reqwatchers = res;
 					//same as above m8b worse
 					for (let i = 0; i < container.pagewatchers.length; i++) {
-						for(watcher of reqwatchers){
-							if(container.pagewatchers[i].name == watcher.name){
+						for (watcher of reqwatchers) {
+							if (container.pagewatchers[i].name == watcher.name) {
 								if (container.pagewatchers[i].news && !watcher.news) watcher.news = true;
 								if (container.pagewatchers[i].tweets.length < watcher.tweets.length) container.pagewatchers[i] = watcher;
 							}
@@ -304,7 +311,7 @@ var container = new Vue({
 			for (label of this.computedfilters()) {
 				contains = false;
 				if (label.type == "Username") {
-					if (tweet.user.name.toUpperCase()==label.value.toUpperCase()) {
+					if (tweet.user.name.toUpperCase() == label.value.toUpperCase()) {
 						if (this.checkedFilters.length == 0)
 							return true;
 						contains = true
@@ -375,6 +382,30 @@ var container = new Vue({
 			}
 			return [counter, reps];
 		},
+		countWords: function (compTweets) {
+			var words = {}
+
+			for (var i in compTweets) {
+				var tweet = compTweets[i];
+				if (tweet.text != undefined) {
+					var ww = tweet.text.split(' ');
+					for (var j in ww) {
+						var w = ww[j];
+						if (!(w.toLowerCase() in words)) {
+							words[w.toLowerCase()] = 0;
+						}
+						words[w.toLowerCase()]++;
+					}
+				}
+			}
+			wd = []
+			for (let [key, value] of Object.entries(words)) {
+				wd.push({ "tag": key, "weight": value });
+			}
+
+			if (wd.length == 0) wd = "";
+			return wd;
+		},
 		postsAtDay: function (compTweets) {
 			var posts = {};
 
@@ -385,14 +416,14 @@ var container = new Vue({
 					day = date[1] + " " + date[2];
 					if (!(day in posts))
 						posts[day] = 0;
-					
+
 					posts[day]++;
 				}
 			}
 			return posts;
 		},
-		postsPerWeekday: function(compTweets) {
-			var posts = {Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0}
+		postsPerWeekday: function (compTweets) {
+			var posts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 }
 
 			for (var i in compTweets) {
 				var tweet = compTweets[i];
@@ -404,25 +435,28 @@ var container = new Vue({
 			}
 			return posts;
 		},
-		genColors: function (n) {
-			var chartColors = [];
-			while (chartColors.length < n) {
-				var letters = '0123456789ABCDEF';
-				var color = '#';
-				for (var i = 0; i < 6; i++) {
-					color += letters[Math.floor(Math.random() * 16)];
-				}
-				chartColors.push(color);
+		genColor: function (h) {
+			let f = (n, k = (n + h * 12) % 12) => .5 - .5 * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+			let rgb2hex = (r, g, b) => "#" + [r, g, b].map(x => Math.round(x * 255).toString(16).padStart(2, 0)).join('');
+			return (rgb2hex(f(0), f(8), f(4)));
+		},
+		genColors: function (stops) {
+			var colors = []
+			for (var i = 0; i < stops; i++) {
+				var c = i / stops;
+				colors.push(this.genColor(c, 1, 0.5));
 			}
-			return chartColors;
+			colors.sort(() => {return Math.round(Math.random())-0.5});
+			return colors;
 		},
 		buildDoughnut: function (data) {
+			let colors = this.genColors(data[0]);
 			doughnutG = {
 				type: 'doughnut',
 				data: {
 					datasets: [{
 						data: Object.values(data[1]),
-						backgroundColor: this.genColors(data[0]),
+						backgroundColor: colors,
 						label: 'Dataset 1'
 					}],
 					labels: Object.keys(data[1])
@@ -443,20 +477,21 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('doughnut').getContext('2d');
-			if(window.myDoughnut != undefined)
+			if (window.myDoughnut != undefined)
 				window.myDoughnut.destroy()
 			window.myDoughnut = new Chart(ctx, doughnutG);
 		},
-		buildLine: function(data) {
-			var col = this.genColors(7);
+		buildLine: function (data) {
+			//var col = colors[Math.floor((Math.random() * 7) - 0.001)];
+			let colors = this.genColors(7);
 			lineG = {
 				type: 'line',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
-						label: 'My First dataset',
-						backgroundColor: col,
-						borderColor: col,
+						label: '',
+						backgroundColor: colors,
+						borderColor: colors,
 						data: Object.values(data),
 						fill: false,
 					}]
@@ -465,7 +500,10 @@ var container = new Vue({
 					responsive: true,
 					title: {
 						display: true,
-						text: 'Number of tweets in time'
+						text: 'Tweeting tendencies'
+					},
+					legend: {
+						display: false,
 					},
 					tooltips: {
 						mode: 'index',
@@ -494,20 +532,20 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('line').getContext('2d')
-			if(window.myLine != undefined)
+			if (window.myLine != undefined)
 				window.myLine.destroy()
 			window.myLine = new Chart(ctx, lineG);
 		},
-		buildBar: function(data) {
-			var col = this.genColors(data.length);
+		buildBar: function (data) {
+			let colors = this.genColors(Object.keys(data).length);
 			barG = {
 				type: 'bar',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
-						label: "test",
-						backgroundColor: col,
-						borderColor: col,
+						label: "",
+						backgroundColor: colors,
+						borderColor: colors,
 						data: Object.values(data),
 						fill: true,
 					}]
@@ -516,7 +554,10 @@ var container = new Vue({
 					responsive: true,
 					title: {
 						display: true,
-						text: 'Number of tweets in time'
+						text: 'Tweets per day'
+					},
+					legend: {
+						display: false,
 					},
 					tooltips: {
 						mode: 'index',
@@ -545,9 +586,36 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('bar').getContext('2d')
-			if(window.myBar != undefined)
+			if (window.myBar != undefined)
 				window.myBar.destroy()
 			window.myBar = new Chart(ctx, barG);
+		},
+		buildWordCloud: function (data) {
+			//am4core.useTheme(am4themes_dark);
+			//am4core.useTheme(am4themes_animated);
+
+			let chart = am4core.create("wordcloud-holder", am4plugins_wordCloud.WordCloud);
+			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+			series.accuracy = 5;
+			series.step = 15;
+			series.rotationThreshold = 0.7;
+			series.maxCount = 30;
+			series.minWordLength = 3;
+			series.labels.template.tooltipText = "{word}: {value}";
+			series.fontFamily = "Courier New";
+			series.minFontSize = am4core.percent(8);
+			series.maxFontSize = am4core.percent(70);
+
+			series.dataFields.word = "tag";
+			series.dataFields.value = "weight";
+			txt = ""
+			for (let j = 0; j < data.length; j++) {
+				obj = data[j];
+				for (let i = 0; i < obj["weight"]; i++)
+					txt += obj["tag"] + " ";
+			}
+			series.text = txt;
+
 		},
 		updateGraphs: function (compTweets) {
 			var dData = this.countHashtags(compTweets);
@@ -556,8 +624,10 @@ var container = new Vue({
 			this.buildLine(lData);
 			var bData = this.postsAtDay(compTweets);
 			this.buildBar(bData);
+			var wcData = this.countWords(compTweets);
+			this.buildWordCloud(wcData);
 		},
-		currentTweets: function(){
+		currentTweets: function () {
 			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
 			return this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
 		}
@@ -569,11 +639,10 @@ var container = new Vue({
 			let comp = [];
 			for (tweet of this.currentTweets()) {
 				if (this.righthashtags(tweet) && this.rightlocation(tweet) && this.rightcontains(tweet) && this.rightUser(tweet)
-				  && !(this.onlyLocated && !tweet.geo) && !(this.onlyImages && !tweet.entities.media)) {
+					&& !(this.onlyLocated && !tweet.geo) && !(this.onlyImages && !tweet.entities.media)) {
 					comp.push(tweet);
 				}
 			};
-			this.updateGraphs(comp);
 			return comp;
 		},
 		computedchecks: {
@@ -597,6 +666,11 @@ var container = new Vue({
 				}
 			}
 			return watchers;
+		}
+	},
+	watch: {
+		computedtweets: function () {
+			this.updateGraphs(this.computedtweets);
 		}
 	}
 })

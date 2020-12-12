@@ -11,6 +11,11 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
         <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin="" ></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+        <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/plugins/wordCloud.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/themes/dark.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
     </head>
 <body class="container-fluid">
     <div class="jumbotron rounded bg-primary">
@@ -50,7 +55,7 @@
                 </li>
             </ol>
         </nav>
-        <div class="col-8">
+        <div class="col-7">
             <!--STREAM/SEARCH QUERYING AND START-->
             <div v-if="current_tab==0" id="gathering" class="container border rounded p-3 mb-2 mt-2">
                 <div id="switchquery" class="btn-group">
@@ -275,8 +280,10 @@
               </table>
             </div>
         </div>
-        <div class="col-4" style="position: sticky; top: 0;">
+        <div class="col-5" id="graphs-holder" style="position: sticky; top: 0;">
             <p>Statistiche</p>
+            
+            <div id="wordcloud-holder" ></div>
             <div id="doughnut-holder">
                 <canvas id="doughnut"></canvas>
             </div>
