@@ -92,8 +92,12 @@
                 <div v-else id="search" class="container">
                     <h3>Search Settings</h3>
                     <div class="row mb-1">
-                        <div class="col-2">
-                            <label for="searchquery">Query</label>
+                        <div class="col-2">      
+                            <label for="searchquery">Query
+                                <span><a href="https://developer.twitter.com/en/docs/twitter-api/v1/rules-and-filtering/search-operators" target="_blank">
+                                    <i class="far fa-question-circle"></i>
+                                </a></span>
+                            </label>
                         </div>
                         <div class="col-3">
                             <input type="text" id="searchquery" ref="searchquery" placeholder="Insert query expression">
@@ -352,9 +356,14 @@
                                 <div class="col-3">
                                     <input type="text" id="watchername" ref="watchername" placeholder="Insert watcher name">
                                 </div>
-                            </div><div class="row mb-1">
+                            </div>
+                            <div class="row mb-1">
                                 <div class="col-2">
-                                    <label for="watcherquery">Query</label>
+                                    <label for="watcherquery">Query
+                                        <span><a href="https://developer.twitter.com/en/docs/twitter-api/v1/rules-and-filtering/search-operators" target="_blank">
+                                            <i class="far fa-question-circle"></i>
+                                        </a></span>    
+                                    </label>
                                 </div>
                                 <div class="col-3">
                                     <input type="text" id="watcherquery" ref="watcherquery" placeholder="Insert query expression">
