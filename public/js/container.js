@@ -24,16 +24,19 @@ var container = new Vue({
 		local_filters: ["Contains", "Hashtag", "Location", "Username"],
 		lastSorted: "",
 
-		//queries
+		//streaming
 		is_stream: true,
-		stream_query: {},
-		search_query: {},
+
+		//periodic tweeting
+		tweeting_status: "#ingsw2020 post automatico! Twitter Tracker ha trovato _COUNT_ nuovi tweet!",
+		intervaltoken: null,
 
 		//graphs
 		doughnutG: {},
 		lineG: {},
 		barG: {},
 		wordcloudG: {},
+		wc_chart: null,
 
 		//wordcloud
 		words: []
@@ -220,12 +223,45 @@ var container = new Vue({
 				});
 		},
 		disableWatcher: function (index) {
-			$.post("watch/stop?name=" + this.pagewatchers[index].name);
+			ok = confirm("Are you sure you want to disable this watcher? It cannot be restarted.");
+			if(ok){
+				$.post("watch/stop?name=" + this.pagewatchers[index].name);
+				this.pagewatchers[index]["disabled"] = true;
+			}
 		},
 		removeWatcher: function (index) {
 			this.pagewatchers.splice(index, 1);
 			this.current_tab = 0;
 		},
+		
+		//setta timeinterval function che ogni timer ms posta tweet basato su tweets
+		//correntemente in visualizzazione aggiungendo la wordcloud come allegato
+		setTweeting: function() {
+			const mintimer = 1000*60;
+			let time = queryparser.parseDHMSInterval(this.$refs.tweettimer.value);
+			let timer = time > mintimer ? time : mintimer;
+			console.log(timer);
+			this.intervaltoken = setInterval( async function() {
+				try {
+					let img = await container.getChartAsImage();
+					let media = await $.post('media', {imgdata: img});
+					let params = {
+						status: container.computeStatus,
+						media_ids: [media.media_id_string]
+					};
+					await $.post("tweet", {params: params});
+					console.log("Posted tweet!");
+				}
+				catch(err){
+					throw(err);
+				}
+			}, timer);
+		},
+		stopTweeting: function() {
+			clearInterval(this.intervaltoken);
+			this.intervaltoken = null;
+		},
+
 		righthashtags: function (tweet) { //ora deve combaciare con tutti gli hashtag, chiedere se va bene
 			if (!filtercounter["Hashtag"] || filtercounter["Hashtag"] == 0) { return true; }
 			if (!tweet.entities || !tweet.entities.hashtags) { return false; }
@@ -593,6 +629,9 @@ var container = new Vue({
 		buildWordCloud: function (data) {
 			//am4core.useTheme(am4themes_dark);
 			//am4core.useTheme(am4themes_animated);
+			
+			//risolve i warning di 'char not disposed'
+			if(this.wc_chart) this.wc_chart.dispose();
 
 			let chart = am4core.create("wordcloud-holder", am4plugins_wordCloud.WordCloud);
 			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
@@ -615,6 +654,8 @@ var container = new Vue({
 					txt += obj["tag"] + " ";
 			}
 			series.text = txt;
+			chart.exporting.menu = new am4core.ExportMenu();
+			this.wc_chart = chart;
 
 		},
 		updateGraphs: function (compTweets) {
@@ -630,6 +671,33 @@ var container = new Vue({
 		currentTweets: function () {
 			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
 			return this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
+		},
+		
+		getChartAsImage: async function(){
+			if(this.wc_chart){
+				try {
+					let imgdata = await this.wc_chart.exporting.getImage("png");
+					imgdata = imgdata.replace(/-/g, '+').replace(/_/g, '/');
+					imgdata = imgdata.split('base64,')[1]
+					console.log(imgdata);
+					return imgdata;
+				}
+				catch {
+					throw(err);
+				}
+			}
+		},
+
+		getDivAsImage: async function(id) {
+			try {
+				let canvas = await html2canvas(document.getElementById(id));
+				let imgdata = canvas.toDataURL();
+				console.log(imgdata);
+				return imgdata;
+			}
+			catch(err) {
+				console.log(err);
+			}
 		}
 	},
 	computed: {
@@ -645,7 +713,7 @@ var container = new Vue({
 			};
 			return comp;
 		},
-		computedchecks: {
+		computedchecks:  {
 			get() {
 				return this.checkedsettings.length > 0;
 			},
@@ -666,6 +734,16 @@ var container = new Vue({
 				}
 			}
 			return watchers;
+		},
+		//fa parsing della stringa dello status sostituendo alle _KEYWORD_ le istanze corrispondenti
+		computeStatus: function() {
+			let status = this.tweeting_status;
+			status = status.replace(/_COUNT_/g, this.computedtweets.length.toString());
+			//status = status.replace(/_HASH_/g, Object.keys(this.countHashtags(this.computedtweets)[1])[0]);
+			return status;
+		},
+		computeReverseDHMS() {
+			return queryparser.parseDHMSIntervalReverse(this.pagewatchers[this.current_tab-1].timer); 
 		}
 	},
 	watch: {

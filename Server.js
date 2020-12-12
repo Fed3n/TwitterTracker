@@ -25,12 +25,33 @@ app.get("/test", function(req, res) {
 
 //###TWITTER API###
 
+app.post("/tweet", async function (req, res) {
+    if(req.body.params){
+        if(!req.body.params.status) return res.status(400).send("'status' parameter is mandatory.");
+        let tweet = await newapi.postTweet(req.body.params);
+        if(tweet){
+            res.setHeader('Content-Type', 'application/json');  
+            return res.status(200).send(tweet);
+        } else return res.status(500).send("Could not post your tweet.");
+    } else return res.status(400).send("Provide parameters for your tweet.");
+});
+
 
 app.get("/user", async function (req, res) {
     let user = await newapi.getUser(req.query);
     res.setHeader('Content-Type', 'application/json');  
     if(user) return res.status(200).send(user)
     else return res.status(404).send("Could not find user.");
+});
+
+app.post("/media", async function (req, res) {
+    if(req.body.imgdata){
+        let media_key = await newapi.uploadMedia(req.body.imgdata);
+        if(media_key){
+            res.setHeader('Content-Type', 'application/json');  
+            return res.status(200).send(media_key);
+        } else return res.status(500).send("Could not upload image.");
+    } else return res.status(400).send("Provide image base64 data in your request.");
 });
 
 /* vd https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/api-reference/get-search-tweets per parametri da passare a search
