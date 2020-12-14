@@ -78,6 +78,23 @@ const queryparser = {
         }
         //defaults to 10seconds
         return timer ? timer : 10000;
+    },
+
+    parseDHMSIntervalReverse: function(interval){
+        let n = (interval/1000);
+        
+        let days = Math.floor(n / (24*60*60));
+        n = n % (24*60*60);
+        
+        let hours = Math.floor(n / (60*60));
+        n = n % (60*60);
+
+        let mins = Math.floor(n / 60);
+        
+        secs = n % 60;
+
+        return `${days}:${hours}:${mins}:${secs}`
+
     }
 
 }
