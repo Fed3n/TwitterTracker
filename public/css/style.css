@@ -38,4 +38,9 @@ tr {
     display: table;
     table-layout: fixed;
 }
-th { position: sticky; top: 0; }
+
+th { 
+	position: sticky; 
+	top: 0; 
+	cursor: pointer;
+}

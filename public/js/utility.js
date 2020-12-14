@@ -49,5 +49,4 @@ $(document).ready(function(){
 	$('.dropdown-menu').click((e)=>{e.stopPropagation();});
 	$('.modal').on('shown.bs.modal', () => {map.mymap.invalidateSize();});
 	map.SetMap("map");
-
 })

@@ -18,12 +18,18 @@ app.get("/", function (req, res) {
     res.render("index");
 });
 
-//test grafici
-app.get("/test", function(req, res) {
-    res.render("graphsTest");
-});
-
 //###TWITTER API###
+
+app.post("/tweet", async function (req, res) {
+    if(req.body.params){
+        if(!req.body.params.status) return res.status(400).send("'status' parameter is mandatory.");
+        let tweet = await newapi.postTweet(req.body.params);
+        if(tweet){
+            res.setHeader('Content-Type', 'application/json');  
+            return res.status(200).send(tweet);
+        } else return res.status(500).send("Could not post your tweet.");
+    } else return res.status(400).send("Provide parameters for your tweet.");
+});
 
 
 app.get("/user", async function (req, res) {
@@ -33,16 +39,24 @@ app.get("/user", async function (req, res) {
     else return res.status(404).send("Could not find user.");
 });
 
+app.post("/media", async function (req, res) {
+    if(req.body.imgdata){
+        let media_key = await newapi.uploadMedia(req.body.imgdata);
+        if(media_key){
+            res.setHeader('Content-Type', 'application/json');  
+            return res.status(200).send(media_key);
+        } else return res.status(500).send("Could not upload image.");
+    } else return res.status(400).send("Provide image base64 data in your request.");
+});
+
 /* vd https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/api-reference/get-search-tweets per parametri da passare a search
  * passate uno per uno quelli che volete usare nella query e la funzione fa parsing e li mette in un oggetto params*/
 app.get("/search", async function (req, res) {
     let params = {};
-    console.log(req.query);
     for(let field in req.query){
         params[field] = req.query[field];
     }
     let arr = await newapi.recentSearch(params);
-    console.log(arr);
     if(arr) {
         if(arr.length > 0){
             res.setHeader('Content-Type', 'application/json');  
@@ -58,11 +72,9 @@ app.get("/search", async function (req, res) {
 app.post("/stream/start", async function (req, res) {
     console.log("in stream");
     let params = {};
-    console.log(req.query);
     for(let field in req.query){
         params[field] = req.query[field];
     }
-    console.log('Stream params: ' + params);
     try {
         newapi.startStream(params);
         return res.status(200).send("Stream started.");
@@ -96,12 +108,12 @@ app.get("/stream", function (req,res) {
 
 //mette in azione un nuovo watcher con nome name, che fa una search di tweets con parametri
 //params ogni timer millisecondi
-app.post("/watch/start", function (req, res) {
+app.post("/watch/start", async function (req, res) {
     if(req.body.name && req.body.params && req.body.timer){
         req.body.name;
         req.body.params;
         req.body.timer;
-        if(watch.addWatcher(req.body.name, req.body.timer, req.body.params) < 0)
+        if(await watch.addWatcher(req.body.name, req.body.timer, req.body.params) < 0)
             return res.status(400).send("Watcher name already in use.");
         return res.status(200).send("New watcher added.");
     }

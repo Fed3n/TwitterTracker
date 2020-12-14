@@ -1,5 +1,8 @@
+//const { WordCloudController } = require("chartjs-chart-wordcloud");
+
 //meme di martina per far andare values su tutti i browsers
 Object.values = Object.values || function (o) { return Object.keys(o).map(function (k) { return o[k] }) };
+
 
 var filtercounter = {};
 var container = new Vue({
@@ -16,19 +19,27 @@ var container = new Vue({
 		checkedsettings: ["Username", "Text", "Date"],
 		checkedFilters: [],
 		onlyLocated: false,
+		onlyImages: false,
 		stream_on: false,
-		local_filters: ["Contains", "Hashtag", "Location"],
+		local_filters: ["Contains", "Hashtag", "Location", "Username"],
 		lastSorted: "",
 
-		//queries
+		//streaming
 		is_stream: true,
-		stream_query: {},
-		search_query: {},
+
+		//periodic tweeting
+		tweeting_status: "#ingsw2020 post automatico! Twitter Tracker ha trovato _COUNT_ nuovi tweet!",
+		intervaltoken: null,
 
 		//graphs
 		doughnutG: {},
 		lineG: {},
-		barG: {}
+		barG: {},
+		wordcloudG: {},
+		wc_chart: null,
+
+		//wordcloud
+		words: []
 	},
 	mounted: function () {
 		window.setInterval(this.updateStream, 1000);
@@ -178,7 +189,7 @@ var container = new Vue({
 				container.allwatchers = watchers;
 			})
 				.catch(function (err) {
-					throw (err);
+					modal.showError(err.message);
 				});
 			let namelist = [];
 			for (watcher of this.pagewatchers) {
@@ -189,8 +200,8 @@ var container = new Vue({
 					let reqwatchers = res;
 					//same as above m8b worse
 					for (let i = 0; i < container.pagewatchers.length; i++) {
-						for(watcher of reqwatchers){
-							if(container.pagewatchers[i].name == watcher.name){
+						for (watcher of reqwatchers) {
+							if (container.pagewatchers[i].name == watcher.name) {
 								if (container.pagewatchers[i].news && !watcher.news) watcher.news = true;
 								if (container.pagewatchers[i].tweets.length < watcher.tweets.length) container.pagewatchers[i] = watcher;
 							}
@@ -198,7 +209,7 @@ var container = new Vue({
 					}
 				})
 					.catch(function (err) {
-						throw (err);
+						modal.showError(err.message);
 					});
 			}
 		},
@@ -208,16 +219,56 @@ var container = new Vue({
 				if (res.length > 0) container.pagewatchers.push(res[0]);
 			})
 				.catch(function (err) {
-					throw (err);
+					modal.showError(err.message);
 				});
 		},
 		disableWatcher: function (index) {
-			$.post("watch/stop?name=" + this.pagewatchers[index].name);
+			if (index < this.pagewatchers.length){
+				ok = confirm("Are you sure you want to disable this watcher? It cannot be restarted.");
+				if(ok){
+					$.post("watch/stop?name=" + this.pagewatchers[index].name);
+					this.pagewatchers[index]["disabled"] = true;
+				}
+			}
+			else
+				modal.showError("Watcher does not exist.");
 		},
 		removeWatcher: function (index) {
-			this.pagewatchers.splice(index, 1);
-			this.current_tab = 0;
+			if (index < this.pagewatchers.length){
+				this.pagewatchers.splice(index, 1);
+				this.current_tab = 0;
+			} else
+				modal.showError("Watcher does not exist.");
 		},
+		
+		//setta timeinterval function che ogni timer ms posta tweet basato su tweets
+		//correntemente in visualizzazione aggiungendo la wordcloud come allegato
+		setTweeting: function() {
+			const mintimer = 1000*60;
+			let time = queryparser.parseDHMSInterval(this.$refs.tweettimer.value);
+			let timer = time > mintimer ? time : mintimer;
+			console.log(timer);
+			this.intervaltoken = setInterval( async function() {
+				try {
+					let img = await container.getChartAsImage();
+					let media = await $.post('media', {imgdata: img});
+					let params = {
+						status: container.computeStatus,
+						media_ids: [media.media_id_string]
+					};
+					await $.post("tweet", {params: params});
+					console.log("Posted tweet!");
+				}
+				catch(err){
+					throw(err);
+				}
+			}, timer);
+		},
+		stopTweeting: function() {
+			clearInterval(this.intervaltoken);
+			this.intervaltoken = null;
+		},
+
 		righthashtags: function (tweet) { //ora deve combaciare con tutti gli hashtag, chiedere se va bene
 			if (!filtercounter["Hashtag"] || filtercounter["Hashtag"] == 0) { return true; }
 			if (!tweet.entities || !tweet.entities.hashtags) { return false; }
@@ -226,7 +277,7 @@ var container = new Vue({
 				if (label.type == "Hashtag") {
 					contains = false;
 					for (tag of tweet.entities.hashtags) {
-						if (tag.text == label.value) {
+						if (tag.text.toUpperCase() == label.value.toUpperCase()) {
 							if (this.checkedFilters.length == 0)
 								return true;
 							contains = true;
@@ -296,29 +347,48 @@ var container = new Vue({
 			return contains;
 
 		},
+		rightUser: function (tweet) {
+			if (!filtercounter["Username"] || filtercounter["Username"] == 0) { return true; }
+			if (!tweet.user.name) { return false; }
+			let contains;
+			for (label of this.computedfilters()) {
+				contains = false;
+				if (label.type == "Username") {
+					if (tweet.user.name.toUpperCase() == label.value.toUpperCase()) {
+						if (this.checkedFilters.length == 0)
+							return true;
+						contains = true
+					} else {
+						if (this.checkedFilters.length > 0)
+							return false;
+					}
+				}
+			}
+			return contains;
+		},
 		sortTweets: function (setting) {
 			if (setting == this.lastSorted) {
-				this.tweets = this.tweets.reverse();
+				this.computedtweets = this.computedtweets.reverse();
 			} else {
 				this.lastSorted = setting;
 				switch (setting) {
-					case "Id":
-						this.tweets.sort((x, y) => { if (x.id < y.id) return -1; else return 1 });
+					case "Images":
+						this.computedtweets.sort((x, y) => { if (x.entities.media && !y.entities.media) return -1; else return 1 });
 						break;
 					case "Username":
-						this.tweets.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
 						break;
 					case "Text":
-						this.tweets.sort((x, y) => { if (x.text < y.text) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.text < y.text) return -1; else return 1 });
 						break;
 					case "Likes":
-						this.tweets.sort((x, y) => { if (x.favorite_count < y.favorite_count) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.favorite_count < y.favorite_count) return -1; else return 1 });
 						break;
 					case "Retweets":
-						this.tweets.sort((x, y) => { if (x.retweet_count < y.retweet_count) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.retweet_count < y.retweet_count) return -1; else return 1 });
 						break;
 					case "Date":
-						this.tweets.sort((x, y) => { if (Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1 });
 						break;
 				}
 			}
@@ -355,6 +425,30 @@ var container = new Vue({
 			}
 			return [counter, reps];
 		},
+		countWords: function (compTweets) {
+			var words = {}
+
+			for (var i in compTweets) {
+				var tweet = compTweets[i];
+				if (tweet.text != undefined) {
+					var ww = tweet.text.split(' ');
+					for (var j in ww) {
+						var w = ww[j];
+						if (!(w.toLowerCase() in words)) {
+							words[w.toLowerCase()] = 0;
+						}
+						words[w.toLowerCase()]++;
+					}
+				}
+			}
+			wd = []
+			for (let [key, value] of Object.entries(words)) {
+				wd.push({ "tag": key, "weight": value });
+			}
+
+			if (wd.length == 0) wd = "";
+			return wd;
+		},
 		postsAtDay: function (compTweets) {
 			var posts = {};
 
@@ -365,14 +459,14 @@ var container = new Vue({
 					day = date[1] + " " + date[2];
 					if (!(day in posts))
 						posts[day] = 0;
-					
+
 					posts[day]++;
 				}
 			}
 			return posts;
 		},
-		postsPerWeekday: function(compTweets) {
-			var posts = {Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0}
+		postsPerWeekday: function (compTweets) {
+			var posts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 }
 
 			for (var i in compTweets) {
 				var tweet = compTweets[i];
@@ -384,25 +478,28 @@ var container = new Vue({
 			}
 			return posts;
 		},
-		genColors: function (n) {
-			var chartColors = [];
-			while (chartColors.length < n) {
-				var letters = '0123456789ABCDEF';
-				var color = '#';
-				for (var i = 0; i < 6; i++) {
-					color += letters[Math.floor(Math.random() * 16)];
-				}
-				chartColors.push(color);
+		genColor: function (h) {
+			let f = (n, k = (n + h * 12) % 12) => .5 - .5 * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+			let rgb2hex = (r, g, b) => "#" + [r, g, b].map(x => Math.round(x * 255).toString(16).padStart(2, 0)).join('');
+			return (rgb2hex(f(0), f(8), f(4)));
+		},
+		genColors: function (stops) {
+			var colors = []
+			for (var i = 0; i < stops; i++) {
+				var c = i / stops;
+				colors.push(this.genColor(c, 1, 0.5));
 			}
-			return chartColors;
+			colors.sort(() => {return Math.round(Math.random())-0.5});
+			return colors;
 		},
 		buildDoughnut: function (data) {
+			let colors = this.genColors(data[0]);
 			doughnutG = {
 				type: 'doughnut',
 				data: {
 					datasets: [{
 						data: Object.values(data[1]),
-						backgroundColor: this.genColors(data[0]),
+						backgroundColor: colors,
 						label: 'Dataset 1'
 					}],
 					labels: Object.keys(data[1])
@@ -423,20 +520,21 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('doughnut').getContext('2d');
-			if(window.myDoughnut != undefined)
+			if (window.myDoughnut != undefined)
 				window.myDoughnut.destroy()
 			window.myDoughnut = new Chart(ctx, doughnutG);
 		},
-		buildLine: function(data) {
-			var col = this.genColors(7);
+		buildLine: function (data) {
+			//var col = colors[Math.floor((Math.random() * 7) - 0.001)];
+			let colors = this.genColors(7);
 			lineG = {
 				type: 'line',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
-						label: 'My First dataset',
-						backgroundColor: col,
-						borderColor: col,
+						label: '',
+						backgroundColor: colors,
+						borderColor: colors,
 						data: Object.values(data),
 						fill: false,
 					}]
@@ -445,7 +543,10 @@ var container = new Vue({
 					responsive: true,
 					title: {
 						display: true,
-						text: 'Number of tweets in time'
+						text: 'Tweeting tendencies'
+					},
+					legend: {
+						display: false,
 					},
 					tooltips: {
 						mode: 'index',
@@ -474,20 +575,20 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('line').getContext('2d')
-			if(window.myLine != undefined)
+			if (window.myLine != undefined)
 				window.myLine.destroy()
 			window.myLine = new Chart(ctx, lineG);
 		},
-		buildBar: function(data) {
-			var col = this.genColors(data.length);
+		buildBar: function (data) {
+			let colors = this.genColors(Object.keys(data).length);
 			barG = {
 				type: 'bar',
 				data: {
 					labels: Object.keys(data),
 					datasets: [{
-						label: "test",
-						backgroundColor: col,
-						borderColor: col,
+						label: "",
+						backgroundColor: colors,
+						borderColor: colors,
 						data: Object.values(data),
 						fill: true,
 					}]
@@ -496,7 +597,10 @@ var container = new Vue({
 					responsive: true,
 					title: {
 						display: true,
-						text: 'Number of tweets in time'
+						text: 'Tweets per day'
+					},
+					legend: {
+						display: false,
 					},
 					tooltips: {
 						mode: 'index',
@@ -525,35 +629,106 @@ var container = new Vue({
 				}
 			};
 			var ctx = document.getElementById('bar').getContext('2d')
-			if(window.myBar != undefined)
+			if (window.myBar != undefined)
 				window.myBar.destroy()
 			window.myBar = new Chart(ctx, barG);
 		},
+		buildWordCloud: function (data) {
+			//risolve i warning di 'char not disposed'
+			if(this.wc_chart) this.wc_chart.dispose();
+
+			let chart = am4core.create("wordcloud-holder", am4plugins_wordCloud.WordCloud);
+			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+			series.accuracy = 5;
+			series.step = 15;
+			series.rotationThreshold = 0.7;
+			series.maxCount = 30;
+			series.minWordLength = 3;
+			series.labels.template.tooltipText = "{word}: {value}";
+			series.fontFamily = "Courier New";
+			series.minFontSize = am4core.percent(8);
+			series.maxFontSize = am4core.percent(70);
+
+			series.dataFields.word = "tag";
+			series.dataFields.value = "weight";
+			txt = ""
+			for (let j = 0; j < data.length; j++) {
+				obj = data[j];
+				for (let i = 0; i < obj["weight"]; i++)
+					txt += obj["tag"] + " ";
+			}
+			series.text = txt;
+			chart.exporting.menu = new am4core.ExportMenu();
+			this.wc_chart = chart;
+
+		},
 		updateGraphs: function (compTweets) {
-			var dData = this.countHashtags(compTweets);
-			this.buildDoughnut(dData);
-			var lData = this.postsPerWeekday(compTweets);
-			this.buildLine(lData);
-			var bData = this.postsAtDay(compTweets);
-			this.buildBar(bData);
+			if(compTweets.length > 0){
+				var dData = this.countHashtags(compTweets);
+				this.buildDoughnut(dData);
+				$("#doughnut-holder").show();
+				var lData = this.postsPerWeekday(compTweets);
+				this.buildLine(lData);
+				$("#line-holder").show();
+				var bData = this.postsAtDay(compTweets);
+				this.buildBar(bData);
+				$("#bar-holder").show();
+				var wcData = this.countWords(compTweets);
+				this.buildWordCloud(wcData);
+				$("#wordcloud-holder").show();
+			} else {
+				$("#wordcloud-holder").hide();
+				$("#doughnut-holder").hide();
+				$("#line-holder").hide();
+				$("#bar-holder").hide();
+			}
+		},
+		currentTweets: function () {
+			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
+			return this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
+		},
+		
+		getChartAsImage: async function(){
+			if(this.wc_chart){
+				try {
+					let imgdata = await this.wc_chart.exporting.getImage("png");
+					imgdata = imgdata.replace(/-/g, '+').replace(/_/g, '/');
+					imgdata = imgdata.split('base64,')[1]
+					console.log(imgdata);
+					return imgdata;
+				}
+				catch {
+					throw(err);
+				}
+			}
+		},
+
+		getDivAsImage: async function(id) {
+			try {
+				let canvas = await html2canvas(document.getElementById(id));
+				let imgdata = canvas.toDataURL();
+				console.log(imgdata);
+				return imgdata;
+			}
+			catch(err) {
+				console.log(err);
+			}
 		}
 	},
 	computed: {
 		computedtweets: function () {
-			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
-			let tweets = this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
 			this.labels;
 			this.checkedFilters;
 			let comp = [];
-			for (tweet of tweets) {
-				if (this.righthashtags(tweet) && this.rightlocation(tweet) && this.rightcontains(tweet) && !(this.onlyLocated && !tweet.geo)) {
+			for (tweet of this.currentTweets()) {
+				if (this.righthashtags(tweet) && this.rightlocation(tweet) && this.rightcontains(tweet) && this.rightUser(tweet)
+					&& !(this.onlyLocated && !tweet.geo) && !(this.onlyImages && !tweet.entities.media)) {
 					comp.push(tweet);
 				}
 			};
-			this.updateGraphs(tweets);
 			return comp;
 		},
-		computedchecks: {
+		computedchecks:  {
 			get() {
 				return this.checkedsettings.length > 0;
 			},
@@ -574,6 +749,21 @@ var container = new Vue({
 				}
 			}
 			return watchers;
+		},
+		//fa parsing della stringa dello status sostituendo alle _KEYWORD_ le istanze corrispondenti
+		computeStatus: function() {
+			let status = this.tweeting_status;
+			status = status.replace(/_COUNT_/g, this.computedtweets.length.toString());
+			//status = status.replace(/_HASH_/g, Object.keys(this.countHashtags(this.computedtweets)[1])[0]);
+			return status;
+		},
+		computeReverseDHMS() {
+			return queryparser.parseDHMSIntervalReverse(this.pagewatchers[this.current_tab-1].timer); 
+		}
+	},
+	watch: {
+		computedtweets: function () {
+			this.updateGraphs(this.computedtweets);
 		}
 	}
 })
