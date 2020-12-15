@@ -18,11 +18,6 @@ app.get("/", function (req, res) {
     res.render("index");
 });
 
-//test grafici
-app.get("/test", function(req, res) {
-    res.render("graphsTest");
-});
-
 //###TWITTER API###
 
 app.post("/tweet", async function (req, res) {

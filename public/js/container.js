@@ -189,7 +189,7 @@ var container = new Vue({
 				container.allwatchers = watchers;
 			})
 				.catch(function (err) {
-					throw (err);
+					modal.showError(err.message);
 				});
 			let namelist = [];
 			for (watcher of this.pagewatchers) {
@@ -209,7 +209,7 @@ var container = new Vue({
 					}
 				})
 					.catch(function (err) {
-						throw (err);
+						modal.showError(err.message);
 					});
 			}
 		},
@@ -219,19 +219,26 @@ var container = new Vue({
 				if (res.length > 0) container.pagewatchers.push(res[0]);
 			})
 				.catch(function (err) {
-					throw (err);
+					modal.showError(err.message);
 				});
 		},
 		disableWatcher: function (index) {
-			ok = confirm("Are you sure you want to disable this watcher? It cannot be restarted.");
-			if(ok){
-				$.post("watch/stop?name=" + this.pagewatchers[index].name);
-				this.pagewatchers[index]["disabled"] = true;
+			if (index < this.pagewatchers.length){
+				ok = confirm("Are you sure you want to disable this watcher? It cannot be restarted.");
+				if(ok){
+					$.post("watch/stop?name=" + this.pagewatchers[index].name);
+					this.pagewatchers[index]["disabled"] = true;
+				}
 			}
+			else
+				modal.showError("Watcher does not exist.");
 		},
 		removeWatcher: function (index) {
-			this.pagewatchers.splice(index, 1);
-			this.current_tab = 0;
+			if (index < this.pagewatchers.length){
+				this.pagewatchers.splice(index, 1);
+				this.current_tab = 0;
+			} else
+				modal.showError("Watcher does not exist.");
 		},
 		
 		//setta timeinterval function che ogni timer ms posta tweet basato su tweets
@@ -361,27 +368,27 @@ var container = new Vue({
 		},
 		sortTweets: function (setting) {
 			if (setting == this.lastSorted) {
-				this.tweets = this.tweets.reverse();
+				this.computedtweets = this.computedtweets.reverse();
 			} else {
 				this.lastSorted = setting;
 				switch (setting) {
 					case "Images":
-						this.tweets.sort((x, y) => { if (x.entities.media && !y.entities.media) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.entities.media && !y.entities.media) return -1; else return 1 });
 						break;
 					case "Username":
-						this.tweets.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
 						break;
 					case "Text":
-						this.tweets.sort((x, y) => { if (x.text < y.text) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.text < y.text) return -1; else return 1 });
 						break;
 					case "Likes":
-						this.tweets.sort((x, y) => { if (x.favorite_count < y.favorite_count) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.favorite_count < y.favorite_count) return -1; else return 1 });
 						break;
 					case "Retweets":
-						this.tweets.sort((x, y) => { if (x.retweet_count < y.retweet_count) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (x.retweet_count < y.retweet_count) return -1; else return 1 });
 						break;
 					case "Date":
-						this.tweets.sort((x, y) => { if (Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1 });
+						this.computedtweets.sort((x, y) => { if (Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1 });
 						break;
 				}
 			}
@@ -627,9 +634,6 @@ var container = new Vue({
 			window.myBar = new Chart(ctx, barG);
 		},
 		buildWordCloud: function (data) {
-			//am4core.useTheme(am4themes_dark);
-			//am4core.useTheme(am4themes_animated);
-			
 			//risolve i warning di 'char not disposed'
 			if(this.wc_chart) this.wc_chart.dispose();
 
@@ -661,14 +665,25 @@ var container = new Vue({
 
 		},
 		updateGraphs: function (compTweets) {
-			var dData = this.countHashtags(compTweets);
-			this.buildDoughnut(dData);
-			var lData = this.postsPerWeekday(compTweets);
-			this.buildLine(lData);
-			var bData = this.postsAtDay(compTweets);
-			this.buildBar(bData);
-			var wcData = this.countWords(compTweets);
-			this.buildWordCloud(wcData);
+			if(compTweets.length > 0){
+				var dData = this.countHashtags(compTweets);
+				this.buildDoughnut(dData);
+				$("#doughnut-holder").show();
+				var lData = this.postsPerWeekday(compTweets);
+				this.buildLine(lData);
+				$("#line-holder").show();
+				var bData = this.postsAtDay(compTweets);
+				this.buildBar(bData);
+				$("#bar-holder").show();
+				var wcData = this.countWords(compTweets);
+				this.buildWordCloud(wcData);
+				$("#wordcloud-holder").show();
+			} else {
+				$("#wordcloud-holder").hide();
+				$("#doughnut-holder").hide();
+				$("#line-holder").hide();
+				$("#bar-holder").hide();
+			}
 		},
 		currentTweets: function () {
 			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher

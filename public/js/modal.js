@@ -57,7 +57,7 @@ var modal = new Vue({
 		//show map with every tweet position
 		showMap: function(){
 			this.reset();
-			tweets = numberThem(container.computedtweets)
+			let tweets = numberThem(container.computedtweets);
 			for(tweet of tweets){
 				if(tweet.geo && tweet.geo.coordinates)
 					this.addMarker(tweet);
@@ -66,7 +66,7 @@ var modal = new Vue({
 			$("#bubble").prop( "checked", true );
 			$("#bubble").on("change", function(){
 				if($("#bubble").is(':checked')){
-					map.AddCircleMarker(tweets)
+					map.AddCircleMarker(tweets);
 				}else{
 					map.DeleteAllCircleMarkers();
 				}
