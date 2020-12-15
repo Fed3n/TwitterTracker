@@ -40,6 +40,7 @@ const map = {
     lastLat: null,
     lastLong:null,
     nonLocated:0,
+    mostCommonPlace: null,
     SetMap : function(div){
         this.mymap = L.map(div).setView([41.2925, 12.5736], 5); //inizializza la mappa 
         const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -129,9 +130,14 @@ const map = {
             }
         }
         let keys = Object.keys(dict);
+        let mostCommon = 0
         for(let i = 0; i < keys.length; i ++){
+            if(dict[keys[i]].radius > dict[keys[mostCommon]].radius){
+                mostCommon = i;
+            }
             this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / (tweets.length - this.nonLocated) * 150));
         }
+        this.mostCommonPlace = dict[keys[mostCommon]].coord;
 
     },
 
