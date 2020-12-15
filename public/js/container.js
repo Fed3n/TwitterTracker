@@ -29,7 +29,7 @@ var container = new Vue({
 		is_stream: true,
 
 		//periodic tweeting
-		tweeting_status: "#ingsw2020 post automatico! Twitter Tracker ha trovato _COUNT_ nuovi tweet!",
+		tweeting_status: "#ingsw2020 post automatico! Twitter Tracker ha trovato _COUNT_ nuovi tweet, trending hashtag è [ _HASH_ ] ",
 		intervaltoken: null,
 
 		//graphs
@@ -261,7 +261,7 @@ var container = new Vue({
 					console.log("Posted tweet!");
 				}
 				catch (err) {
-					throw (err);
+					modal.showError("Could not post tweet. Check if statistics exist.");
 				}
 			}, timer);
 		},
@@ -437,9 +437,9 @@ var container = new Vue({
 			});
 
 			//crea un array contenente i primi 50 elementi
-			items = items.slice(0, 50);
+			items = items.slice(0, 30);
 
-			this.mostPopularHashtag = items[0][0];
+			this.mostPopularHashtag = items[0] ? items[0][0] : null;
 			console.log(this.mostPopularHashtag);
 
 			return [counter, items];
@@ -789,7 +789,7 @@ var container = new Vue({
 		computeStatus: function () {
 			let status = this.tweeting_status;
 			status = status.replace(/_COUNT_/g, this.computedtweets.length.toString());
-			//status = status.replace(/_HASH_/g, Object.keys(this.countHashtags(this.computedtweets)[1])[0]);
+			status = status.replace(/_HASH_/g, this.mostPopularHashtag);
 			return status;
 		},
 		computeReverseDHMS() {

@@ -1,3 +1,5 @@
+//queryparser e' un singleton che accumula metodi di parsing delle query a twitter
+
 const queryparser = {
    
     //stream queries usano track,follow,location
@@ -20,6 +22,7 @@ const queryparser = {
         if(location) {
                 let queries = '';
                 for(loc of location.split(',')){
+                        //funzione che mi rida' info geografiche a partire dal nome di un luogo
                         let geoloc = await geoutils.getCoordsFromLoc(loc);
                         let box = geoloc.box; 
                         if(box){
@@ -60,6 +63,7 @@ const queryparser = {
     parseDHMSInterval: function(str){
         let t = str.split(':');
         let timer = 0;
+        //fail case is parseInt failing (which would be NaN)
         if(t[0]){
             let n = parseInt(t[0]);
             if(n !== NaN) timer += (24*60*60*1000)*n;
@@ -79,7 +83,8 @@ const queryparser = {
         //defaults to 10seconds
         return timer ? timer : 10000;
     },
-
+    
+    //reverse parsing of the above function
     parseDHMSIntervalReverse: function(interval){
         let n = (interval/1000);
         
@@ -92,7 +97,8 @@ const queryparser = {
         let mins = Math.floor(n / 60);
         
         secs = n % 60;
-
+        
+        //same format return as above function
         return `${days}:${hours}:${mins}:${secs}`
 
     }
