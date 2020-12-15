@@ -644,6 +644,8 @@ var container = new Vue({
 			series.fontFamily = "Courier New";
 			series.minFontSize = am4core.percent(8);
 			series.maxFontSize = am4core.percent(70);
+			series.excludeWords = ["https"]
+			series.minWordLength = 4;
 
 			series.dataFields.word = "tag";
 			series.dataFields.value = "weight";
