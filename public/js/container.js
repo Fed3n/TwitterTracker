@@ -407,6 +407,7 @@ var container = new Vue({
 
 		// graphs
 		countHashtags: function (compTweets) {
+			//questa funzione si occupa di contare gli hashtag usati con le loro ricorrenze
 			var counter = 0;
 			var reps = {};
 
@@ -425,24 +426,26 @@ var container = new Vue({
 				}
 			}
 
-			// Create items array
+			//crea l'array items
 			var items = Object.keys(reps).map(function (key) {
 				return [key, reps[key]];
 			});
 
-			// Sort the array based on the second element
+			//ordina items basandosi sul secondo elemento
 			items.sort(function (first, second) {
 				return second[1] - first[1];
 			});
 
-			// Create a new array with only the first 5 items
+			//crea un array contenente i primi 50 elementi
 			items = items.slice(0, 50);
+
 			this.mostPopularHashtag = items[0][0];
 			console.log(this.mostPopularHashtag);
 
 			return [counter, items];
 		},
 		countWords: function (compTweets) {
+			//questa funzione si occupa di contare le parole con le loro ricorrenze
 			var words = {}
 
 			for (var i in compTweets) {
@@ -467,6 +470,7 @@ var container = new Vue({
 			return wd;
 		},
 		postsAtDay: function (compTweets) {
+			//questa funzione controlla i giorni specifici, in termini di numero e mese, in cui sono stati postati i vari tweet
 			var posts = {};
 
 			for (var i in compTweets) {
@@ -483,6 +487,7 @@ var container = new Vue({
 			return posts;
 		},
 		postsPerWeekday: function (compTweets) {
+			//questa funzione controlla la tendenza dei post ad essere pubblicati nei vari giorni della settimana, contandoli nella struttura posts
 			var posts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 }
 
 			for (var i in compTweets) {
@@ -496,11 +501,13 @@ var container = new Vue({
 			return posts;
 		},
 		genColor: function (h) {
+			//funzione che genera un singolo colore, di supporto a genColors
 			let f = (n, k = (n + h * 12) % 12) => .5 - .5 * Math.max(Math.min(k - 3, 9 - k, 1), -1);
 			let rgb2hex = (r, g, b) => "#" + [r, g, b].map(x => Math.round(x * 255).toString(16).padStart(2, 0)).join('');
 			return (rgb2hex(f(0), f(8), f(4)));
 		},
 		genColors: function (stops) {
+			//funzione che genera stops colori diversi equalmente distanziati per poi disordinarli
 			var colors = []
 			for (var i = 0; i < stops; i++) {
 				var c = i / stops;
@@ -510,6 +517,7 @@ var container = new Vue({
 			return colors;
 		},
 		buildDoughnut: function (data) {
+			//questa funzione si occupa di configurare i parametri del grafico a ciambella nella struttura doughnutG e successivamente visualizzarla
 			let colors = this.genColors(data[0]);
 			doughnutG = {
 				type: 'doughnut',
@@ -542,7 +550,7 @@ var container = new Vue({
 			window.myDoughnut = new Chart(ctx, doughnutG);
 		},
 		buildLine: function (data) {
-			//var col = colors[Math.floor((Math.random() * 7) - 0.001)];
+			//questa funzione si occupa di configurare i parametri del grafico a linea nella struttura lineG e successivamente visualizzarla
 			let colors = this.genColors(7);
 			lineG = {
 				type: 'line',
@@ -597,6 +605,7 @@ var container = new Vue({
 			window.myLine = new Chart(ctx, lineG);
 		},
 		buildBar: function (data) {
+			//questa funzione si occupa di configurare i parametri del grafico a barre nella struttura barG e successivamente visualizzarla
 			let colors = this.genColors(Object.keys(data).length);
 			barG = {
 				type: 'bar',
@@ -654,6 +663,7 @@ var container = new Vue({
 			//risolve i warning di 'char not disposed'
 			if (this.wc_chart) this.wc_chart.dispose();
 
+			//libreria che costruisce la wordcloud automaticamente partendo da una stringa di testo
 			let chart = am4core.create("wordcloud-holder", am4plugins_wordCloud.WordCloud);
 			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
 			series.accuracy = 5;
@@ -661,7 +671,7 @@ var container = new Vue({
 			series.excludeWords = ["https"];
 			series.rotationThreshold = 0.7;
 			series.maxCount = 30;
-			series.minWordLength = 4;
+			series.minWordLength = 4; //abbiamo impostato questa dimensione minima per evitare di trovare articoli e/o preposizioni come parole più usate
 			series.labels.template.tooltipText = "{word}: {value}";
 			series.fontFamily = "Courier New";
 			series.minFontSize = am4core.percent(8);
@@ -671,6 +681,8 @@ var container = new Vue({
 
 			series.dataFields.word = "tag";
 			series.dataFields.value = "weight";
+
+			//trasformiamo tutte le parole trovate in una stringa unica di parole
 			txt = ""
 			for (let j = 0; j < data.length; j++) {
 				obj = data[j];
@@ -683,7 +695,9 @@ var container = new Vue({
 
 		},
 		updateGraphs: function (compTweets) {
+			//questa funzione si occupa di aggiornare i grafici ogni volta che c'è un cambiamento nei tweet mostrati
 			if (compTweets.length > 0) {
+				//raccoglie i dati necessari ai grafici per poi costruirli
 				var dData = this.countHashtags(compTweets);
 				this.buildDoughnut(dData);
 				$("#doughnut-holder").show();
@@ -697,6 +711,7 @@ var container = new Vue({
 				this.buildWordCloud(wcData);
 				$("#wordcloud-holder").show();
 			} else {
+				//e in caso non ci sono tweet, nasconde i grafici stessi
 				$("#wordcloud-holder").hide();
 				$("#doughnut-holder").hide();
 				$("#line-holder").hide();
@@ -783,6 +798,7 @@ var container = new Vue({
 	},
 	watch: {
 		computedtweets: function () {
+			//questa funzione viene invocata ogni volta che computedtweets viene invocata e aggiorna i grafici
 			this.updateGraphs(this.computedtweets);
 		}
 	}
