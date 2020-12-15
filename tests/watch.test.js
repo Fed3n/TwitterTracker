@@ -25,12 +25,3 @@ test('test addWatcher removeWatcher', ()=>{
 	watch.removeWatcher(watcher2.name);
 	expect(watch.listWatchers().length).toBe(0);
 });
-
-test('test watchers have tweets', ()=>{
-	watch.addWatcher("prova", 3000, { "q": "covid", "count": "5" });
-	
-	let data = watch.getWatchersData(["prova"]);
-	watch.removeWatcher("prova");
-	console.log(data[0]);
-	expect(data[0].tweets.length).not.toBe(0);
-})
