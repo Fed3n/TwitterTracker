@@ -137,7 +137,8 @@ const map = {
             }
             this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / (tweets.length - this.nonLocated) * 150));
         }
-        this.mostCommonPlace = dict[keys[mostCommon]].coord;
+        if(dict[keys[mostCommon]])
+            this.mostCommonPlace = dict[keys[mostCommon]].coord;
 
     },
 
