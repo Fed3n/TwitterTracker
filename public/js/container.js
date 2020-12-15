@@ -23,6 +23,7 @@ var container = new Vue({
 		stream_on: false,
 		local_filters: ["Contains", "Hashtag", "Location", "Username"],
 		lastSorted: "",
+		mostPopularHashtag: "",
 
 		//streaming
 		is_stream: true,
@@ -223,9 +224,9 @@ var container = new Vue({
 				});
 		},
 		disableWatcher: function (index) {
-			if (index < this.pagewatchers.length){
+			if (index < this.pagewatchers.length) {
 				ok = confirm("Are you sure you want to disable this watcher? It cannot be restarted.");
-				if(ok){
+				if (ok) {
 					$.post("watch/stop?name=" + this.pagewatchers[index].name);
 					this.pagewatchers[index]["disabled"] = true;
 				}
@@ -234,37 +235,37 @@ var container = new Vue({
 				modal.showError("Watcher does not exist.");
 		},
 		removeWatcher: function (index) {
-			if (index < this.pagewatchers.length){
+			if (index < this.pagewatchers.length) {
 				this.pagewatchers.splice(index, 1);
 				this.current_tab = 0;
 			} else
 				modal.showError("Watcher does not exist.");
 		},
-		
+
 		//setta timeinterval function che ogni timer ms posta tweet basato su tweets
 		//correntemente in visualizzazione aggiungendo la wordcloud come allegato
-		setTweeting: function() {
-			const mintimer = 1000*60;
+		setTweeting: function () {
+			const mintimer = 1000 * 60;
 			let time = queryparser.parseDHMSInterval(this.$refs.tweettimer.value);
 			let timer = time > mintimer ? time : mintimer;
 			console.log(timer);
-			this.intervaltoken = setInterval( async function() {
+			this.intervaltoken = setInterval(async function () {
 				try {
 					let img = await container.getChartAsImage();
-					let media = await $.post('media', {imgdata: img});
+					let media = await $.post('media', { imgdata: img });
 					let params = {
 						status: container.computeStatus,
 						media_ids: [media.media_id_string]
 					};
-					await $.post("tweet", {params: params});
+					await $.post("tweet", { params: params });
 					console.log("Posted tweet!");
 				}
-				catch(err){
-					throw(err);
+				catch (err) {
+					throw (err);
 				}
 			}, timer);
 		},
-		stopTweeting: function() {
+		stopTweeting: function () {
 			clearInterval(this.intervaltoken);
 			this.intervaltoken = null;
 		},
@@ -423,7 +424,23 @@ var container = new Vue({
 					}
 				}
 			}
-			return [counter, reps];
+
+			// Create items array
+			var items = Object.keys(reps).map(function (key) {
+				return [key, reps[key]];
+			});
+
+			// Sort the array based on the second element
+			items.sort(function (first, second) {
+				return second[1] - first[1];
+			});
+
+			// Create a new array with only the first 5 items
+			items = items.slice(0, 50);
+			this.mostPopularHashtag = items[0][0];
+			console.log(this.mostPopularHashtag);
+
+			return [counter, items];
 		},
 		countWords: function (compTweets) {
 			var words = {}
@@ -489,7 +506,7 @@ var container = new Vue({
 				var c = i / stops;
 				colors.push(this.genColor(c, 1, 0.5));
 			}
-			colors.sort(() => {return Math.round(Math.random())-0.5});
+			colors.sort(() => { return Math.round(Math.random()) - 0.5 });
 			return colors;
 		},
 		buildDoughnut: function (data) {
@@ -498,11 +515,11 @@ var container = new Vue({
 				type: 'doughnut',
 				data: {
 					datasets: [{
-						data: Object.values(data[1]),
+						data: data[1].map(function (x) {return x[1]}),
 						backgroundColor: colors,
 						label: 'Dataset 1'
 					}],
-					labels: Object.keys(data[1])
+					labels: data[1].map(function (x) {return x[0]})
 				},
 				options: {
 					responsive: true,
@@ -635,15 +652,16 @@ var container = new Vue({
 		},
 		buildWordCloud: function (data) {
 			//risolve i warning di 'char not disposed'
-			if(this.wc_chart) this.wc_chart.dispose();
+			if (this.wc_chart) this.wc_chart.dispose();
 
 			let chart = am4core.create("wordcloud-holder", am4plugins_wordCloud.WordCloud);
 			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
 			series.accuracy = 5;
 			series.step = 15;
+			series.excludeWords = ["https"];
 			series.rotationThreshold = 0.7;
 			series.maxCount = 30;
-			series.minWordLength = 3;
+			series.minWordLength = 4;
 			series.labels.template.tooltipText = "{word}: {value}";
 			series.fontFamily = "Courier New";
 			series.minFontSize = am4core.percent(8);
@@ -663,7 +681,7 @@ var container = new Vue({
 
 		},
 		updateGraphs: function (compTweets) {
-			if(compTweets.length > 0){
+			if (compTweets.length > 0) {
 				var dData = this.countHashtags(compTweets);
 				this.buildDoughnut(dData);
 				$("#doughnut-holder").show();
@@ -687,9 +705,9 @@ var container = new Vue({
 			//se siamo nel primo tab sono i tweet locali, senno' i tweet del watcher
 			return this.current_tab == 0 ? this.tweets : this.pagewatchers[this.current_tab - 1].tweets;
 		},
-		
-		getChartAsImage: async function(){
-			if(this.wc_chart){
+
+		getChartAsImage: async function () {
+			if (this.wc_chart) {
 				try {
 					let imgdata = await this.wc_chart.exporting.getImage("png");
 					imgdata = imgdata.replace(/-/g, '+').replace(/_/g, '/');
@@ -698,19 +716,19 @@ var container = new Vue({
 					return imgdata;
 				}
 				catch {
-					throw(err);
+					throw (err);
 				}
 			}
 		},
 
-		getDivAsImage: async function(id) {
+		getDivAsImage: async function (id) {
 			try {
 				let canvas = await html2canvas(document.getElementById(id));
 				let imgdata = canvas.toDataURL();
 				console.log(imgdata);
 				return imgdata;
 			}
-			catch(err) {
+			catch (err) {
 				console.log(err);
 			}
 		}
@@ -728,7 +746,7 @@ var container = new Vue({
 			};
 			return comp;
 		},
-		computedchecks:  {
+		computedchecks: {
 			get() {
 				return this.checkedsettings.length > 0;
 			},
@@ -751,14 +769,14 @@ var container = new Vue({
 			return watchers;
 		},
 		//fa parsing della stringa dello status sostituendo alle _KEYWORD_ le istanze corrispondenti
-		computeStatus: function() {
+		computeStatus: function () {
 			let status = this.tweeting_status;
 			status = status.replace(/_COUNT_/g, this.computedtweets.length.toString());
 			//status = status.replace(/_HASH_/g, Object.keys(this.countHashtags(this.computedtweets)[1])[0]);
 			return status;
 		},
 		computeReverseDHMS() {
-			return queryparser.parseDHMSIntervalReverse(this.pagewatchers[this.current_tab-1].timer); 
+			return queryparser.parseDHMSIntervalReverse(this.pagewatchers[this.current_tab - 1].timer);
 		}
 	},
 	watch: {
