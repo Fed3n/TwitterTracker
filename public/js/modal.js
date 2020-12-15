@@ -20,7 +20,7 @@ var modal = new Vue({
 				//map.AddMarker needs an array of image urls
 				images = [];
 				for(img of data.entities.media){
-					images.push(img.media_url);
+					images.push(img.media_url);WatcherModa
 					console.log()
 				}
 			}
@@ -35,7 +35,7 @@ var modal = new Vue({
 			//remove markers, tweets and messages
 			this.removeMarkers();
 			$("#tweetmodal").hide();
-			$("#watchermodal").hide();
+			$(".watchermodal").hide();
 			//this.tweet=null;
 			this.errormsg="";
 			//this.watcher_setup = false;
@@ -78,7 +78,7 @@ var modal = new Vue({
 		//show new watcher setup
 		showWatcher: function(){
 			this.reset();
-			$("#watchermodal").show();
+			$(".watchermodal").show();
 			//this.watcher_setup = true;
 			this.show();
 		},

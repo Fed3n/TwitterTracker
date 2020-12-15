@@ -294,7 +294,7 @@
                 <div id="tweetslist">
                   <table class="table table-striped">
                       <thead>
-                          <th v-for="setting in checkedsettings" v-on:click="sortTweets(setting)">{{setting}}</th>
+                          <th v-for="setting in checkedsettings" v-on:click="sortSettings(setting)">{{setting}}</th>
                       </thead>
                       <tbody>
                         <tr v-for="tweet in computedtweets" class="clickable" @click="showinfo(tweet)">
@@ -382,7 +382,7 @@
                         <label for="bubble">show bubble</label></div>
                          <div id="map" class="mx-auto" style="width: 40vw; height: 40vw;"></div>
                     </div>
-                    <div id="watchermodal" class="container-fluid">
+                    <div class="watchermodal" class="container-fluid">
                         <div class="container">
                             <h3>Watcher Launch</h3>
                             <div class="row mb-1">
@@ -437,12 +437,12 @@
                                     <input type="text" ref="watchertimer" placeholder="Days:Hours:Minutes:Seconds">
                                 </div>
                             </div>
-                            <button class="btn btn-primary" @click="addWatcher" id="addwatch">Start</button>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary watchermodal" @click="addWatcher" id="addwatch">Start</button>
                 </div>
             </div>
         </div>

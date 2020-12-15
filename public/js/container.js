@@ -8,21 +8,27 @@ var filtercounter = {};
 var container = new Vue({
 	el: "#container",
 	data: {
+		//Filters and Tweets
 		labels: [],
 		tweets: [],
 		//WATCHERS//
 		current_tab: 0,
 		pagewatchers: [],
 		allwatchers: [],
-		//
-		settings: ["Username", "Text", "Retweets", "Date", "Likes", "Images"], //inserire i potenziali parametri utili
+		//Table Headers
+		settings: ["Username", "Text", "Retweets", "Date", "Likes", "Images"],
 		checkedsettings: ["Username", "Text", "Date"],
 		checkedFilters: [],
 		onlyLocated: false,
 		onlyImages: false,
+		//True if is streaming
 		stream_on: false,
+		//filter types
 		local_filters: ["Contains", "Hashtag", "Location", "Username"],
-		lastSorted: "",
+
+		//sort parameters
+		lastSorted: "Username",
+		reverse: false,
 		mostPopularHashtag: "",
 
 		//streaming
@@ -50,6 +56,7 @@ var container = new Vue({
 		addfilter: function () {
 			let type = this.$refs.filtertype.value;
 			let input = this.$refs.filterinput.value;
+			//per il filtro location dobbiamo effettuare una richiesta per trovare le coordinate
 			if (type == "Location") {
 				let url = "http://nominatim.openstreetmap.org/search/" + input.split(' ').join('%20') + '?format=json&addressdetails=1&limit=1';
 				$.get(url, function (data) {
@@ -59,7 +66,9 @@ var container = new Vue({
 				}, "json");
 			}
 			else
-				this.labels.push({ type: type, value: input });
+				this.labels.push({ type: type, value: input }); //altrimenti viene subito inserita
+
+			//controlla se ci sono già i filtri
 			if (filtercounter[type])
 				filtercounter[type]++;
 			else
@@ -144,9 +153,10 @@ var container = new Vue({
 			}
 		},
 		appendtweets: function (newtweets) {
-			for (newTweet of newtweets) {
+			//aggiunge tutti i nuovi tweet alla coda dei tweet, ma solo se non erano presenti
+			for (let newTweet of newtweets) {
 				let isin = false;
-				for (oldTweet of this.tweets) {
+				for (let oldTweet of this.tweets) {
 					if (oldTweet.id == newTweet.id) { isin = true; }
 				}
 				if (!isin) { this.tweets.unshift(newTweet); }
@@ -176,11 +186,12 @@ var container = new Vue({
 		//to be called at intervals, updates info on server side watchers
 		//and updates page watchers
 		updateWatchers: function () {
+			//aggiorna i watch
 			$.get("/watch").then(function (res) {
 				watchers = [];
 				//dont ask its ok dw about this unless you're me then fk
-				for (el of res) {
-					for (aw of container.allwatchers)
+				for (let el of res) {
+					for (let aw of container.allwatchers)
 						if (el.name == aw.name && (!el.news) && (aw.news)) {
 							el.news = true;
 							break;
@@ -193,7 +204,7 @@ var container = new Vue({
 					modal.showError(err.message);
 				});
 			let namelist = [];
-			for (watcher of this.pagewatchers) {
+			for (let watcher of this.pagewatchers) {
 				namelist.push(watcher.name);
 			}
 			if (namelist.length > 0) {
@@ -201,7 +212,7 @@ var container = new Vue({
 					let reqwatchers = res;
 					//same as above m8b worse
 					for (let i = 0; i < container.pagewatchers.length; i++) {
-						for (watcher of reqwatchers) {
+						for (let watcher of reqwatchers) {
 							if (container.pagewatchers[i].name == watcher.name) {
 								if (container.pagewatchers[i].news && !watcher.news) watcher.news = true;
 								if (container.pagewatchers[i].tweets.length < watcher.tweets.length) container.pagewatchers[i] = watcher;
@@ -224,8 +235,9 @@ var container = new Vue({
 				});
 		},
 		disableWatcher: function (index) {
+			//disabilita i watch, chiedendo conferma e disabilitando il bottone
 			if (index < this.pagewatchers.length) {
-				ok = confirm("Are you sure you want to disable this watcher? It cannot be restarted.");
+				let ok = confirm("Are you sure you want to disable this watcher? It cannot be restarted.");
 				if (ok) {
 					$.post("watch/stop?name=" + this.pagewatchers[index].name);
 					this.pagewatchers[index]["disabled"] = true;
@@ -235,6 +247,7 @@ var container = new Vue({
 				modal.showError("Watcher does not exist.");
 		},
 		removeWatcher: function (index) {
+			//rimuove il watch da quelli disponibili
 			if (index < this.pagewatchers.length) {
 				this.pagewatchers.splice(index, 1);
 				this.current_tab = 0;
@@ -266,18 +279,22 @@ var container = new Vue({
 			}, timer);
 		},
 		stopTweeting: function () {
+			//interrompe i tweet da postare
 			clearInterval(this.intervaltoken);
 			this.intervaltoken = null;
 		},
 
-		righthashtags: function (tweet) { //ora deve combaciare con tutti gli hashtag, chiedere se va bene
+		righthashtags: function (tweet) { 
+			//se non ci sono filtri non serve che combacino
 			if (!filtercounter["Hashtag"] || filtercounter["Hashtag"] == 0) { return true; }
 			if (!tweet.entities || !tweet.entities.hashtags) { return false; }
 			let contains;
-			for (label of this.computedfilters()) {
+			//controlla tutti i filtri Hastag
+			for (let label of this.computedfilters()) {
 				if (label.type == "Hashtag") {
 					contains = false;
-					for (tag of tweet.entities.hashtags) {
+					for (let tag of tweet.entities.hashtags) {
+						//se i filtri hanno il check deve combaciare con tutti altrimenti basta che combaci con uno
 						if (tag.text.toUpperCase() == label.value.toUpperCase()) {
 							if (this.checkedFilters.length == 0)
 								return true;
@@ -292,11 +309,14 @@ var container = new Vue({
 			};
 			return contains;
 		},
-		rightlocation: function (tweet) { //da debuggare
+		rightlocation: function (tweet) {
+			//Se non ha filtri non serve controllare
 			if (!filtercounter["Location"] || filtercounter["Location"] == 0) { return true; }
 			if (!tweet.place || !tweet.place.bounding_box || !tweet.place.bounding_box.coordinates) { return false; }
 			let contains;
-			for (label of this.computedfilters()) {
+
+			//controlla tutti i filtri Location
+			for (let label of this.computedfilters()) {
 				if (label.type == "Location") {
 					contains = false;
 
@@ -304,7 +324,8 @@ var container = new Vue({
 					bbox = bbox.map(function (x) {
 						return parseFloat(x, 10);
 					});
-
+					
+					//calcolo per trovare il punto del tweet
 					coords = tweet.place.bounding_box.coordinates[0];
 					coords = [
 						parseFloat(coords[0][1], 10),
@@ -317,6 +338,7 @@ var container = new Vue({
 						(coords[2] + coords[3]) / 2
 					]
 					if (bbox[0] <= parsedCoords[0] && bbox[1] >= parsedCoords[0] && bbox[2] <= parsedCoords[1] && bbox[3] >= parsedCoords[1]) {
+						//se i filtri hanno il check deve combaciare con tutti altrimenti basta che combaci con uno
 						if (this.checkedFilters.length == 0)
 							return true;
 						contains = true;
@@ -329,13 +351,16 @@ var container = new Vue({
 			return contains;
 		},
 		rightcontains: function (tweet) {
+			//Se non ha filtri non serve controllare
 			if (!filtercounter["Contains"] || filtercounter["Contains"] == 0) { return true; }
 			if (!tweet.text) { return false; }
 			let contains;
-			for (label of this.computedfilters()) {
+			//controlla tutti i filtri Contains
+			for (let label of this.computedfilters()) {
 				contains = false;
 				if (label.type == "Contains") {
 					if (tweet.text.includes(label.value)) {
+						//se i filtri hanno il check deve combaciare con tutti altrimenti basta che combaci con uno
 						if (this.checkedFilters.length == 0)
 							return true;
 						contains = true
@@ -349,13 +374,16 @@ var container = new Vue({
 
 		},
 		rightUser: function (tweet) {
+			//Se non ha filtri non serve controllare
 			if (!filtercounter["Username"] || filtercounter["Username"] == 0) { return true; }
 			if (!tweet.user.name) { return false; }
 			let contains;
-			for (label of this.computedfilters()) {
+			//controlla per tutti i filtri Username
+			for (let label of this.computedfilters()) {
 				contains = false;
 				if (label.type == "Username") {
 					if (tweet.user.name.toUpperCase() == label.value.toUpperCase()) {
+						//se i filtri hanno il check deve combaciare con tutti altrimenti basta che combaci con uno
 						if (this.checkedFilters.length == 0)
 							return true;
 						contains = true
@@ -367,37 +395,48 @@ var container = new Vue({
 			}
 			return contains;
 		},
-		sortTweets: function (setting) {
-			if (setting == this.lastSorted) {
-				this.computedtweets = this.computedtweets.reverse();
-			} else {
-				this.lastSorted = setting;
-				switch (setting) {
-					case "Images":
-						this.computedtweets.sort((x, y) => { if (x.entities.media && !y.entities.media) return -1; else return 1 });
-						break;
-					case "Username":
-						this.computedtweets.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
-						break;
-					case "Text":
-						this.computedtweets.sort((x, y) => { if (x.text < y.text) return -1; else return 1 });
-						break;
-					case "Likes":
-						this.computedtweets.sort((x, y) => { if (x.favorite_count < y.favorite_count) return -1; else return 1 });
-						break;
-					case "Retweets":
-						this.computedtweets.sort((x, y) => { if (x.retweet_count < y.retweet_count) return -1; else return 1 });
-						break;
-					case "Date":
-						this.computedtweets.sort((x, y) => { if (Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1 });
-						break;
-				}
+		sortSettings: function(setting){
+			//imposta i parametri per l'ordinamento
+			if(setting==this.lastSorted)
+				this.reverse=!this.reverse;
+			else{
+				this.lastSorted=setting;
+				this.reverse=false;
 			}
 		},
+		sortTweets: function (array) {
+			//a seconda del parametro da ordinare bisogna controllare un campo diverso
+			switch (this.lastSorted) {
+				case "Images":
+					array.sort((x, y) => { if (x.entities.media && !y.entities.media) return -1; else return 1 });
+					break;
+				case "Username":
+					array.sort((x, y) => { if (x.user.name < y.user.name) return -1; else return 1 });
+					break;
+				case "Text":
+					array.sort((x, y) => { if (x.text < y.text) return -1; else return 1 });
+					break;
+				case "Likes":
+					array.sort((x, y) => { if (x.favorite_count < y.favorite_count) return -1; else return 1 });
+					break;
+				case "Retweets":
+					array.sort((x, y) => { if (x.retweet_count < y.retweet_count) return -1; else return 1 });
+					break;
+				case "Date":
+					array.sort((x, y) => { if (Date.parse(x.created_at) < Date.parse(y.created_at)) return -1; else return 1 });
+					break;
+			}
+			//se si preme su un paramentro per più volte si vuole ordinare inversamente
+			if(this.reverse){
+				array.reverse();
+			}
+			return array;
+		},
 		computedfilters: function () {
+			//controlla quelli checkat o tutti
 			if (this.checkedFilters.length > 0) {
 				let comp = [];
-				for (index of this.checkedFilters) {
+				for (let index of this.checkedFilters) {
 					comp.push(this.labels[index]);
 				}
 				return comp;
@@ -405,7 +444,7 @@ var container = new Vue({
 			return this.labels;
 		},
 
-		// graphs
+		// GRAPHS UTILITIES
 		countHashtags: function (compTweets) {
 			//questa funzione si occupa di contare gli hashtag usati con le loro ricorrenze
 			var counter = 0;
@@ -750,28 +789,32 @@ var container = new Vue({
 	},
 	computed: {
 		computedtweets: function () {
+			//Vue imposta dei listener
 			this.labels;
 			this.checkedFilters;
 			let comp = [];
-			for (tweet of this.currentTweets()) {
+			//per ogni tweet si vuole visualizzare solo se corrisponde a tutti i filtri inseriti
+			for (let tweet of this.currentTweets()) {
 				if (this.righthashtags(tweet) && this.rightlocation(tweet) && this.rightcontains(tweet) && this.rightUser(tweet)
 					&& !(this.onlyLocated && !tweet.geo) && !(this.onlyImages && !tweet.entities.media)) {
 					comp.push(tweet);
 				}
 			};
-			return comp;
+			return this.sortTweets(comp);
 		},
 		computedchecks: {
 			get() {
+				//vero solo se c'è almeno unìimpostazione selezionata
 				return this.checkedsettings.length > 0;
 			},
 			set() { }
 		},
 		computedwatchers: function () {
 			watchers = [];
-			for (watcher of this.allwatchers) {
+			//visualiza solo i watcher che hai selezionato di voler vedere
+			for (let watcher of this.allwatchers) {
 				let is_in = false;
-				for (pw of this.pagewatchers) {
+				for (let pw of this.pagewatchers) {
 					if (watcher.name == pw.name) {
 						is_in = true;
 						break;
