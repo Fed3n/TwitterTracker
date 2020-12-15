@@ -20,7 +20,7 @@ var modal = new Vue({
 				//map.AddMarker needs an array of image urls
 				images = [];
 				for(img of data.entities.media){
-					images.push(img.media_url);WatcherModa
+					images.push(img.media_url);
 					console.log()
 				}
 			}
@@ -103,6 +103,7 @@ var modal = new Vue({
 			let timer = queryparser.parseDHMSInterval(this.$refs.watchertimer.value);
 
 			if(params && name && timer){
+				//se il modal è pronto, lo faccio partire
 				$.post("/watch/start", {"name":name, "params":params, "timer":timer})
 				.then(function(){
 					$.get("/watch/data?"+$.param({"namelist":[name]})).then(function(res){
