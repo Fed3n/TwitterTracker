@@ -1,100 +1,40 @@
-/*
-questo serve nel caso si voglia una icona personalizzata, la tengo che sai mai 
-############################ 
-var myIcon = L.icon({ 
-    iconUrl:'icon.png',
-    iconSize:[38,94],
-    iconAnchor:[19,47]
-});
-############################
-*/
-
-/*
-info utili: serve una dimensione minima se no si arrabbia e non compare nulla, così va
-        #mappa {
-        width: 49vw;
-        height: 49vw;
-        }
-
-queste cose sono da includere 
-
-        <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
-        integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-        crossorigin=""
-        />
-        <link  rel="stylesheet" type="text/css" href="style.css">
-        <script
-        src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
-        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
-        crossorigin=""
-        ></script>
-
-*/
 
 const map = {
-    marker: [],
-    circleMarker: [], 
-    mymap: null,
-    lastLat: null,
-    lastLong:null,
-    nonLocated:0,
-    mostCommonPlace: null,
+    marker: [], //insieme dei marker sulla mappa
+    circleMarker: [],  //insieme delle bolle sulla mappa 
+    mymap: null, // variabile mappa di leaflet
+    lastLat: null, //latitudine cliccata dal mouse
+    lastLong:null, //longitudine cliccata dal mouse
+    nonLocated:0, // tweet senza locazione 
+    mostCommonPlace: null, // place con più tweet nella zona 
     SetMap : function(div){
         this.mymap = L.map(div).setView([41.2925, 12.5736], 5); //inizializza la mappa 
-        const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        const attribution ='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'; 
         const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        const tiles = L.tileLayer(tileUrl, { attribution });
-        tiles.addTo(this.mymap);
+        const tiles = L.tileLayer(tileUrl, { attribution }); //da un titolo alla mappa
+        tiles.addTo(this.mymap); //aggiunge il titolo 
         this.mymap.on('click', function(e) { //alla pressione vengono salvati i dati di latitudine e longitudine 
-            lastLat = e.latlng.lat;
-            lastLong = e.latlng.lng;
+            lastLat = e.latlng.lat; //latitudine
+            lastLong = e.latlng.lng; //longitudine
         });
     },
     
-
-    // AddMap : function(div, tweets){
-    //     if(map.mymap){ //se la mappa è già stata inizializzata una volta la elimina e riconfigura
-    //         map.DeleteAllMarkers();
-    //         map.mymap.off();
-    //         map.mymap.remove();
-    //         map.mymap = null;
-    //     }
-    //     map.SetMap(div);
-    //     let nonGeolocated = 0; 
-    //     for(let i = 0;i < tweets.length; i++){ //aggiungiungo un marker per ogni tweet passato (se ha il campo geolacation settato)
-    //         if(tweets[i].geo){
-    //             if(tweets[i].entities.media != null){
-    //                 map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, tweets[i].entities.media);
-    //             }else{
-    //                 map.AddMarker(tweets[i].geo.coordinates[0], tweets[i].geo.coordinates[1],  tweets[i].text, null);
-    //             }
-    //         }else{ 
-    //             nonGeolocated ++;
-    //         }
-    //     }
-    //     if(nonGeolocated > 0 && tweets.length > 1) //se ci sono tweet non geolocati stampo quanti sono con un allert
-    //         alert(nonGeolocated + " tweets non inseriti per mancanza di dati");
-    // },
-    
     AddMarker : function(lat, long, tweet, img){ //aggiunge un singolo marker
-        let new_Marker = L.marker([lat, long]/* , {icon: myIcon} */).addTo(this.mymap);
-        new_Marker.message = tweet; 
-        new_Marker.img = img; 
+        let new_Marker = L.marker([lat, long]).addTo(this.mymap); //crea un marker 
+        new_Marker.message = tweet;  //aggiunge il tweet al marker
+        new_Marker.img = img; //aggiunge le immagini al marker
         new_Marker.on('click', function(e){ //aggiungo l'evento click che apre un popup al marker
-            if(e.sourceTarget.getPopup())    
-                e.sourceTarget.getPopup().openPopup();
+            if(e.sourceTarget.getPopup())    //crea il popup se non è stato definito
+                e.sourceTarget.getPopup().openPopup(); //apre il popup se c'è
             else{
-                let message;
-                message = "<p>" + e.sourceTarget.message +"</p>";
+                let message = "<p>" + e.sourceTarget.message +"</p>"; //salva il tweet in un tag html
                 if(new_Marker.img){
-                    message += `<p><button Onclick = '$(".img").toggle()'>Show Image</button>`;
-                    for(let i = 0; i < e.sourceTarget.img.length; i++){
-                        message += `<image class = "img" style = "display: none;" height="150" src= "` + e.sourceTarget.img[i] + `"></p>`;
+                    message += `<p><button Onclick = '$(".img").toggle()'>Show Image</button>`; //un bottone per mostrare le immagini
+                    for(let i = 0; i < e.sourceTarget.img.length; i++){ //ciclo sulle immagini del tweet
+                        message += `<image class = "img" style = "display: none;" height="150" src= "` + e.sourceTarget.img[i] + `"></p>`; //aggiungo un paragrafo html per ogni immagine
                     }
                 }
-                e.sourceTarget.bindPopup(message).openPopup();
+                e.sourceTarget.bindPopup(message).openPopup(); // apre il popup dopo averlo definito
             }
 
         });
@@ -102,91 +42,85 @@ const map = {
     },
 
     DeleteAllMarkers : function () { //rimuove tutti i marker
-        for(marker of this.marker) {
-            this.mymap.removeLayer(marker);
+        for(marker of this.marker) { // ciclo sui marker
+            this.mymap.removeLayer(marker); //rimuovo il marker
         }  
     },
 
-    DeleteAllCircleMarkers : function(){
-        for(CircleMarker of this.circleMarker){
-            CircleMarker.remove();
+    DeleteAllCircleMarkers : function(){ //rimuove tutte le bolle
+        for(CircleMarker of this.circleMarker){ // ciclo sulle bolle
+            CircleMarker.remove(); //rimuovo le bolle
         }
     },
 
-    AddCircleMarker: function(tweets){
-        let dict = {};
-        map.nonLocated = 0;
-        for(let i = 0; i < tweets.length; i++){
-            let coord = map.GetMediumLocationFromPlace(tweets[i]);
-            if(coord && dict[Math.round(coord[0]) + "" + Math.round(coord[1])]){
-                dict[Math.round(coord[0]) + "" + Math.round(coord[1])].radius += 1;
-            }else if(coord){
-                dict[Math.round(coord[0]) + "" + Math.round(coord[1])] = {
-                    coord : coord,
-                    radius : 1
+    AddCircleMarker: function(tweets){ //aggiunge tutte le bolle
+        let dict = {}; //dizionario per contare i tweet in ogni place
+        map.nonLocated = 0; //tweet senza place
+        for(let i = 0; i < tweets.length; i++){ //ciclo sui tweet
+            let coord = map.GetMediumLocationFromPlace(tweets[i]); //prendo le coordinate medie del place 
+            if(coord && dict[Math.round(coord[0]) + "" + Math.round(coord[1])]){ //controllo, se ha le coordinate, se è già presente nel dizionario
+                dict[Math.round(coord[0]) + "" + Math.round(coord[1])].radius += 1; // se è presente incremento il valore del dizionario
+            }else if(coord){ //se non è presente e ha le coordinate 
+                dict[Math.round(coord[0]) + "" + Math.round(coord[1])] = { //aggiungo al dizionario il tweet
+                    coord : coord, //coordinate
+                    radius : 1 //raggio in base al numero di tweet nella zona
                 }
             }else{
-                map.nonLocated++;
+                map.nonLocated++; //se non ha il campo place lo aggiungo agli altri non locati
             }
         }
-        let keys = Object.keys(dict);
-        let mostCommon = 0
-        for(let i = 0; i < keys.length; i ++){
-            if(dict[keys[i]].radius > dict[keys[mostCommon]].radius){
-                mostCommon = i;
+        let keys = Object.keys(dict); //mi salvo tutte le chiavi
+        let mostCommon = 0 //il place più salvato
+        for(let i = 0; i < keys.length; i ++){  //ciclo sul dizionario
+            if(dict[keys[i]].radius > dict[keys[mostCommon]].radius){ //controllo qual'è il place più frequente
+                mostCommon = i; //salvo il place più frequente
             }
-            this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / (tweets.length - this.nonLocated) * 150));
+            this.circleMarker.push(map.CreateCircleMarker(dict[keys[i]].coord[1], dict[keys[i]].coord[0], dict[keys[i]].radius / (tweets.length - this.nonLocated) * 150)); //aggiungo la bolla proporzionata
         }
-        if(dict[keys[mostCommon]])
-            this.mostCommonPlace = dict[keys[mostCommon]].coord;
+        if(dict[keys[mostCommon]]) // se esiste un place più frequente
+            this.mostCommonPlace = dict[keys[mostCommon]].coord; //lo salvo in una variabile apposita 
 
     },
 
     CreateCircleMarker: function(lat, long, radius){
-        console.log(radius)
-        let mark = L.circleMarker([lat, long], {
-            "radius": radius,
-            "fillColor": "#ff7800",
-            "color": "#ff7800",
-            "weight": 1,
-            "opacity": 1
-          }).addTo(this.mymap);
-        console.log(mark);
-        return mark;
+        let mark = L.circleMarker([lat, long], { //creo l'oggetto come da documentazione
+            "radius": radius, //raggio in proporzione alle persone che sono in quel place
+            "fillColor": "#ff7800", //colore arancione della bolla
+            "color": "#ff7800", //colore del bordo sempre arancione ma scuro
+            "weight": 1, //peso nella mappa
+            "opacity": 1 //opacità nella mappa
+          }).addTo(this.mymap); //aggiunta alla mappa
+        return mark; //ritorno il marker
     },
     
-    //richiesta ad openstreetmap API di location, coords rida' coordinate (lat,lon), box rida' boundingbox
-    getCoordsFromLoc : async function(location,type) {
-        let url = "http://nominatim.openstreetmap.org/search?";
-        params = {
-            "q": location,
-            "format": "json",
-            "limit": 1
+    getCoordsFromLoc : async function(location,type) { //richiesta ad openstreetmap API di location, coords rida' coordinate (lat,lon), box rida' boundingbox
+        let url = "http://nominatim.openstreetmap.org/search?"; //url per la richiesta
+        let params = { //parametri per la richiesta
+            "q": location, //locazione
+            "format": "json", //formato
+            "limit": 1 //limite
         }
-        try {
-            let data = await $.get(url+$.param(params));
-            console.log(data);
-            if(type == "coords"){
-                return {"lat": data[0].lat, "lon": data[0].lon};
+        try { //per evitare crash
+            let data = await $.get(url+$.param(params)); //attendo la risposta della get
+            if(type == "coords"){ //in base al tipo di richiesta
+                return {"lat": data[0].lat, "lon": data[0].lon}; //ritrono latitudine e longitudine
             }
-            if(type == "box"){
-                //south Latitude, north Latitude, west Longitude, east Longitude
-                return {"0":data[0].boundingbox["0"],"1":data[0].boundingbox["1"],"2":data[0].boundingbox["2"],"3":data[0].boundingbox["3"]};
+            if(type == "box"){ //caso box
+                return {"0":data[0].boundingbox["0"],"1":data[0].boundingbox["1"],"2":data[0].boundingbox["2"],"3":data[0].boundingbox["3"]}; //ritorno south Latitude, north Latitude, west Longitude, east Longitude
             }
-            return null;
-        } catch(err) {
-            console.log(err);
-            return null;
+            return null; //nel caso di richiesta sbagliata
+        } catch(err) {//nel caso di possibile errore
+            return null; //ritorno senza far nulla
         }
     },
 
-    GetMediumLocationFromPlace(tweet){
-        if(tweet.place != null){
-            return [(tweet.place.bounding_box.coordinates[0][0][0] + tweet.place.bounding_box.coordinates[0][1][0] + 
-                tweet.place.bounding_box.coordinates[0][2][0] + tweet.place.bounding_box.coordinates[0][3][0]) / 4 , 
-            (tweet.place.bounding_box.coordinates[0][0][1] + tweet.place.bounding_box.coordinates[0][1][1] + 
-                tweet.place.bounding_box.coordinates[0][2][1] + tweet.place.bounding_box.coordinates[0][3][1]) / 4 ];
+    GetMediumLocationFromPlace(tweet){ //ritorna il centro del place
+        if(tweet.place != null){ //se il place è presente 
+            return [(tweet.place.bounding_box.coordinates[0][0][0] + tweet.place.bounding_box.coordinates[0][1][0] + //somma dei punti di longitudine
+                tweet.place.bounding_box.coordinates[0][2][0] + tweet.place.bounding_box.coordinates[0][3][0]) / 4 , //divisi per 4 perchè quadrato
+            (tweet.place.bounding_box.coordinates[0][0][1] + tweet.place.bounding_box.coordinates[0][1][1] +  //somma dei punti di latitudine
+                tweet.place.bounding_box.coordinates[0][2][1] + tweet.place.bounding_box.coordinates[0][3][1]) / 4 ];//divisi per 4 perchè quadrato
         }
-        return null;
+        return null; //nel caso di dato sbagliato
     }
 };
