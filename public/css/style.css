@@ -26,7 +26,7 @@ thead {
 }
 
 tbody {
-	height: 600px;
+	height: 650px;
     flex: 1 1 auto;
     display: block;
     overflow-y: auto;
