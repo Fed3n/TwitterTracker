@@ -201,7 +201,7 @@ var container = new Vue({
 				container.allwatchers = watchers;
 			})
 				.catch(function (err) {
-					modal.showError(err.message);
+					return;
 				});
 			let namelist = [];
 			for (let watcher of this.pagewatchers) {
@@ -221,7 +221,7 @@ var container = new Vue({
 					}
 				})
 					.catch(function (err) {
-						modal.showError(err.message);
+						return;
 					});
 			}
 		},
