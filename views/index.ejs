@@ -232,7 +232,7 @@
                                 <option v-for="filter in local_filters">{{filter}}</option>
                             </select>
                             <input type="text" ref="filterinput">
-                            <button id="addlabel" class="btn btn-primary" v-on:click="addfilter">Aggiungi</button>
+                            <button id="addlabel" class="btn btn-primary" v-on:click="addfilter">Add</button>
                             <div class="located">
                                 <input type="checkbox" id="hasLocation" v-model="onlyLocated">
                                 <label for="hasLocation">Is Located</label>
@@ -261,7 +261,7 @@
                                 <div class="dropdown-menu" aria-labelledby="togglesettings">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="multiple" class="custom-control-input" value="multiple" v-model="computedchecks" @change="checkedsettings.length>0 ? checkedsettings=[] : checkedsettings=settings">
-                                        <label class="custom-control-label" for="multiple">{{computedchecks? "Deseleziona tutto" : "Seleziona Tutto"}}</label>
+                                        <label class="custom-control-label" for="multiple">{{computedchecks? "Deselect All" : "Select All"}}</label>
                                     </div>
                                     <div v-for="setting in settings" class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" v-bind:id="setting" v-bind:value="setting" v-model="checkedsettings">
@@ -285,7 +285,8 @@
                         <button id="export" class="btn btn-primary">Export</button>
                     </div>
                     <div class="d-flex justify-content-between col-md-3">
-                        <p class="border rounded p-1 m-1">Raccolti {{ computedtweets.length }} tweets!</p>
+                        <p class="border rounded p-1 m-1" v-if="computedtweets.length==1">There is 1 tweet!</p>
+                        <p class="border rounded p-1 m-1" v-else>There are {{ computedtweets.length }} tweets!</p>
                     </div>
                     <button id="clearTweets" class="btn btn-danger">Clear All</button>
                 </div>
